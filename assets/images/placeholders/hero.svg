@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1200" viewBox="0 0 1800 1200">
+  <defs>
+    <linearGradient id="ghero" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8A9B96"/>
+      <stop offset="55%" stop-color="#5C6E68"/>
+      <stop offset="100%" stop-color="#2E3B37"/>
+    </linearGradient>
+    <filter id="bhero"><feGaussianBlur stdDeviation="90"/></filter>
+  </defs>
+  <rect width="1800" height="1200" fill="url(#ghero)"/>
+  <g filter="url(#bhero)">
+    <circle cx="450" cy="300" r="380" fill="#D9CBA8" opacity="0.5"/>
+    <circle cx="1400" cy="850" r="420" fill="#3E4A3D" opacity="0.5"/>
+    <circle cx="1200" cy="250" r="300" fill="#B8935F" opacity="0.35"/>
+    <circle cx="300" cy="950" r="320" fill="#6F8598" opacity="0.4"/>
+  </g>
+  <text x="1776" y="1176" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#ffffff" opacity="0.5">Sample hero image — replace with featured artwork photo</text>
+</svg>

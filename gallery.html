@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>document.documentElement.classList.add('js');</script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gallery — Available &amp; Sold Artwork | Maureen Osborne</title>
+<meta name="description" content="Browse original oil paintings by Maureen Osborne: available artwork ready to purchase, and a sold archive of previously collected pieces." />
+<link rel="canonical" href="https://maureenosborne.art/gallery.html" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Gallery — Available & Sold Artwork | Maureen Osborne" />
+<meta property="og:description" content="Original oil paintings by Jersey-based artist Maureen Osborne — available work and a sold archive." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="brand">Maureen Osborne<span class="brand-sub">Jersey, Channel Islands</span></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="gallery.html?tab=available">Available Work</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <a href="contact.html" class="btn btn-outline nav-cta">Enquire</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-menu">
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="btn btn-primary">Enquire</a>
+</div>
+
+<header class="page-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Gallery</div>
+    <span class="eyebrow">The Collection</span>
+    <h1>Artwork Gallery</h1>
+    <p class="lede">Original oil paintings, available to purchase directly, alongside a record of previously collected work.</p>
+  </div>
+</header>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="gallery-tabs" role="tablist">
+      <button class="gallery-tab active" data-tab="available" role="tab" aria-selected="true">Available Artwork</button>
+      <button class="gallery-tab" data-tab="sold" role="tab" aria-selected="false">Sold Archive</button>
+    </div>
+
+    <div class="gallery-filters" id="collection-filters"></div>
+
+    <div id="available-panel">
+      <div class="art-grid" id="available-grid"></div>
+    </div>
+
+    <div id="sold-panel" style="display:none;">
+      <p class="lede mt-2" style="margin-bottom: var(--space-4);">
+        Every piece below has already found a home with a collector. Browsing the sold archive is a good way to
+        get a sense of Maureen's range, past pricing, and how quickly new work tends to sell.
+      </p>
+      <div class="art-grid" id="sold-grid"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-dark cta-band">
+  <div class="container reveal">
+    <span class="eyebrow">Don't see the right piece?</span>
+    <h2>Enquire about a commission</h2>
+    <p class="lede">Maureen accepts a limited number of commissions each year — a considered way to have a piece painted around a specific place or memory.</p>
+    <div class="btn-row">
+      <a href="contact.html?type=commission" class="btn btn-primary">Start a Commission Enquiry</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="brand">Maureen Osborne</a>
+        <p>Original oil paintings from a studio in Jersey, Channel Islands. New work released in small collections throughout the year.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="about.html">About the Artist</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="gallery.html?tab=sold">Sold Archive</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <p id="footer-email">hello@maureenosborne.art</p>
+        <p>Jersey, Channel Islands</p>
+        <a href="https://instagram.com/" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span id="year"></span> Maureen Osborne. All artwork images and content remain the property of the artist.</span>
+      <span>Site by design</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+  if (typeof SITE !== "undefined") document.getElementById("footer-email").textContent = SITE.email;
+
+  const params = new URLSearchParams(location.search);
+  let activeCollection = params.get("collection") || "all";
+
+  const tabs = document.querySelectorAll(".gallery-tab");
+  const panels = { available: document.getElementById("available-panel"), sold: document.getElementById("sold-panel") };
+
+  function setTab(tab) {
+    tabs.forEach(t => {
+      const isActive = t.dataset.tab === tab;
+      t.classList.toggle("active", isActive);
+      t.setAttribute("aria-selected", isActive);
+    });
+    panels.available.style.display = tab === "available" ? "" : "none";
+    panels.sold.style.display = tab === "sold" ? "" : "none";
+  }
+
+  tabs.forEach(t => t.addEventListener("click", () => setTab(t.dataset.tab)));
+  setTab(params.get("tab") === "sold" ? "sold" : "available");
+
+  function renderFilters() {
+    const el = document.getElementById("collection-filters");
+    if (!el || typeof COLLECTIONS === "undefined") return;
+    const pills = [{ id: "all", name: "All Work" }, ...COLLECTIONS];
+    el.innerHTML = pills.map(c =>
+      `<button class="filter-pill${c.id === activeCollection ? " active" : ""}" data-collection="${c.id}">${c.name}</button>`
+    ).join("");
+    el.querySelectorAll(".filter-pill").forEach(btn => {
+      btn.addEventListener("click", () => {
+        activeCollection = btn.dataset.collection;
+        el.querySelectorAll(".filter-pill").forEach(b => b.classList.toggle("active", b === btn));
+        renderGrids();
+      });
+    });
+  }
+
+  function filtered(list) {
+    return activeCollection === "all" ? list : list.filter(a => a.collection === activeCollection);
+  }
+
+  function renderGrids() {
+    if (typeof ARTWORKS === "undefined" || !window.Gallery) return;
+    const available = filtered(ARTWORKS.filter(a => a.status !== "sold"));
+    const sold = filtered(ARTWORKS.filter(a => a.status === "sold"));
+    window.Gallery.renderArtGrid(document.getElementById("available-grid"), available);
+    window.Gallery.renderArtGrid(document.getElementById("sold-grid"), sold);
+  }
+
+  renderFilters();
+  renderGrids();
+</script>
+</body>
+</html>
