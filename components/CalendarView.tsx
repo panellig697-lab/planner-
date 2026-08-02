@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { AppState } from "@/lib/types";
 import { monthLabel, todayISO, WEEKDAY } from "@/lib/dateUtils";
 
@@ -55,14 +56,22 @@ export default function CalendarView({ state }: { state: AppState }) {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <button onClick={() => shiftMonth(-1)} className="label-caps px-2 py-1 hover:text-rust-dark">
-          ← Prev
+        <button
+          onClick={() => shiftMonth(-1)}
+          aria-label="Previous month"
+          className="rounded-lg border border-line p-1.5 text-ink-soft transition hover:border-rust/40 hover:text-rust-dark"
+        >
+          <ChevronLeft className="h-4 w-4" />
         </button>
-        <h2 className="font-serif text-lg font-semibold text-ink">
+        <h2 className="text-base font-semibold text-ink">
           {monthLabel(cursor.year, cursor.month)}
         </h2>
-        <button onClick={() => shiftMonth(1)} className="label-caps px-2 py-1 hover:text-rust-dark">
-          Next →
+        <button
+          onClick={() => shiftMonth(1)}
+          aria-label="Next month"
+          className="rounded-lg border border-line p-1.5 text-ink-soft transition hover:border-rust/40 hover:text-rust-dark"
+        >
+          <ChevronRight className="h-4 w-4" />
         </button>
       </div>
 
@@ -91,7 +100,7 @@ export default function CalendarView({ state }: { state: AppState }) {
                 {items.slice(0, 2).map((item) => (
                   <div
                     key={item.id}
-                    className={`truncate rounded-sm px-1 py-0.5 text-[10px] leading-tight ${
+                    className={`truncate rounded-md px-1 py-0.5 text-[10px] leading-tight ${
                       item.kind === "task"
                         ? "bg-paper-dark text-ink-soft"
                         : "bg-rust/10 text-rust-dark"

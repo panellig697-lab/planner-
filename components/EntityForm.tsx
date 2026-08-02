@@ -73,7 +73,7 @@ export default function EntityForm({
   return (
     <form onSubmit={handleSubmit} className="card space-y-3 p-4">
       {error && (
-        <div role="alert" className="flex items-start gap-2 rounded-sm border border-rust bg-rust/10 px-3 py-2 text-sm text-rust-dark">
+        <div role="alert" className="flex items-start gap-2 rounded-lg border border-rust bg-rust/10 px-3 py-2.5 text-sm text-rust-dark animate-fade-in">
           <span aria-hidden>⚠</span>
           <span>{error}</span>
         </div>
@@ -91,14 +91,14 @@ export default function EntityForm({
         <button
           type="submit"
           disabled={saving}
-          className="rounded-sm bg-rust px-3 py-1.5 text-sm font-medium text-paper disabled:opacity-50"
+          className="rounded-lg bg-rust px-3.5 py-2 text-sm font-medium text-paper shadow-soft transition hover:opacity-90 disabled:opacity-50"
         >
           {saving ? "Saving…" : initial ? "Save changes" : "Create"}
         </button>
         <button
           type="button"
           onClick={onDone}
-          className="rounded-sm border border-line px-3 py-1.5 text-sm text-ink-soft"
+          className="rounded-lg border border-line px-3.5 py-2 text-sm text-ink-soft transition hover:text-ink"
         >
           Cancel
         </button>
@@ -119,7 +119,7 @@ function FieldInput({
   state: AppState;
 }) {
   const baseClass =
-    "w-full rounded-sm border border-line bg-paper px-2 py-1.5 text-sm text-ink";
+    "w-full rounded-lg border border-line bg-paper px-2.5 py-2 text-sm text-ink outline-none transition focus:border-rust/50";
 
   if (field.type === "title" || field.type === "text") {
     return (

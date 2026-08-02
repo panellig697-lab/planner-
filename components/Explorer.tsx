@@ -1,23 +1,37 @@
 "use client";
 
 import { useState } from "react";
+import { Plus, Users, Building2, FolderKanban, CheckSquare, Lightbulb, BookOpen } from "lucide-react";
 import { SCHEMAS, type EntityType } from "@/lib/schema";
-import type { AppState } from "@/lib/types";
+import type { AppState, Company } from "@/lib/types";
 import type { MutatePayload } from "@/lib/useAppState";
 import EntityForm from "./EntityForm";
+import CompanyWorkspace from "./CompanyWorkspace";
 import { formatGBP } from "@/lib/format";
+import { SkeletonList } from "./ui/Skeleton";
+import EmptyState from "./ui/EmptyState";
 
-const TABS: EntityType[] = ["people", "companies", "projects", "tasks", "ideas", "knowledge"];
+const TABS: { key: EntityType; icon: typeof Users }[] = [
+  { key: "people", icon: Users },
+  { key: "companies", icon: Building2 },
+  { key: "projects", icon: FolderKanban },
+  { key: "tasks", icon: CheckSquare },
+  { key: "ideas", icon: Lightbulb },
+  { key: "knowledge", icon: BookOpen },
+];
 
 export default function Explorer({
   state,
   mutate,
+  loading,
 }: {
   state: AppState;
   mutate: (payload: MutatePayload) => Promise<{ id: string }>;
+  loading: boolean;
 }) {
   const [tab, setTab] = useState<EntityType>("people");
   const [editing, setEditing] = useState<string | null>(null); // row id, or "new"
+  const [openCompany, setOpenCompany] = useState<Company | null>(null);
 
   const schema = SCHEMAS[tab];
   const rows = state[tab] as unknown as Record<string, unknown>[];
@@ -25,6 +39,18 @@ export default function Explorer({
   function selectTab(t: EntityType) {
     setTab(t);
     setEditing(null);
+    setOpenCompany(null);
+  }
+
+  if (openCompany) {
+    return (
+      <CompanyWorkspace
+        company={openCompany}
+        state={state}
+        mutate={mutate}
+        onBack={() => setOpenCompany(null)}
+      />
+    );
   }
 
   return (
@@ -32,13 +58,13 @@ export default function Explorer({
       <div className="-mx-4 mb-4 flex gap-1 overflow-x-auto px-4 scrollbar-thin">
         {TABS.map((t) => (
           <button
-            key={t}
-            onClick={() => selectTab(t)}
-            className={`shrink-0 rounded-sm px-3 py-1.5 text-sm ${
-              tab === t ? "bg-ink text-paper" : "border border-line text-ink-soft"
+            key={t.key}
+            onClick={() => selectTab(t.key)}
+            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm transition ${
+              tab === t.key ? "bg-ink text-paper" : "border border-line text-ink-soft hover:text-ink"
             }`}
           >
-            {SCHEMAS[t].label}
+            <t.icon className="h-3.5 w-3.5" /> {SCHEMAS[t.key].label}
           </button>
         ))}
       </div>
@@ -48,9 +74,9 @@ export default function Explorer({
         {editing !== "new" && (
           <button
             onClick={() => setEditing("new")}
-            className="rounded-sm bg-rust px-3 py-1 text-sm font-medium text-paper"
+            className="flex items-center gap-1 rounded-lg bg-rust px-3 py-1.5 text-sm font-medium text-paper shadow-soft transition hover:opacity-90"
           >
-            + Add {schema.singular}
+            <Plus className="h-3.5 w-3.5" /> Add {schema.singular}
           </button>
         )}
       </div>
@@ -61,31 +87,38 @@ export default function Explorer({
         </div>
       )}
 
-      <ul className="space-y-2">
-        {rows.map((row) => (
-          <li key={row.id as string}>
-            {editing === row.id ? (
-              <EntityForm
-                schema={schema}
-                state={state}
-                initial={row}
-                onDone={() => setEditing(null)}
-                mutate={mutate}
-              />
-            ) : (
-              <button
-                onClick={() => setEditing(row.id as string)}
-                className="card block w-full px-3 py-2.5 text-left"
-              >
-                <RowSummary schema={schema} row={row} />
-              </button>
-            )}
-          </li>
-        ))}
-        {rows.length === 0 && editing !== "new" && (
-          <p className="text-sm italic text-ink-soft">Nothing here yet.</p>
-        )}
-      </ul>
+      {loading && rows.length === 0 ? (
+        <SkeletonList rows={5} />
+      ) : rows.length === 0 && editing !== "new" ? (
+        <EmptyState icon={schema.type === "companies" ? Building2 : Users} title={`No ${schema.label.toLowerCase()} yet`} description="Add your first one to get started." />
+      ) : (
+        <ul className="space-y-2">
+          {rows.map((row) => (
+            <li key={row.id as string}>
+              {editing === row.id ? (
+                <EntityForm
+                  schema={schema}
+                  state={state}
+                  initial={row}
+                  onDone={() => setEditing(null)}
+                  mutate={mutate}
+                />
+              ) : (
+                <button
+                  onClick={() =>
+                    tab === "companies"
+                      ? setOpenCompany(row as unknown as Company)
+                      : setEditing(row.id as string)
+                  }
+                  className="card block w-full px-3.5 py-3 text-left animate-fade-in"
+                >
+                  <RowSummary schema={schema} row={row} />
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -105,7 +138,7 @@ function RowSummary({ schema, row }: { schema: (typeof SCHEMAS)[EntityType]; row
           <span className="font-mono text-rust-dark">{formatGBP(amount)}</span>
         )}
         {badge && (
-          <span className="rounded-sm border border-line bg-paper-dark px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide">
+          <span className="rounded-full border border-line bg-paper-dark px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide">
             {badge}
           </span>
         )}

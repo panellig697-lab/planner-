@@ -2,21 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --c-paper: 255 255 255;
+  --c-paper-dark: 246 246 248;
+  --c-ink: 24 24 27;
+  --c-ink-soft: 113 113 122;
+  --c-accent: 224 83 44;
+  --c-accent-dark: 184 63 30;
+  --c-line: 228 228 231;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-paper: 12 12 14;
+    --c-paper-dark: 20 20 23;
+    --c-ink: 244 244 246;
+    --c-ink-soft: 161 161 170;
+    --c-accent: 237 111 74;
+    --c-accent-dark: 245 148 118;
+    --c-line: 39 39 43;
+  }
+}
+
+* {
+  border-color: rgb(var(--c-line));
+}
+
 html {
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background-color: #f4ede1;
-  background-image:
-    radial-gradient(circle at 1px 1px, rgba(31, 26, 20, 0.06) 1px, transparent 0);
-  background-size: 22px 22px;
-  color: #1f1a14;
+  background-color: rgb(var(--c-paper));
+  color: rgb(var(--c-ink));
 }
 
 ::selection {
-  background: #b5502f;
-  color: #f4ede1;
+  background: rgb(var(--c-accent));
+  color: rgb(var(--c-paper));
 }
 
 input,
@@ -26,18 +49,61 @@ button {
   font-family: inherit;
 }
 
+button {
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
 .label-caps {
   font-family: "IBM Plex Mono", "SFMono-Regular", Menlo, monospace;
   font-size: 0.68rem;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: #5b5245;
+  color: rgb(var(--c-ink-soft));
 }
 
 .card {
-  background: #fbf6ec;
-  border: 1px solid #ddd0ba;
-  border-radius: 4px;
+  background: rgb(var(--c-paper));
+  border: 1px solid rgb(var(--c-line));
+  border-radius: 0.875rem;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.04);
+  transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+a.card:hover,
+button.card:hover {
+  border-color: rgb(var(--c-ink-soft) / 0.35);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.08), 0 2px 6px rgb(0 0 0 / 0.05);
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgb(var(--c-paper-dark)) 25%,
+    rgb(var(--c-line)) 37%,
+    rgb(var(--c-paper-dark)) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-shine 1.4s ease infinite;
+  border-radius: 0.5rem;
+}
+
+@keyframes skeleton-shine {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -45,6 +111,6 @@ button {
   width: 6px;
 }
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #ddd0ba;
+  background: rgb(var(--c-line));
   border-radius: 3px;
 }
