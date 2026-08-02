@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: #f4ede1;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(31, 26, 20, 0.06) 1px, transparent 0);
+  background-size: 22px 22px;
+  color: #1f1a14;
+}
+
+::selection {
+  background: #b5502f;
+  color: #f4ede1;
+}
+
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+}
+
+.label-caps {
+  font-family: "IBM Plex Mono", "SFMono-Regular", Menlo, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #5b5245;
+}
+
+.card {
+  background: #fbf6ec;
+  border: 1px solid #ddd0ba;
+  border-radius: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #ddd0ba;
+  border-radius: 3px;
+}
