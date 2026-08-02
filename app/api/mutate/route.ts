@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { mutate } from "@/lib/mutate";
 import { ENTITY_TYPES } from "@/lib/schema";
+import { formatApiError } from "@/lib/apiError";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
   } catch (err: any) {
     console.error("POST /api/mutate failed", err);
     return NextResponse.json(
-      { error: err?.message ?? "Mutation failed" },
+      { error: formatApiError(err) },
       { status: 500 }
     );
   }

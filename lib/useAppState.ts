@@ -11,6 +11,19 @@ export interface MutatePayload {
   properties: Record<string, unknown>;
 }
 
+function patchState(
+  state: AppState,
+  type: EntityType,
+  id: string,
+  properties: Record<string, unknown>
+): AppState {
+  const rows = state[type] as unknown as Record<string, unknown>[];
+  return {
+    ...state,
+    [type]: rows.map((row) => (row.id === id ? { ...row, ...properties } : row)),
+  };
+}
+
 export function useAppState() {
   const [state, setState] = useState<AppState>(EMPTY_STATE);
   const [loading, setLoading] = useState(true);
@@ -37,15 +50,32 @@ export function useAppState() {
 
   const mutate = useCallback(
     async (payload: MutatePayload) => {
-      const res = await fetch("/api/mutate", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Mutation failed");
-      await refresh();
-      return data as { id: string };
+      // Optimistic update: reflect the edit immediately, before the network
+      // round trip resolves, so the UI never appears to "not save" even on a
+      // slow connection. If the request fails, we roll back via refresh().
+      if (payload.action === "update" && payload.id) {
+        setState((prev) => patchState(prev, payload.type, payload.id!, payload.properties));
+      }
+
+      try {
+        const res = await fetch("/api/mutate", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error ?? "Mutation failed");
+        }
+        // Reconcile with the source of truth (also picks up server-computed
+        // values and the real id for newly created records).
+        await refresh();
+        return data as { id: string };
+      } catch (err) {
+        // Roll back the optimistic patch by re-syncing with the server.
+        await refresh();
+        throw err;
+      }
     },
     [refresh]
   );

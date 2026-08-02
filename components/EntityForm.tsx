@@ -18,13 +18,18 @@ export default function EntityForm({
   onDone: () => void;
   mutate: (payload: MutatePayload) => Promise<{ id: string }>;
 }) {
-  const [values, setValues] = useState<Record<string, unknown>>(() => {
+  function defaultsFor(source?: Record<string, unknown>) {
     const v: Record<string, unknown> = {};
     for (const field of schema.fields) {
-      v[field.key] = initial?.[field.key] ?? (field.type === "relation" || field.type === "multiselect" ? [] : "");
+      v[field.key] = source?.[field.key] ?? (field.type === "relation" || field.type === "multiselect" ? [] : "");
     }
     return v;
-  });
+  }
+
+  const [values, setValues] = useState<Record<string, unknown>>(() => defaultsFor(initial));
+  // Snapshot of the values the form was opened with, so we can submit only
+  // the fields that actually changed instead of resending the whole row.
+  const [initialSnapshot] = useState<Record<string, unknown>>(() => defaultsFor(initial));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,6 +39,20 @@ export default function EntityForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    const properties = initial
+      ? Object.fromEntries(
+          schema.fields
+            .filter((f) => JSON.stringify(values[f.key]) !== JSON.stringify(initialSnapshot[f.key]))
+            .map((f) => [f.key, values[f.key]])
+        )
+      : values;
+
+    if (initial && Object.keys(properties).length === 0) {
+      onDone();
+      return;
+    }
+
     setSaving(true);
     setError(null);
     try {
@@ -41,7 +60,7 @@ export default function EntityForm({
         type: schema.type,
         action: initial ? "update" : "create",
         id: initial?.id as string | undefined,
-        properties: values,
+        properties,
       });
       onDone();
     } catch (err: any) {
@@ -53,7 +72,12 @@ export default function EntityForm({
 
   return (
     <form onSubmit={handleSubmit} className="card space-y-3 p-4">
-      {error && <p className="text-sm text-rust-dark">{error}</p>}
+      {error && (
+        <div role="alert" className="flex items-start gap-2 rounded-sm border border-rust bg-rust/10 px-3 py-2 text-sm text-rust-dark">
+          <span aria-hidden>⚠</span>
+          <span>{error}</span>
+        </div>
+      )}
       {schema.fields.map((field) => (
         <FieldInput
           key={field.key}

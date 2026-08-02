@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getState } from "@/lib/state";
 import { mutate } from "@/lib/mutate";
 import { classify } from "@/lib/classify";
+import { formatApiError } from "@/lib/apiError";
 
 export const dynamic = "force-dynamic";
 
@@ -24,9 +25,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ summary: decision.summary });
   } catch (err: any) {
     console.error("POST /api/classify failed", err);
-    return NextResponse.json(
-      { error: err?.message ?? "Classification failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: formatApiError(err) }, { status: 500 });
   }
 }
