@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Mail, Phone, Search, ArrowLeft, Building2, FolderKanban, CheckSquare, Globe } from "lucide-react";
+import { Mail, Phone, Search, ArrowLeft, Building2, FolderKanban, CheckSquare, Globe, Plus } from "lucide-react";
 import type { AppState, Person } from "@/lib/types";
 import type { MutatePayload } from "@/lib/useAppState";
 import { byId } from "@/lib/format";
@@ -21,6 +21,7 @@ export default function ContactsView({
   loading: boolean;
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
   const [query, setQuery] = useState("");
 
   const companiesById = byId(state.companies);
@@ -60,6 +61,26 @@ export default function ContactsView({
         </div>
         <span className="label-caps shrink-0">{filtered.length}</span>
       </div>
+
+      {!adding && (
+        <button
+          onClick={() => setAdding(true)}
+          className="mb-4 flex items-center gap-1 rounded-lg bg-rust px-3 py-1.5 text-sm font-medium text-paper shadow-soft transition hover:opacity-90"
+        >
+          <Plus className="h-3.5 w-3.5" /> Add Contact
+        </button>
+      )}
+
+      {adding && (
+        <div className="mb-4">
+          <EntityForm
+            schema={SCHEMAS.people}
+            state={state}
+            onDone={() => setAdding(false)}
+            mutate={mutate}
+          />
+        </div>
+      )}
 
       {loading && state.people.length === 0 ? (
         <SkeletonList rows={6} />

@@ -9,6 +9,7 @@ import {
   CheckSquare,
   Users,
   BarChart3,
+  Palette,
 } from "lucide-react";
 import type { AppState, Company } from "@/lib/types";
 import type { MutatePayload } from "@/lib/useAppState";
@@ -29,9 +30,14 @@ const CARDS: { key: Section; label: string; icon: typeof PoundSterling; blurb: s
   { key: "companies", label: "Companies", icon: Building2, blurb: "Pipeline board" },
   { key: "projects", label: "Projects", icon: FolderKanban, blurb: "All projects" },
   { key: "tasks", label: "Tasks", icon: CheckSquare, blurb: "Open work" },
-  { key: "crm", label: "CRM", icon: Users, blurb: "Clients, leads, parked" },
+  { key: "crm", label: "Retainr/CRM", icon: Users, blurb: "Clients, leads, parked" },
   { key: "metrics", label: "Metrics", icon: BarChart3, blurb: "Business at a glance" },
 ];
+
+// Pinned shortcut straight into a specific company's workspace, same card
+// style/behavior as the section tiles above but resolved by company name
+// instead of a local sub-view.
+const CLARIO_COMPANY_NAME = "Clario";
 
 export default function BusinessOverview({
   state,
@@ -44,6 +50,19 @@ export default function BusinessOverview({
 }) {
   const [section, setSection] = useState<Section | null>(null);
   const [openCompany, setOpenCompany] = useState<Company | null>(null);
+  const [clarioMissing, setClarioMissing] = useState(false);
+
+  function openClario() {
+    const company = state.companies.find(
+      (c) => c.name.trim().toLowerCase() === CLARIO_COMPANY_NAME.toLowerCase()
+    );
+    if (company) {
+      setClarioMissing(false);
+      setOpenCompany(company);
+    } else {
+      setClarioMissing(true);
+    }
+  }
 
   if (openCompany) {
     return (
@@ -62,18 +81,37 @@ export default function BusinessOverview({
 
   if (!section) {
     return (
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {CARDS.map((c) => (
+      <div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {CARDS.map((c) => (
+            <button
+              key={c.key}
+              onClick={() => setSection(c.key)}
+              className="card animate-fade-in flex flex-col items-start gap-2 p-4 text-left"
+            >
+              <c.icon className="h-5 w-5 text-rust-dark" strokeWidth={1.75} />
+              <span className="text-sm font-semibold text-ink">{c.label}</span>
+              <span className="text-xs text-ink-soft">{c.blurb}</span>
+            </button>
+          ))}
           <button
-            key={c.key}
-            onClick={() => setSection(c.key)}
+            onClick={openClario}
             className="card animate-fade-in flex flex-col items-start gap-2 p-4 text-left"
           >
-            <c.icon className="h-5 w-5 text-rust-dark" strokeWidth={1.75} />
-            <span className="text-sm font-semibold text-ink">{c.label}</span>
-            <span className="text-xs text-ink-soft">{c.blurb}</span>
+            <Palette className="h-5 w-5 text-rust-dark" strokeWidth={1.75} />
+            <span className="text-sm font-semibold text-ink">Clario</span>
+            <span className="text-xs text-ink-soft">Company workspace</span>
           </button>
-        ))}
+        </div>
+        {clarioMissing && (
+          <div className="mt-3">
+            <EmptyState
+              icon={Palette}
+              title="No company named “Clario” found"
+              description="Add it in Explorer → Companies, then this card will open its workspace directly."
+            />
+          </div>
+        )}
       </div>
     );
   }

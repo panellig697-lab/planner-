@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Users, Building2, FolderKanban, CheckSquare, Lightbulb, BookOpen } from "lucide-react";
+import { Plus, Building2, FolderKanban, CheckSquare, Lightbulb, BookOpen } from "lucide-react";
 import { SCHEMAS, type EntityType } from "@/lib/schema";
 import type { AppState, Company } from "@/lib/types";
 import type { MutatePayload } from "@/lib/useAppState";
@@ -11,12 +11,14 @@ import { formatGBP } from "@/lib/format";
 import { SkeletonList } from "./ui/Skeleton";
 import EmptyState from "./ui/EmptyState";
 
-const TABS: { key: EntityType; icon: typeof Users }[] = [
-  { key: "people", icon: Users },
+// People is covered by the dedicated Contacts tab now, so it's dropped
+// here. Ideas has real content in this workspace (Knowledge doesn't yet),
+// so it takes the featured/default slot People used to occupy.
+const TABS: { key: EntityType; icon: typeof Lightbulb }[] = [
+  { key: "ideas", icon: Lightbulb },
   { key: "companies", icon: Building2 },
   { key: "projects", icon: FolderKanban },
   { key: "tasks", icon: CheckSquare },
-  { key: "ideas", icon: Lightbulb },
   { key: "knowledge", icon: BookOpen },
 ];
 
@@ -29,7 +31,7 @@ export default function Explorer({
   mutate: (payload: MutatePayload) => Promise<{ id: string }>;
   loading: boolean;
 }) {
-  const [tab, setTab] = useState<EntityType>("people");
+  const [tab, setTab] = useState<EntityType>("ideas");
   const [editing, setEditing] = useState<string | null>(null); // row id, or "new"
   const [openCompany, setOpenCompany] = useState<Company | null>(null);
 
@@ -90,7 +92,11 @@ export default function Explorer({
       {loading && rows.length === 0 ? (
         <SkeletonList rows={5} />
       ) : rows.length === 0 && editing !== "new" ? (
-        <EmptyState icon={schema.type === "companies" ? Building2 : Users} title={`No ${schema.label.toLowerCase()} yet`} description="Add your first one to get started." />
+        <EmptyState
+          icon={TABS.find((t) => t.key === tab)!.icon}
+          title={`No ${schema.label.toLowerCase()} yet`}
+          description="Add your first one to get started."
+        />
       ) : (
         <ul className="space-y-2">
           {rows.map((row) => (
