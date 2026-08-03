@@ -1,0 +1,37 @@
+import { NextResponse } from "next/server";
+import { mutate } from "@/lib/mutate";
+import { ENTITY_TYPES } from "@/lib/schema";
+import { formatApiError } from "@/lib/apiError";
+
+export const dynamic = "force-dynamic";
+// Raises the serverless function timeout where the host allows it (e.g.
+// Vercel Pro/Enterprise; ignored on Hobby, which hard-caps at 10s
+// regardless). The Notion client itself is bounded well under this — see
+// lib/notion.ts — so this is headroom, not a substitute for that.
+export const maxDuration = 30;
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const { type, action, id, properties } = body ?? {};
+
+    if (!ENTITY_TYPES.includes(type)) {
+      return NextResponse.json({ error: `Invalid type: ${type}` }, { status: 400 });
+    }
+    if (action !== "create" && action !== "update") {
+      return NextResponse.json({ error: `Invalid action: ${action}` }, { status: 400 });
+    }
+    if (action === "update" && !id) {
+      return NextResponse.json({ error: "id is required for update" }, { status: 400 });
+    }
+
+    const result = await mutate({ type, action, id, properties: properties ?? {} });
+    return NextResponse.json(result);
+  } catch (err: any) {
+    console.error("POST /api/mutate failed", err);
+    return NextResponse.json(
+      { error: formatApiError(err) },
+      { status: 500 }
+    );
+  }
+}
