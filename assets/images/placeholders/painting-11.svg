@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1100" viewBox="0 0 900 1100">
+  <defs>
+    <linearGradient id="g_painting-11" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6B8296"/>
+      <stop offset="100%" stop-color="#2E3E4C"/>
+    </linearGradient>
+    <filter id="blur_painting-11"><feGaussianBlur stdDeviation="60"/></filter>
+  </defs>
+  <rect width="900" height="1100" fill="url(#g_painting-11)"/>
+  <g filter="url(#blur_painting-11)">
+    <circle cx="270.0" cy="275.0" r="220" fill="#CFC2A5" opacity="0.5" />
+    <circle cx="675.0" cy="660.0" r="260" fill="#2E3E4C" opacity="0.45" />
+    <circle cx="495.00000000000006" cy="935.0" r="200" fill="#6B8296" opacity="0.4" />
+    <circle cx="135.0" cy="825.0" r="180" fill="#CFC2A5" opacity="0.35" />
+  </g>
+  <rect width="900" height="1100" fill="none" stroke="#00000022" stroke-width="2"/>
+  <text x="876" y="1076" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#ffffff" opacity="0.55">Sample artwork — replace with photo</text>
+</svg>

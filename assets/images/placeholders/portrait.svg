@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1100" viewBox="0 0 900 1100">
+  <defs>
+    <linearGradient id="gport" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E8E1D3"/>
+      <stop offset="100%" stop-color="#C9BFA9"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="1100" fill="url(#gport)"/>
+  <circle cx="450" cy="430" r="150" fill="#B8AE99"/>
+  <path d="M 220 950 Q 450 720 680 950 L 680 1100 L 220 1100 Z" fill="#B8AE99"/>
+  <text x="450" y="1040" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#6b6455" opacity="0.8">Portrait placeholder — replace with studio photo</text>
+</svg>

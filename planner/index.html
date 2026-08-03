@@ -1,0 +1,760 @@
+Of course! Here's the complete planner code. Copy everything below and paste it into your `index.html` file on GitHub:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Weekly Planner</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Planner" />
+  <meta name="theme-color" content="#0f0f13" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { height: 100%; }
+    body { background: #0f0f13; color: #e4e2f0; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+    ::-webkit-scrollbar { width: 0; height: 0; }
+    input, textarea, select, button { font-family: inherit; }
+    input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.5); }
+    textarea { resize: vertical; }
+    select { -webkit-appearance: none; }
+    .app { min-height: 100dvh; background: #0f0f13; color: #e4e2f0; font-size: 15px; }
+    .header { background: #16151c; border-bottom: 1px solid #252330; padding: calc(14px + env(safe-area-inset-top)) 16px 0; position: sticky; top: 0; z-index: 20; }
+    .top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .app-name { font-size: 11px; font-weight: 700; color: #7c6fff; letter-spacing: 0.14em; text-transform: uppercase; }
+    .week-lbl { font-size: 11px; color: #3f3d52; margin-top: 2px; }
+    .hdr-btns { display: flex; gap: 6px; align-items: center; }
+    .week-toggle-wrap { display: flex; background: #1c1b25; border: 1px solid #252330; border-radius: 8px; padding: 2px; gap: 2px; }
+    .week-toggle-btn { font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 6px; border: none; cursor: pointer; background: transparent; color: #7a7890; transition: all 0.15s; }
+    .week-toggle-btn.active { background: #7c6fff; color: #fff; }
+    .tabs { display: flex; margin-bottom: -1px; }
+    .tab-btn { padding: 9px 14px; font-size: 13px; font-weight: 400; color: #7a7890; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.15s; }
+    .tab-btn.active { font-weight: 600; color: #e4e2f0; border-bottom-color: #7c6fff; }
+    .day-nav { display: flex; gap: 5px; padding: 10px 16px; overflow-x: auto; background: #16151c; border-bottom: 1px solid #252330; }
+    .day-btn { display: flex; flex-direction: column; align-items: center; min-width: 40px; padding: 7px 4px; border-radius: 10px; background: transparent; border: 1px solid transparent; cursor: pointer; transition: all 0.15s; }
+    .day-btn.active { background: #7c6fff; border-color: transparent; }
+    .day-btn.today:not(.active) { background: #1c1b25; border-color: rgba(124,111,255,0.27); }
+    .day-lbl { font-size: 10px; font-weight: 700; color: #3f3d52; letter-spacing: 0.05em; }
+    .day-btn.active .day-lbl { color: #fff; }
+    .day-num { font-size: 17px; font-weight: 700; color: #7a7890; line-height: 1.2; }
+    .day-btn.active .day-num { color: #fff; }
+    .dot-row { display: flex; gap: 2px; margin-top: 3px; justify-content: center; min-height: 4px; }
+    .dot { width: 4px; height: 4px; border-radius: 50%; background: #252330; }
+    .dot.done { background: #22c55e; }
+    .dot.partial { background: #7c6fff; }
+    .dot.overdue { background: #ef4444; }
+    .content { padding: 16px 16px calc(40px + env(safe-area-inset-bottom)); max-width: 580px; margin: 0 auto; }
+    .section { margin-bottom: 20px; }
+    .section-label { font-size: 10px; font-weight: 700; color: #3f3d52; letter-spacing: 0.13em; text-transform: uppercase; margin-bottom: 9px; }
+    .card { background: #16151c; border: 1px solid #252330; border-radius: 12px; overflow: hidden; }
+    .card-row { display: flex; align-items: center; gap: 10px; padding: 12px 13px; border-bottom: 1px solid #252330; transition: opacity 0.2s; }
+    .card-row.done { opacity: 0.45; }
+    .card-row:last-child { border-bottom: none; }
+    .empty-state { padding: 22px 14px; color: #3f3d52; font-size: 13px; text-align: center; }
+    .check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid #3f3d52; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; font-size: 12px; color: #fff; }
+    .check.checked { background: #7c6fff; border-color: transparent; }
+    .check.skipped { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.33); color: #ef4444; }
+    .item-text { flex: 1; font-size: 14px; line-height: 1.4; color: #e4e2f0; }
+    .item-text.done { text-decoration: line-through; color: #7a7890; }
+    .badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; flex-shrink: 0; }
+    .badge-purple { color: #7c6fff; background: rgba(124,111,255,0.13); }
+    .badge-red { color: #ef4444; background: rgba(239,68,68,0.13); }
+    .badge-green { color: #22c55e; background: rgba(34,197,94,0.13); }
+    .badge-amber { color: #f59e0b; background: rgba(245,158,11,0.13); }
+    .badge-high { font-size: 10px; font-weight: 700; color: #f59e0b; background: rgba(245,158,11,0.13); padding: 1px 7px; border-radius: 20px; flex-shrink: 0; }
+    .streak-badge { font-size: 11px; font-weight: 600; color: #f59e0b; background: rgba(245,158,11,0.13); padding: 2px 8px; border-radius: 20px; flex-shrink: 0; }
+    .del-btn { background: none; border: none; color: #3f3d52; cursor: pointer; font-size: 18px; padding: 0 3px; line-height: 1; flex-shrink: 0; }
+    .ghost-btn { background: none; border: 1px solid #252330; border-radius: 7px; color: #7a7890; font-size: 11px; padding: 5px 10px; cursor: pointer; }
+    .ghost-btn.danger { color: #ef4444; border-color: rgba(239,68,68,0.27); }
+    .add-btn { background: #7c6fff; border: none; border-radius: 9px; color: #fff; font-size: 22px; width: 44px; height: 44px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .pri-btn { background: none; border: 1px solid #252330; border-radius: 9px; color: #3f3d52; font-size: 18px; width: 44px; height: 44px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; }
+    .pri-btn.high { color: #f59e0b; border-color: #f59e0b; }
+    .txt-input { flex: 1; background: #16151c; border: 1px solid #252330; border-radius: 9px; color: #e4e2f0; font-size: 15px; padding: 11px 13px; outline: none; -webkit-appearance: none; }
+    .sm-input { background: #16151c; border: 1px solid #252330; border-radius: 9px; color: #e4e2f0; font-size: 13px; padding: 10px; outline: none; -webkit-appearance: none; flex-shrink: 0; }
+    .sel-input { background: #16151c; border: 1px solid #252330; border-radius: 9px; color: #e4e2f0; font-size: 13px; padding: 10px; outline: none; cursor: pointer; -webkit-appearance: none; }
+    .note-area { width: 100%; min-height: 80px; background: #16151c; border: 1px solid #252330; border-radius: 10px; color: #e4e2f0; font-size: 14px; padding: 11px 13px; outline: none; line-height: 1.6; -webkit-appearance: none; }
+    .add-row { display: flex; gap: 8px; margin-top: 10px; }
+    .prog-wrap { margin-bottom: 18px; }
+    .prog-meta { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px; color: #7a7890; }
+    .prog-bar { height: 3px; background: #252330; border-radius: 2px; overflow: hidden; }
+    .prog-fill { height: 100%; background: linear-gradient(90deg, #7c6fff, #a78bfa); border-radius: 2px; transition: width 0.4s ease; }
+    .next-week-banner { background: rgba(124,111,255,0.08); border: 1px solid rgba(124,111,255,0.19); border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    .overdue-banner { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.19); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; }
+    .overdue-hdr { font-size: 11px; font-weight: 700; color: #ef4444; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+    .overdue-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; position: relative; }
+    .skip-box { background: #1c1b25; border: 1px solid #252330; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+    .skip-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .skip-pill { padding: 5px 11px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; background: transparent; color: #3f3d52; border: 1px solid #252330; }
+    .copy-wrap { position: relative; }
+    .copy-menu { position: absolute; z-index: 30; right: 0; top: 110%; background: #1c1b25; border: 1px solid #252330; border-radius: 10px; padding: 6px; min-width: 155px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    .copy-menu-label { font-size: 10px; color: #3f3d52; padding: 4px 12px 6px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    .copy-menu-item { display: block; width: 100%; background: none; border: none; color: #e4e2f0; font-size: 14px; padding: 9px 13px; text-align: left; cursor: pointer; border-radius: 7px; }
+    .copy-menu-item:hover { background: #252330; }
+    .copy-menu-item.next { color: #7c6fff; }
+    .copy-divider { height: 1px; background: #252330; margin: 4px 0; }
+    .cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .cat-header { display: flex; align-items: center; gap: 7px; padding: 8px 13px 4px; background: #1c1b25; }
+    .cat-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    .day-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+    .day-pill { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; background: transparent; color: #3f3d52; border: 1px solid #252330; }
+    .routine-block { padding: 13px 14px; border-bottom: 1px solid #252330; }
+    .routine-block:last-child { border-bottom: none; }
+    .routine-top { display: flex; align-items: center; gap: 9px; margin-bottom: 9px; }
+    .add-routine-box { background: #16151c; border: 1px solid #252330; border-radius: 12px; padding: 14px; }
+    .add-routine-inner { display: flex; flex-direction: column; gap: 8px; }
+    .add-routine-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.67); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+    .modal-box { background: #16151c; border: 1px solid #252330; border-radius: 16px; padding: 24px; width: 100%; max-width: 360px; }
+    .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .modal-sub { font-size: 13px; color: #7a7890; margin-bottom: 20px; line-height: 1.5; }
+    .modal-btns { display: flex; gap: 10px; }
+    .cancel-btn { flex: 1; padding: 12px; background: transparent; border: 1px solid #252330; border-radius: 9px; color: #7a7890; cursor: pointer; font-size: 14px; }
+    .danger-btn { flex: 1; padding: 12px; background: #ef4444; border: none; border-radius: 9px; color: #fff; cursor: pointer; font-size: 14px; font-weight: 600; }
+    .drag-handle { color: #3f3d52; font-size: 13px; user-select: none; cursor: grab; }
+    .hist-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .hist-nav-btns { display: flex; gap: 6px; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script>
+'use strict';
+const { useState, useEffect, useRef, createElement: h, Fragment } = React;
+const DAYS  = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const SHORT = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const CATS  = ["Morning","Evening","Work","Health","Other"];
+const CAT_COLOR = { Morning:"#f59e0b", Evening:"#8b5cf6", Work:"#3b82f6", Health:"#ef4444", Other:"#6b7280" };
+const SKIP_REASONS = ["Rest day","Travelling","Too busy","Not feeling well","Other"];
+const STORAGE_KEY = "gio-planner-v1";
+function getTodayIdx() { const d = new Date().getDay(); return d === 0 ? 6 : d - 1; }
+function genId() { return Math.random().toString(36).slice(2,9); }
+function getWeekLabel(off = 0) {
+  const now = new Date();
+  const diff = (now.getDay() === 0 ? -6 : 1 - now.getDay()) + off * 7;
+  const mon = new Date(now); mon.setDate(now.getDate() + diff);
+  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  const f = d => d.toLocaleDateString("en-GB", { day:"numeric", month:"short" });
+  return f(mon) + " – " + f(sun);
+}
+function getMondayOfWeek(off = 0) {
+  const now = new Date();
+  const diff = (now.getDay() === 0 ? -6 : 1 - now.getDay()) + off * 7;
+  const m = new Date(now); m.setDate(now.getDate() + diff);
+  return m;
+}
+function blankWeek(label) {
+  const days = {};
+  DAYS.forEach(d => { days[d] = { tasks:[], routineOverrides:{}, notes:"" }; });
+  return { label, days };
+}
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    if (p.week && !p.weeks) {
+      return { weeks:{ current:p.week, next:blankWeek(getWeekLabel(1)) }, history:p.history||[], routines:p.routines||[] };
+    }
+    if (p.weeks && !p.weeks.next) p.weeks.next = blankWeek(getWeekLabel(1));
+    return p;
+  } catch { return null; }
+}
+function saveData(d) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } catch {} }
+function makeInit() {
+  return { weeks:{ current:blankWeek(getWeekLabel(0)), next:blankWeek(getWeekLabel(1)) }, history:[], routines:[] };
+}
+function CatDot({ cat }) {
+  return h('div', { className:'cat-dot', style:{ background: CAT_COLOR[cat]||'#6b7280' } });
+}
+function Planner() {
+  const [data, setData] = useState(() => loadData() || makeInit());
+  const [activeWeek, setActiveWeek] = useState("current");
+  const [day, setDay] = useState(DAYS[getTodayIdx()]);
+  const [tab, setTab] = useState("week");
+  const [newTask, setNewTask] = useState("");
+  const [newPri, setNewPri] = useState("normal");
+  const [copyMenuId, setCopyMenuId] = useState(null);
+  const [newR, setNewR] = useState("");
+  const [newRTime, setNewRTime] = useState("");
+  const [newRCat, setNewRCat] = useState("Morning");
+  const [editTaskId, setEditTaskId] = useState(null);
+  const [editTaskVal, setEditTaskVal] = useState("");
+  const [editRoutineId, setEditRoutineId] = useState(null);
+  const [editRoutineVal, setEditRoutineVal] = useState("");
+  const [skipMenuId, setSkipMenuId] = useState(null);
+  const [showReset, setShowReset] = useState(false);
+  const [histIdx, setHistIdx] = useState(0);
+  const dragFrom = useRef(null);
+  useEffect(() => { saveData(data); }, [data]);
+  function save(fn) {
+    setData(prev => {
+      const next = fn(JSON.parse(JSON.stringify(prev)));
+      saveData(next);
+      return next;
+    });
+  }
+  const todayIdx = getTodayIdx();
+  const isNextWeek = activeWeek === "next";
+  const week = (data.weeks && data.weeks[activeWeek]) || blankWeek(getWeekLabel(0));
+  const dayD = week.days[day] || { tasks:[], routineOverrides:{}, notes:"" };
+  const routines = data.routines || [];
+  const dayIdx = DAYS.indexOf(day);
+  function dayRoutines(d) { return routines.filter(r => r.days && r.days.includes(d)); }
+  const overdueTasks = (() => {
+    if (isNextWeek) return [];
+    const out = [];
+    DAYS.forEach((d, i) => {
+      if (i >= todayIdx) return;
+      const tasks = (week.days[d] && week.days[d].tasks) || [];
+      tasks.forEach(t => { if (!t.done) out.push(Object.assign({}, t, { fromDay: d })); });
+    });
+    return out;
+  })();
+  function rStatus(rId, forDay) {
+    const tgt = forDay || day;
+    const ov = week.days[tgt] && week.days[tgt].routineOverrides && week.days[tgt].routineOverrides[rId];
+    if (ov === true) return "done";
+    if (typeof ov === "string") return "skip";
+    return "pending";
+  }
+  function getStreak(rId) {
+    let streak = 0;
+    const cw = (data.weeks && data.weeks.current) || week;
+    for (let i = todayIdx - 1; i >= 0; i--) {
+      const ov = cw.days[DAYS[i]] && cw.days[DAYS[i]].routineOverrides && cw.days[DAYS[i]].routineOverrides[rId];
+      if (ov === true) streak++;
+      else if (typeof ov === "string") continue;
+      else break;
+    }
+    (data.history || []).forEach(hw => {
+      let broken = false;
+      for (let i = 6; i >= 0; i--) {
+        const ov = hw.days[DAYS[i]] && hw.days[DAYS[i]].routineOverrides && hw.days[DAYS[i]].routineOverrides[rId];
+        if (ov === true) streak++;
+        else if (typeof ov === "string") continue;
+        else { broken = true; break; }
+      }
+    });
+    return streak;
+  }
+  function dayProgress(d) {
+    const dd = week.days[d]; if (!dd) return null;
+    const dr = dayRoutines(d);
+    const total = dd.tasks.length + dr.length; if (!total) return null;
+    const done = dd.tasks.filter(t => t.done).length
+      + dr.filter(r => dd.routineOverrides && dd.routineOverrides[r.id] === true).length;
+    return Math.round((done / total) * 100);
+  }
+  const prog = dayProgress(day);
+  function addTask() {
+    const text = newTask.trim(); if (!text) return;
+    save(d => {
+      d.weeks[activeWeek].days[day].tasks.push({ id:genId(), text, done:false, priority:newPri });
+      return d;
+    });
+    setNewTask(""); setNewPri("normal");
+  }
+  function toggleTask(id) {
+    save(d => {
+      const t = d.weeks[activeWeek].days[day].tasks.find(t => t.id === id);
+      if (t) t.done = !t.done;
+      return d;
+    });
+  }
+  function deleteTask(id) {
+    save(d => {
+      d.weeks[activeWeek].days[day].tasks = d.weeks[activeWeek].days[day].tasks.filter(t => t.id !== id);
+      return d;
+    });
+  }
+  function saveTaskEdit(id) {
+    const text = editTaskVal.trim();
+    if (text) save(d => { const t = d.weeks[activeWeek].days[day].tasks.find(t => t.id===id); if(t) t.text=text; return d; });
+    setEditTaskId(null); setEditTaskVal("");
+  }
+  function copyTask(task, targetDay, targetWeek) {
+    const wk = targetWeek || activeWeek;
+    save(d => {
+      d.weeks[wk].days[targetDay].tasks.push({ id:genId(), text:task.text, done:false, priority:task.priority });
+      return d;
+    });
+    setCopyMenuId(null);
+  }
+  function reorderTasks(newOrder) {
+    save(d => { d.weeks[activeWeek].days[day].tasks = newOrder; return d; });
+  }
+  function updateNotes(val) {
+    save(d => { d.weeks[activeWeek].days[day].notes = val; return d; });
+  }
+  function onDragStart(e, idx) { dragFrom.current = idx; }
+  function onDragOver(e) { e.preventDefault(); }
+  function onDrop(e, idx) {
+    if (dragFrom.current === null || dragFrom.current === idx) return;
+    const next = dayD.tasks.slice();
+    const [moved] = next.splice(dragFrom.current, 1);
+    next.splice(idx, 0, moved);
+    reorderTasks(next);
+    dragFrom.current = null;
+  }
+  function addRoutine() {
+    const text = newR.trim(); if (!text) return;
+    save(d => { d.routines.push({ id:genId(), text, time:newRTime, category:newRCat, days:DAYS.slice() }); return d; });
+    setNewR(""); setNewRTime(""); setNewRCat("Morning");
+  }
+  function deleteRoutine(id) {
+    save(d => {
+      d.routines = d.routines.filter(r => r.id !== id);
+      ["current","next"].forEach(wk => {
+        DAYS.forEach(dy => { if (d.weeks[wk] && d.weeks[wk].days[dy]) delete d.weeks[wk].days[dy].routineOverrides[id]; });
+      });
+      return d;
+    });
+  }
+  function toggleRoutineDay(rId, rd) {
+    save(d => {
+      const r = d.routines.find(r => r.id === rId); if (!r) return d;
+      r.days = r.days.includes(rd) ? r.days.filter(x => x !== rd) : r.days.concat(rd);
+      return d;
+    });
+  }
+  function cycleRoutine(rId) {
+    const s = rStatus(rId);
+    if (s === "pending") {
+      save(d => { d.weeks[activeWeek].days[day].routineOverrides[rId] = true; return d; });
+    } else if (s === "done") {
+      setSkipMenuId(rId);
+    } else {
+      save(d => { delete d.weeks[activeWeek].days[day].routineOverrides[rId]; return d; });
+    }
+  }
+  function applySkip(rId, reason) {
+    save(d => { d.weeks[activeWeek].days[day].routineOverrides[rId] = reason; return d; });
+    setSkipMenuId(null);
+  }
+  function saveRoutineEdit(id) {
+    const text = editRoutineVal.trim();
+    if (text) save(d => { const r = d.routines.find(r => r.id===id); if(r) r.text=text; return d; });
+    setEditRoutineId(null); setEditRoutineVal("");
+  }
+  function updateRoutineField(id, field, val) {
+    save(d => { const r = d.routines.find(r => r.id===id); if(r) r[field]=val; return d; });
+  }
+  function resetWeek() {
+    save(d => {
+      d.history.unshift(d.weeks.current);
+      if (d.history.length > 8) d.history = d.history.slice(0,8);
+      d.weeks.current = d.weeks.next;
+      d.weeks.current.label = getWeekLabel(0);
+      d.weeks.next = blankWeek(getWeekLabel(1));
+      return d;
+    });
+    setShowReset(false); setActiveWeek("current"); setDay(DAYS[getTodayIdx()]);
+  }
+  const monday = getMondayOfWeek(isNextWeek ? 1 : 0);
+  function getDayDate(i) { const d = new Date(monday); d.setDate(monday.getDate()+i); return d.getDate(); }
+  function closeMenus() { setCopyMenuId(null); setSkipMenuId(null); }
+  function renderDayNav() {
+    return h('div', { className:'day-nav' },
+      DAYS.map((d, i) => {
+        const active  = day === d;
+        const isToday = i === todayIdx && !isNextWeek;
+        const pct     = dayProgress(d);
+        const hasOD   = !isNextWeek && i < todayIdx && (week.days[d] && week.days[d].tasks || []).some(t => !t.done);
+        let cls = 'day-btn';
+        if (active) cls += ' active';
+        else if (isToday) cls += ' today';
+        return h('button', { key:d, className:cls, onClick:()=>setDay(d) },
+          h('span', { className:'day-lbl' }, SHORT[i]),
+          h('span', { className:'day-num' }, getDayDate(i)),
+          h('div',  { className:'dot-row' },
+            pct !== null
+              ? h('div', { className:'dot ' + (pct===100?'done':pct>0?'partial':'') })
+              : h('div', { style:{width:4,height:4} }),
+            hasOD ? h('div', { className:'dot overdue' }) : null
+          )
+        );
+      })
+    );
+  }
+  function renderProgress() {
+    let label = day;
+    if (!isNextWeek && dayIdx === todayIdx) label += " · Today";
+    else if (!isNextWeek && dayIdx < todayIdx) label += " · Past";
+    else if (isNextWeek) label += " · Next week";
+    else label += " · Upcoming";
+    const rightLabel = prog === null ? "Nothing planned" : prog === 100 ? "✓ All done" : prog + "% complete";
+    const rightColor = prog === 100 ? "#22c55e" : "#7a7890";
+    return h('div', { className:'prog-wrap' },
+      h('div', { className:'prog-meta' },
+        h('span', null, label),
+        h('span', { style:{color:rightColor} }, rightLabel)
+      ),
+      h('div', { className:'prog-bar' },
+        h('div', { className:'prog-fill', style:{width:(prog||0)+"%"} })
+      )
+    );
+  }
+  function renderRoutinesForDay() {
+    const dr = dayRoutines(day);
+    if (!dr.length) return null;
+    const grouped = [];
+    CATS.forEach(cat => {
+      const items = dr.filter(r => (r.category||"Other") === cat);
+      if (items.length) grouped.push({ cat, items });
+    });
+    return h('div', { className:'section' },
+      h('div', { className:'section-label' }, "Daily Routine"),
+      h('div', { className:'card' },
+        grouped.map(({ cat, items }) =>
+          h(Fragment, { key:cat },
+            grouped.length > 1
+              ? h('div', { className:'cat-header' },
+                  h(CatDot, { cat }),
+                  h('span', { className:'cat-label', style:{color:CAT_COLOR[cat]||'#7c6fff'} }, cat)
+                )
+              : null,
+            items.map(r => {
+              const s = rStatus(r.id);
+              const done = s === "done", skipped = s === "skip";
+              const skipReason = typeof (week.days[day] && week.days[day].routineOverrides && week.days[day].routineOverrides[r.id]) === "string"
+                && week.days[day].routineOverrides[r.id];
+              let checkCls = 'check';
+              if (done) checkCls += ' checked';
+              else if (skipped) checkCls += ' skipped';
+              return h('div', { key:r.id, className:'card-row' + (done||skipped?' done':'') },
+                h('div', { className:checkCls, onClick:()=>cycleRoutine(r.id) },
+                  done ? "✓" : skipped ? "–" : null
+                ),
+                h('span', { className:'item-text' + (done||skipped?' done':'') }, r.text),
+                r.time && !skipped ? h('span', { className:'badge badge-purple' }, r.time) : null,
+                skipped && skipReason ? h('span', { className:'badge badge-red' }, skipReason) : null
+              );
+            })
+          )
+        )
+      ),
+      h('div', { style:{fontSize:11,color:'#3f3d52',marginTop:5,paddingLeft:2} },
+        "Tap to complete · again to skip · again to reset"
+      )
+    );
+  }
+  function renderTasks() {
+    return h('div', { className:'section' },
+      h('div', { className:'section-label' }, "Tasks for " + day),
+      h('div', { className:'card' },
+        dayD.tasks.length === 0
+          ? h('div', { className:'empty-state' }, "No tasks yet — add one below")
+          : dayD.tasks.map((task, i) => {
+              const isHigh = task.priority === "high";
+              return h('div', {
+                key:task.id,
+                className:'card-row' + (task.done?' done':''),
+                draggable: !task.done,
+                onDragStart: e => onDragStart(e, i),
+                onDragOver: onDragOver,
+                onDrop: e => onDrop(e, i)
+              },
+                !task.done ? h('span', { className:'drag-handle' }, "⠿") : null,
+                h('div', {
+                  className:'check' + (task.done?' checked':''),
+                  onClick:()=>toggleTask(task.id)
+                }, task.done ? "✓" : null),
+                editTaskId === task.id
+                  ? h('input', {
+                      className:'txt-input', autoFocus:true, value:editTaskVal,
+                      onChange:e=>setEditTaskVal(e.target.value),
+                      onBlur:()=>saveTaskEdit(task.id),
+                      onKeyDown:e=>{ if(e.key==="Enter")saveTaskEdit(task.id); if(e.key==="Escape"){setEditTaskId(null);setEditTaskVal("");} },
+                      style:{padding:"3px 9px",height:30}
+                    })
+                  : h('span', {
+                      className:'item-text' + (task.done?' done':''),
+                      style:{cursor:'text'},
+                      onDoubleClick:()=>{ if(!task.done){ setEditTaskId(task.id); setEditTaskVal(task.text); } }
+                    }, task.text),
+                isHigh && !task.done ? h('span', { className:'badge-high' }, "HIGH") : null,
+                h('div', { className:'copy-wrap' },
+                  h('button', {
+                    className:'del-btn',
+                    style:{fontSize:15},
+                    title:'Copy to another day',
+                    onClick:e=>{ e.stopPropagation(); setCopyMenuId(copyMenuId===task.id?null:task.id); }
+                  }, "⇢"),
+                  copyMenuId === task.id
+                    ? h('div', { className:'copy-menu', onClick:e=>e.stopPropagation() },
+                        h('div', { className:'copy-menu-label' }, isNextWeek?"Copy to (next week)":"Copy to this week"),
+                        DAYS.filter(d => d !== day || isNextWeek).map(d =>
+                          h('button', { key:d, className:'copy-menu-item', onClick:()=>copyTask(task, d) }, d)
+                        ),
+                        !isNextWeek ? h(Fragment, null,
+                          h('div', { className:'copy-divider' }),
+                          h('div', { className:'copy-menu-label' }, "Next week"),
+                          DAYS.map(d =>
+                            h('button', { key:"nw"+d, className:'copy-menu-item next', onClick:()=>copyTask(task, d, "next") }, d)
+                          )
+                        ) : null
+                      )
+                    : null
+                ),
+                h('button', { className:'del-btn', onClick:()=>deleteTask(task.id) }, "×")
+              );
+            })
+      ),
+      h('div', { className:'add-row' },
+        h('button', {
+          className:'pri-btn' + (newPri==="high"?' high':''),
+          onClick:()=>setNewPri(p=>p==="high"?"normal":"high"),
+          title:'Toggle priority'
+        }, "⚑"),
+        h('input', {
+          className:'txt-input', placeholder:'Add a task…', value:newTask,
+          onChange:e=>setNewTask(e.target.value),
+          onKeyDown:e=>e.key==="Enter"&&addTask()
+        }),
+        h('button', { className:'add-btn', onClick:addTask }, "+")
+      ),
+      newPri==="high" ? h('div', { style:{fontSize:11,color:'#f59e0b',marginTop:5,paddingLeft:2} }, "High priority") : null
+    );
+  }
+  function renderWeekTab() {
+    return h(Fragment, null,
+      isNextWeek
+        ? h('div', { className:'next-week-banner' },
+            h('span', { style:{fontSize:18} }, "📅"),
+            h('div', null,
+              h('div', { style:{fontSize:12,fontWeight:600,color:'#7c6fff'} }, "Planning ahead"),
+              h('div', { style:{fontSize:11,color:'#7a7890',marginTop:1} }, "Tasks added here will be waiting for you next week")
+            )
+          )
+        : null,
+      !isNextWeek && overdueTasks.length > 0 && dayIdx === todayIdx
+        ? h('div', { className:'overdue-banner' },
+            h('div', { className:'overdue-hdr' }, "⚠ Overdue from earlier this week"),
+            overdueTasks.map(t =>
+              h('div', { key:t.id, className:'overdue-row' },
+                h('span', { className:'badge badge-red', style:{flexShrink:0} }, t.fromDay.slice(0,3)),
+                h('span', { style:{flex:1,fontSize:13,color:'#7a7890'} }, t.text),
+                h('div', { className:'copy-wrap' },
+                  h('button', {
+                    className:'ghost-btn', style:{fontSize:11,padding:'4px 8px'},
+                    onClick:e=>{ e.stopPropagation(); setCopyMenuId(copyMenuId===t.id+"_od"?null:t.id+"_od"); }
+                  }, "Move to →"),
+                  copyMenuId === t.id+"_od"
+                    ? h('div', { className:'copy-menu', onClick:e=>e.stopPropagation() },
+                        DAYS.filter(d=>d!==t.fromDay).map(d=>
+                          h('button', { key:d, className:'copy-menu-item', onClick:()=>{ copyTask(t,d); setCopyMenuId(null); } }, d)
+                        )
+                      )
+                    : null
+                )
+              )
+            )
+          )
+        : null,
+      renderProgress(),
+      skipMenuId
+        ? h('div', { className:'skip-box', onClick:e=>e.stopPropagation() },
+            h('div', { style:{fontSize:12,color:'#7a7890'} }, "Why are you skipping this?"),
+            h('div', { className:'skip-grid' },
+              SKIP_REASONS.map(r =>
+                h('button', { key:r, className:'skip-pill', onClick:()=>applySkip(skipMenuId,r) }, r)
+              )
+            )
+          )
+        : null,
+      renderRoutinesForDay(),
+      renderTasks(),
+      h('div', { className:'section' },
+        h('div', { className:'section-label' }, "Notes for " + day),
+        h('textarea', {
+          className:'note-area',
+          placeholder:'Ideas, context, anything worth remembering…',
+          value: dayD.notes || "",
+          onChange: e => updateNotes(e.target.value)
+        })
+      )
+    );
+  }
+  function renderRoutinesTab() {
+    return h('div', { className:'section' },
+      h('div', { style:{marginBottom:16} },
+        h('div', { className:'section-label' }, "Your Routines"),
+        h('div', { style:{fontSize:12,color:'#3f3d52'} }, "Set which days each routine appears. Streaks count consecutive completions — skips don't break them.")
+      ),
+      routines.length === 0
+        ? h('div', { className:'card', style:{marginBottom:16} }, h('div', { className:'empty-state' }, "No routines yet"))
+        : null,
+      CATS.map(cat => {
+        const group = routines.filter(r => (r.category||"Other") === cat);
+        if (!group.length) return null;
+        return h('div', { key:cat, style:{marginBottom:16} },
+          h('div', { style:{display:'flex',alignItems:'center',gap:7,marginBottom:8} },
+            h(CatDot, { cat }),
+            h('span', { className:'cat-label', style:{color:CAT_COLOR[cat]||'#7c6fff'} }, cat)
+          ),
+          h('div', { className:'card' },
+            group.map((r, i) => {
+              const streak = getStreak(r.id);
+              return h('div', { key:r.id, className:'routine-block' },
+                h('div', { className:'routine-top' },
+                  h(CatDot, { cat }),
+                  editRoutineId === r.id
+                    ? h('input', {
+                        className:'txt-input', autoFocus:true, value:editRoutineVal,
+                        style:{flex:1,padding:"3px 10px",height:30},
+                        onChange:e=>setEditRoutineVal(e.target.value),
+                        onBlur:()=>saveRoutineEdit(r.id),
+                        onKeyDown:e=>{ if(e.key==="Enter")saveRoutineEdit(r.id); if(e.key==="Escape"){setEditRoutineId(null);setEditRoutineVal("");} }
+                      })
+                    : h('span', {
+                        style:{flex:1,fontSize:14,color:'#e4e2f0',cursor:'text'},
+                        onDoubleClick:()=>{ setEditRoutineId(r.id); setEditRoutineVal(r.text); }
+                      }, r.text),
+                  r.time ? h('span', { className:'badge badge-purple' }, r.time) : null,
+                  streak >= 2 ? h('span', { className:'streak-badge' }, "🔥 " + streak + "d") : null,
+                  h('select', {
+                    value: r.category||"Other",
+                    className:'sm-input',
+                    style:{width:90,fontSize:11},
+                    onChange:e=>updateRoutineField(r.id,"category",e.target.value)
+                  }, CATS.map(c => h('option', { key:c, value:c }, c))),
+                  h('button', { className:'del-btn', onClick:()=>deleteRoutine(r.id) }, "×")
+                ),
+                h('div', { className:'day-pills' },
+                  DAYS.map(d =>
+                    h('button', {
+                      key:d,
+                      className:'day-pill',
+                      style: r.days && r.days.includes(d)
+                        ? { background:(CAT_COLOR[cat]||'#7c6fff')+'22', color:CAT_COLOR[cat]||'#7c6fff', borderColor:(CAT_COLOR[cat]||'#7c6fff')+'55' }
+                        : {},
+                      onClick:()=>toggleRoutineDay(r.id, d)
+                    }, d.slice(0,3))
+                  )
+                ),
+                streak === 1 ? h('div', { style:{fontSize:11,color:'#3f3d52',marginTop:6} }, "Complete again tomorrow to start a streak") : null
+              );
+            })
+          )
+        );
+      }),
+      h('div', { className:'add-routine-box' },
+        h('div', { className:'section-label', style:{marginBottom:10} }, "Add Routine"),
+        h('div', { className:'add-routine-inner' },
+          h('input', {
+            className:'txt-input', placeholder:'e.g. Morning run, Review emails', value:newR,
+            onChange:e=>setNewR(e.target.value),
+            onKeyDown:e=>e.key==="Enter"&&addRoutine()
+          }),
+          h('div', { className:'add-routine-row' },
+            h('input', { className:'sm-input', type:'time', value:newRTime, style:{width:100}, onChange:e=>setNewRTime(e.target.value) }),
+            h('select', { className:'sel-input', value:newRCat, style:{flex:1}, onChange:e=>setNewRCat(e.target.value) },
+              CATS.map(c => h('option', { key:c, value:c }, c))
+            ),
+            h('button', { className:'add-btn', style:{width:'auto',padding:'0 16px',fontSize:15,fontWeight:600}, onClick:addRoutine }, "Add")
+          )
+        )
+      )
+    );
+  }
+  function renderHistoryTab() {
+    const history = data.history || [];
+    if (history.length === 0) {
+      return h('div', { className:'section' },
+        h('div', { className:'card' }, h('div', { className:'empty-state' }, "No history yet — reset a week to archive it here"))
+      );
+    }
+    const hw = history[histIdx];
+    const totalT = DAYS.reduce((a,d) => a + ((hw.days[d] && hw.days[d].tasks && hw.days[d].tasks.length)||0), 0);
+    const doneT  = DAYS.reduce((a,d) => a + ((hw.days[d] && hw.days[d].tasks && hw.days[d].tasks.filter(t=>t.done).length)||0), 0);
+    return h('div', { className:'section' },
+      h('div', { className:'hist-nav' },
+        h('div', { className:'section-label' }, "Week History"),
+        h('div', { className:'hist-nav-btns' },
+          h('button', { className:'ghost-btn', style:{opacity:histIdx<=0?0.3:1}, disabled:histIdx<=0, onClick:()=>setHistIdx(i=>Math.max(i-1,0)) }, "◀ Newer"),
+          h('button', { className:'ghost-btn', style:{opacity:histIdx>=history.length-1?0.3:1}, disabled:histIdx>=history.length-1, onClick:()=>setHistIdx(i=>Math.min(i+1,history.length-1)) }, "Older ▶")
+        )
+      ),
+      h('div', { style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12} },
+        h('span', { style:{fontSize:13,color:'#7c6fff',fontWeight:600} }, hw.label),
+        h('span', { className:'badge ' + (doneT===totalT&&totalT>0?'badge-green':'badge-purple') }, doneT+"/"+totalT+" tasks")
+      ),
+      DAYS.map(d => {
+        const dd = hw.days[d];
+        if (!dd || (!dd.tasks.length && !dd.notes)) return null;
+        return h('div', { key:d, style:{marginBottom:14} },
+          h('div', { style:{fontSize:10,fontWeight:700,color:'#3f3d52',letterSpacing:'0.12em',textTransform:'uppercase',marginBottom:7} }, d),
+          h('div', { className:'card' },
+            dd.tasks.map((t,i) =>
+              h('div', { key:t.id, className:'card-row', style:{borderBottom:i<dd.tasks.length-1?'1px solid #252330':'none'} },
+                h('div', { style:{width:14,height:14,borderRadius:4,background:t.done?'#7c6fff':'#252330',flexShrink:0} }),
+                h('span', { className:'item-text'+(t.done?' done':''), style:{fontSize:13} }, t.text),
+                t.priority==="high" ? h('span', { className:'badge-high' }, "HIGH") : null
+              )
+            ),
+            dd.notes
+              ? h('div', { style:{padding:'10px 13px',borderTop:'1px solid #252330',fontSize:12,color:'#7a7890',fontStyle:'italic',lineHeight:1.5} }, dd.notes)
+              : null
+          )
+        );
+      })
+    );
+  }
+  return h('div', { className:'app', onClick:closeMenus },
+    h('div', { className:'header' },
+      h('div', { className:'top-row' },
+        h('div', null,
+          h('div', { className:'app-name' }, "Weekly Planner"),
+          h('div', { className:'week-lbl' }, week.label)
+        ),
+        h('div', { className:'hdr-btns' },
+          h('div', { className:'week-toggle-wrap' },
+            h('button', {
+              className:'week-toggle-btn' + (activeWeek==="current"?' active':''),
+              onClick:()=>{ setActiveWeek("current"); setDay(DAYS[getTodayIdx()]); }
+            }, "This Week"),
+            h('button', {
+              className:'week-toggle-btn' + (activeWeek==="next"?' active':''),
+              onClick:()=>{ setActiveWeek("next"); setDay(DAYS[0]); }
+            }, "Next Week")
+          ),
+          h('button', { className:'ghost-btn danger', onClick:()=>setShowReset(true) }, "Reset")
+        )
+      ),
+      h('div', { className:'tabs' },
+        h('button', { className:'tab-btn'+(tab==="week"?' active':''),     onClick:()=>setTab("week") }, "Days"),
+        h('button', { className:'tab-btn'+(tab==="routines"?' active':''), onClick:()=>setTab("routines") }, "Routines"),
+        h('button', { className:'tab-btn'+(tab==="history"?' active':''),  onClick:()=>setTab("history") }, "History")
+      )
+    ),
+    tab === "week" ? renderDayNav() : null,
+    h('div', { className:'content' },
+      tab === "week"     ? renderWeekTab()     : null,
+      tab === "routines" ? renderRoutinesTab() : null,
+      tab === "history"  ? renderHistoryTab()  : null
+    ),
+    showReset
+      ? h('div', { className:'modal-overlay', onClick:()=>setShowReset(false) },
+          h('div', { className:'modal-box', onClick:e=>e.stopPropagation() },
+            h('div', { className:'modal-title' }, "Archive & reset this week?"),
+            h('div', { className:'modal-sub' }, "This week is saved to History. Any tasks planned for next week become this week. Routines carry forward untouched."),
+            h('div', { className:'modal-btns' },
+              h('button', { className:'cancel-btn', onClick:()=>setShowReset(false) }, "Cancel"),
+              h('button', { className:'danger-btn', onClick:resetWeek }, "Archive & Reset")
+            )
+          )
+        )
+      : null
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(h(Planner));
+</script>
+</body>
+</html>
+```
+
+Now paste this into your `index.html` file and commit it. Then go through the GitHub Pages setup as instructed!
