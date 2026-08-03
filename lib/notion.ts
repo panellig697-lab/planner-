@@ -9,7 +9,17 @@ export function getNotionClient(): Client {
     );
   }
   if (!client) {
-    client = new Client({ auth: process.env.NOTION_API_KEY });
+    // The SDK's default is 60s per request with up to 2 retries (backoff up
+    // to 60s each) — worst case, minutes. Serverless hosts (Vercel's Hobby
+    // tier included) kill the function well before that, dropping the
+    // connection with no clean response, which looks like an infinite
+    // "Saving…" with no error. Bound it well under any platform's function
+    // timeout so a slow/rate-limited call fails fast and visibly instead.
+    client = new Client({
+      auth: process.env.NOTION_API_KEY,
+      timeoutMs: 10_000,
+      retry: { maxRetries: 1, maxRetryDelayMs: 2_000 },
+    });
   }
   return client;
 }

@@ -4,6 +4,11 @@ import { ENTITY_TYPES } from "@/lib/schema";
 import { formatApiError } from "@/lib/apiError";
 
 export const dynamic = "force-dynamic";
+// Raises the serverless function timeout where the host allows it (e.g.
+// Vercel Pro/Enterprise; ignored on Hobby, which hard-caps at 10s
+// regardless). The Notion client itself is bounded well under this — see
+// lib/notion.ts — so this is headroom, not a substitute for that.
+export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {

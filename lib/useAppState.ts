@@ -24,6 +24,30 @@ function patchState(
   };
 }
 
+/**
+ * fetch() has no default timeout — if the server hangs (a slow upstream
+ * Notion call, a serverless function that gets killed mid-request), the
+ * browser will happily wait forever and the UI is stuck on "Saving…" with
+ * no way to tell the difference between "still working" and "dead". This
+ * guarantees every request reaches a terminal state within `timeoutMs`.
+ */
+async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } catch (err: any) {
+    if (err?.name === "AbortError") {
+      throw new Error(
+        `Request timed out after ${Math.round(timeoutMs / 1000)}s — the server didn't respond. Check your connection and try again.`
+      );
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export function useAppState() {
   const [state, setState] = useState<AppState>(EMPTY_STATE);
   const [loading, setLoading] = useState(true);
@@ -33,7 +57,7 @@ export function useAppState() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/state", { cache: "no-store" });
+      const res = await fetchWithTimeout("/api/state", { cache: "no-store" }, 15_000);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to load state");
       setState(data);
@@ -58,11 +82,15 @@ export function useAppState() {
       }
 
       try {
-        const res = await fetch("/api/mutate", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+        const res = await fetchWithTimeout(
+          "/api/mutate",
+          {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(payload),
+          },
+          30_000
+        );
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.error ?? "Mutation failed");

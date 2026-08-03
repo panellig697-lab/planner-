@@ -20,6 +20,10 @@ function valuesMatch(a: unknown, b: unknown): boolean {
   return na === nb;
 }
 
+function timeout(ms: number): Promise<"timed-out"> {
+  return new Promise((resolve) => setTimeout(() => resolve("timed-out"), ms));
+}
+
 /**
  * Re-fetches the page we just wrote and checks each submitted field landed.
  * Notion can return a 200 for a write that didn't actually apply (e.g. the
@@ -27,15 +31,35 @@ function valuesMatch(a: unknown, b: unknown): boolean {
  * or — depending on workspace settings — a select value that isn't an
  * existing option). Without this check that failure mode looks identical
  * to success: the API call resolves, but nothing changed.
+ *
+ * This is deliberately best-effort: it must never be the reason a
+ * successful write looks like it hung or failed. If the verification call
+ * itself is slow, rate-limited, or errors out, we log it and move on —
+ * only a *confirmed* mismatch (a clean read-back that actually differs)
+ * fails the mutation. Bounded to 6s so it can never meaningfully add to
+ * how long "Saving…" is visible.
  */
 async function verifyWrite(
   pageId: string,
   submitted: Record<string, unknown>,
   schema: EntitySchema
 ): Promise<void> {
-  const notion = getNotionClient();
-  const page = await notion.pages.retrieve({ page_id: pageId } as any);
-  const flat = pageToFlat(page, schema);
+  let flat: Record<string, unknown>;
+  try {
+    const notion = getNotionClient();
+    const result = await Promise.race([
+      notion.pages.retrieve({ page_id: pageId } as any),
+      timeout(6_000),
+    ]);
+    if (result === "timed-out") {
+      console.warn(`[mutate] verifyWrite timed out reading back ${pageId}; skipping verification`);
+      return;
+    }
+    flat = pageToFlat(result, schema);
+  } catch (err) {
+    console.warn(`[mutate] verifyWrite failed to read back ${pageId}; skipping verification`, err);
+    return;
+  }
 
   const mismatches = Object.keys(submitted).filter(
     (key) => !valuesMatch(submitted[key], flat[key])

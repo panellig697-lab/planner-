@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SCHEMAS, type EntitySchema, type FieldDef } from "@/lib/schema";
 import type { AppState } from "@/lib/types";
 import type { MutatePayload } from "@/lib/useAppState";
@@ -31,7 +31,9 @@ export default function EntityForm({
   // the fields that actually changed instead of resending the whole row.
   const [initialSnapshot] = useState<Record<string, unknown>>(() => defaultsFor(initial));
   const [saving, setSaving] = useState(false);
+  const [slow, setSlow] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const slowTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function setField(key: string, val: unknown) {
     setValues((v) => ({ ...v, [key]: val }));
@@ -54,7 +56,11 @@ export default function EntityForm({
     }
 
     setSaving(true);
+    setSlow(false);
     setError(null);
+    // Saving should never look frozen: if it's still going after a few
+    // seconds, say so explicitly instead of leaving a static "Saving…".
+    slowTimer.current = setTimeout(() => setSlow(true), 4_000);
     try {
       await mutate({
         type: schema.type,
@@ -66,7 +72,9 @@ export default function EntityForm({
     } catch (err: any) {
       setError(err?.message ?? "Save failed");
     } finally {
+      if (slowTimer.current) clearTimeout(slowTimer.current);
       setSaving(false);
+      setSlow(false);
     }
   }
 
@@ -76,6 +84,11 @@ export default function EntityForm({
         <div role="alert" className="flex items-start gap-2 rounded-lg border border-rust bg-rust/10 px-3 py-2.5 text-sm text-rust-dark animate-fade-in">
           <span aria-hidden>⚠</span>
           <span>{error}</span>
+        </div>
+      )}
+      {slow && (
+        <div role="status" className="rounded-lg border border-line bg-paper-dark px-3 py-2 text-xs text-ink-soft animate-fade-in">
+          Still working — Notion is taking longer than usual to respond…
         </div>
       )}
       {schema.fields.map((field) => (

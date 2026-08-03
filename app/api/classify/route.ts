@@ -5,6 +5,7 @@ import { classify } from "@/lib/classify";
 import { formatApiError } from "@/lib/apiError";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 45;
 
 export async function POST(req: Request) {
   try {
