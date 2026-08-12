@@ -130,7 +130,11 @@ export default function Explorer({
 }
 
 function RowSummary({ schema, row }: { schema: (typeof SCHEMAS)[EntityType]; row: Record<string, unknown> }) {
-  const title = String(row[schema.titleField] ?? "Untitled");
+  // `||`, not `??`: a Notion title property with no text comes back as ""
+  // (not null/undefined), so `?? "Untitled"` never caught it — the row
+  // rendered as a real, clickable, but blank list item that looked like it
+  // was simply missing. `||` also falls back on that empty string.
+  const title = String(row[schema.titleField] || "Untitled");
   const badgeField = schema.fields.find((f) => f.type === "select");
   const badge = badgeField ? (row[badgeField.key] as string | null) : null;
   const numberField = schema.fields.find((f) => f.type === "number" && f.currency);
