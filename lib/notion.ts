@@ -2,6 +2,23 @@ import { Client } from "@notionhq/client";
 
 let client: Client | null = null;
 
+/**
+ * The SDK defaults to `fetch.bind(globalThis)` (confirmed by reading its
+ * installed source — it isn't documented). On Vercel/Next.js that global
+ * `fetch` is Next's own patched version, which caches by default unless the
+ * *calling route* opts out (`export const dynamic = "force-dynamic"`).
+ * Every route here already does that, so this SDK's calls should already
+ * be forced to `no-store` via that per-request context — but that's an
+ * implicit dependency on every future route remembering the segment
+ * config, and on Next/Vercel's propagation behavior not changing. Passing
+ * an explicit `cache: "no-store"` fetch here makes it true unconditionally,
+ * at the one place all Notion reads and writes funnel through, instead of
+ * relying on that propagation.
+ */
+function noStoreFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  return fetch(input, { ...init, cache: "no-store" });
+}
+
 export function getNotionClient(): Client {
   if (!process.env.NOTION_API_KEY) {
     throw new Error(
@@ -19,6 +36,7 @@ export function getNotionClient(): Client {
       auth: process.env.NOTION_API_KEY,
       timeoutMs: 10_000,
       retry: { maxRetries: 1, maxRetryDelayMs: 2_000 },
+      fetch: noStoreFetch,
     });
   }
   return client;
