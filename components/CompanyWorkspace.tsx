@@ -17,7 +17,7 @@ import { formatDateLong } from "@/lib/dateUtils";
 import EntityForm from "./EntityForm";
 import { SCHEMAS } from "@/lib/schema";
 import StatTile from "./ui/StatTile";
-import EmptyState from "./ui/EmptyState";
+import { Field, ListSection } from "./ui/DetailBits";
 
 const SECTIONS = [
   { key: "overview", label: "Overview", icon: LayoutGrid },
@@ -207,38 +207,5 @@ export default function CompanyWorkspace({
         </div>
       )}
     </div>
-  );
-}
-
-function Field({ label, value }: { label: string; value: string }) {
-  if (!value) return null;
-  return (
-    <div>
-      <p className="label-caps mb-1">{label}</p>
-      <p className="whitespace-pre-wrap text-sm text-ink-soft">{value}</p>
-    </div>
-  );
-}
-
-function ListSection<T extends { id: string }>({
-  items,
-  empty,
-  render,
-}: {
-  items: T[];
-  empty: string;
-  render: (item: T) => React.ReactNode;
-}) {
-  if (items.length === 0) {
-    return <EmptyState icon={FolderKanban} title={empty} />;
-  }
-  return (
-    <ul className="space-y-1.5">
-      {items.map((item) => (
-        <li key={item.id} className="card flex items-center justify-between px-3.5 py-2.5 text-sm">
-          {render(item)}
-        </li>
-      ))}
-    </ul>
   );
 }

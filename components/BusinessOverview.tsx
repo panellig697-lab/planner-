@@ -7,9 +7,9 @@ import {
   Building2,
   FolderKanban,
   CheckSquare,
-  Users,
   BarChart3,
-  Palette,
+  Lightbulb,
+  BookOpen,
 } from "lucide-react";
 import type { AppState, Company } from "@/lib/types";
 import type { MutatePayload } from "@/lib/useAppState";
@@ -17,27 +17,30 @@ import { formatGBP } from "@/lib/format";
 import { formatDateShort, isPast } from "@/lib/dateUtils";
 import { SCHEMAS } from "@/lib/schema";
 import CompanyWorkspace from "./CompanyWorkspace";
+import EntityList from "./EntityList";
 import StatTile from "./ui/StatTile";
 import EmptyState from "./ui/EmptyState";
 import { SkeletonGrid } from "./ui/Skeleton";
 
 const STAGES = SCHEMAS.companies.fields.find((f) => f.key === "pipeline_stage")!.options!;
 
-type Section = "finance" | "companies" | "projects" | "tasks" | "crm" | "metrics";
+// Retainr/CRM and Clario used to live here as cards — they're now
+// independent top-level workspaces (see RetainrWorkspace/ClarioWorkspace),
+// reusing the same underlying company data and CompanyWorkspace component.
+// Ideas and Knowledge didn't have a home in the new nav (neither is one of
+// the named top-level tabs), so they moved here as two more cards rather
+// than losing access to them.
+type Section = "finance" | "companies" | "projects" | "tasks" | "ideas" | "knowledge" | "metrics";
 
 const CARDS: { key: Section; label: string; icon: typeof PoundSterling; blurb: string }[] = [
   { key: "finance", label: "Finance", icon: PoundSterling, blurb: "Pipeline value & revenue" },
   { key: "companies", label: "Companies", icon: Building2, blurb: "Pipeline board" },
   { key: "projects", label: "Projects", icon: FolderKanban, blurb: "All projects" },
   { key: "tasks", label: "Tasks", icon: CheckSquare, blurb: "Open work" },
-  { key: "crm", label: "Retainr/CRM", icon: Users, blurb: "Clients, leads, parked" },
+  { key: "ideas", label: "Ideas", icon: Lightbulb, blurb: "Product, content, business" },
+  { key: "knowledge", label: "Knowledge", icon: BookOpen, blurb: "Research & references" },
   { key: "metrics", label: "Metrics", icon: BarChart3, blurb: "Business at a glance" },
 ];
-
-// Pinned shortcut straight into a specific company's workspace, same card
-// style/behavior as the section tiles above but resolved by company name
-// instead of a local sub-view.
-const CLARIO_COMPANY_NAME = "Clario";
 
 export default function BusinessOverview({
   state,
@@ -50,19 +53,6 @@ export default function BusinessOverview({
 }) {
   const [section, setSection] = useState<Section | null>(null);
   const [openCompany, setOpenCompany] = useState<Company | null>(null);
-  const [clarioMissing, setClarioMissing] = useState(false);
-
-  function openClario() {
-    const company = state.companies.find(
-      (c) => c.name.trim().toLowerCase() === CLARIO_COMPANY_NAME.toLowerCase()
-    );
-    if (company) {
-      setClarioMissing(false);
-      setOpenCompany(company);
-    } else {
-      setClarioMissing(true);
-    }
-  }
 
   if (openCompany) {
     return (
@@ -81,37 +71,18 @@ export default function BusinessOverview({
 
   if (!section) {
     return (
-      <div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {CARDS.map((c) => (
-            <button
-              key={c.key}
-              onClick={() => setSection(c.key)}
-              className="card animate-fade-in flex flex-col items-start gap-2 p-4 text-left"
-            >
-              <c.icon className="h-5 w-5 text-rust-dark" strokeWidth={1.75} />
-              <span className="text-sm font-semibold text-ink">{c.label}</span>
-              <span className="text-xs text-ink-soft">{c.blurb}</span>
-            </button>
-          ))}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {CARDS.map((c) => (
           <button
-            onClick={openClario}
+            key={c.key}
+            onClick={() => setSection(c.key)}
             className="card animate-fade-in flex flex-col items-start gap-2 p-4 text-left"
           >
-            <Palette className="h-5 w-5 text-rust-dark" strokeWidth={1.75} />
-            <span className="text-sm font-semibold text-ink">Clario</span>
-            <span className="text-xs text-ink-soft">Company workspace</span>
+            <c.icon className="h-5 w-5 text-rust-dark" strokeWidth={1.75} />
+            <span className="text-sm font-semibold text-ink">{c.label}</span>
+            <span className="text-xs text-ink-soft">{c.blurb}</span>
           </button>
-        </div>
-        {clarioMissing && (
-          <div className="mt-3">
-            <EmptyState
-              icon={Palette}
-              title="No company named “Clario” found"
-              description="Add it in Explorer → Companies, then this card will open its workspace directly."
-            />
-          </div>
-        )}
+        ))}
       </div>
     );
   }
@@ -136,7 +107,26 @@ export default function BusinessOverview({
       )}
       {section === "projects" && <ProjectsSection state={state} />}
       {section === "tasks" && <TasksSection state={state} />}
-      {section === "crm" && <CrmSection state={state} />}
+      {section === "ideas" && (
+        <EntityList
+          schema={SCHEMAS.ideas}
+          rows={state.ideas as unknown as Record<string, unknown>[]}
+          state={state}
+          mutate={mutate}
+          loading={loading}
+          icon={Lightbulb}
+        />
+      )}
+      {section === "knowledge" && (
+        <EntityList
+          schema={SCHEMAS.knowledge}
+          rows={state.knowledge as unknown as Record<string, unknown>[]}
+          state={state}
+          mutate={mutate}
+          loading={loading}
+          icon={BookOpen}
+        />
+      )}
       {section === "metrics" && <MetricsSection state={state} />}
     </div>
   );
@@ -286,42 +276,6 @@ function TasksSection({ state }: { state: AppState }) {
         </li>
       ))}
     </ul>
-  );
-}
-
-function CrmSection({ state }: { state: AppState }) {
-  const clients = state.people.filter((p) => p.relationship === "Client");
-  const leads = state.people.filter((p) => p.relationship === "Lead");
-  const parked = state.people.filter((p) => p.relationship === "Parked");
-  return (
-    <div className="space-y-6">
-      <ContactGroup title="Current Clients" people={clients} />
-      <ContactGroup title="Leads" people={leads} />
-      <ContactGroup title="Parked" people={parked} />
-    </div>
-  );
-}
-
-function ContactGroup({ title, people }: { title: string; people: AppState["people"] }) {
-  return (
-    <section>
-      <h3 className="label-caps mb-2">{title}</h3>
-      {people.length === 0 ? (
-        <p className="text-sm italic text-ink-soft/70">None yet.</p>
-      ) : (
-        <ul className="space-y-1.5">
-          {people.map((p) => (
-            <li key={p.id} className="card flex items-center justify-between px-3.5 py-2.5 text-sm">
-              <div>
-                <p className="text-ink">{p.name}</p>
-                <p className="text-xs text-ink-soft">{p.role || p.email || "—"}</p>
-              </div>
-              <span className="text-xs text-ink-soft">{formatDateShort(p.last_contacted)}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
   );
 }
 

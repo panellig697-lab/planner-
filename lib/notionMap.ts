@@ -10,7 +10,11 @@ function dateOnly(iso: string | null | undefined): string | null {
 }
 
 function readProperty(prop: any, field: FieldDef): unknown {
-  if (!prop) return field.type === "relation" || field.type === "multiselect" ? [] : null;
+  if (!prop) {
+    if (field.type === "relation" || field.type === "multiselect") return [];
+    if (field.type === "checkbox") return false;
+    return null;
+  }
   switch (field.type) {
     case "title":
       return (prop.title ?? []).map((t: any) => t.plain_text).join("") || "";
@@ -32,6 +36,8 @@ function readProperty(prop: any, field: FieldDef): unknown {
       return dateOnly(prop.date?.start ?? null);
     case "relation":
       return (prop.relation ?? []).map((r: any) => r.id);
+    case "checkbox":
+      return Boolean(prop.checkbox);
     default:
       return null;
   }
@@ -68,6 +74,8 @@ function writeProperty(value: unknown, field: FieldDef): unknown {
       return { date: value ? { start: String(value) } : null };
     case "relation":
       return { relation: Array.isArray(value) ? value.map((id) => ({ id: String(id) })) : [] };
+    case "checkbox":
+      return { checkbox: Boolean(value) };
     default:
       return null;
   }

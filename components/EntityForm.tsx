@@ -21,7 +21,13 @@ export default function EntityForm({
   function defaultsFor(source?: Record<string, unknown>) {
     const v: Record<string, unknown> = {};
     for (const field of schema.fields) {
-      v[field.key] = source?.[field.key] ?? (field.type === "relation" || field.type === "multiselect" ? [] : "");
+      v[field.key] =
+        source?.[field.key] ??
+        (field.type === "relation" || field.type === "multiselect"
+          ? []
+          : field.type === "checkbox"
+            ? false
+            : "");
     }
     return v;
   }
@@ -216,6 +222,20 @@ function FieldInput({
             </option>
           ))}
         </select>
+      </label>
+    );
+  }
+
+  if (field.type === "checkbox") {
+    return (
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={Boolean(value)}
+          onChange={(e) => onChange(e.target.checked)}
+          className="h-4 w-4 rounded border-line text-rust accent-rust"
+        />
+        <span className="text-sm text-ink">{field.label}</span>
       </label>
     );
   }

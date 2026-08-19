@@ -7,7 +7,8 @@ export type EntityType =
   | "tasks"
   | "ideas"
   | "knowledge"
-  | "events";
+  | "events"
+  | "creative";
 
 export type FieldType =
   | "title"
@@ -19,7 +20,8 @@ export type FieldType =
   | "date"
   | "select"
   | "multiselect"
-  | "relation";
+  | "relation"
+  | "checkbox";
 
 export interface FieldDef {
   key: string; // flat JSON key used in /api/state and /api/mutate
@@ -207,6 +209,48 @@ export const SCHEMAS: Record<EntityType, EntitySchema> = {
       { key: "related_project_id", notionProp: "Related Project", type: "relation", label: "Related Project", relation: "projects" },
     ],
   },
+  creative: {
+    type: "creative",
+    label: "Creative",
+    singular: "Creative Work",
+    dataSourceId: "07f2b8e8-0662-4b94-85cf-5185ea60101d",
+    titleField: "name",
+    fields: [
+      { key: "name", notionProp: "Name", type: "title", label: "Name" },
+      {
+        key: "discipline",
+        notionProp: "Discipline",
+        type: "select",
+        label: "Discipline",
+        options: ["Photography", "Videography", "Art", "Music", "Other"],
+      },
+      {
+        key: "status",
+        notionProp: "Status",
+        type: "select",
+        label: "Status",
+        options: ["Idea", "Active", "Completed", "Archived"],
+      },
+      {
+        key: "category",
+        notionProp: "Category",
+        type: "select",
+        label: "Portfolio Category",
+        options: ["Portraits", "Street", "Documentary", "Commercial", "Art", "Music/Design", "Video", "Other"],
+      },
+      { key: "featured", notionProp: "Featured", type: "checkbox", label: "Featured in Portfolio" },
+      { key: "description", notionProp: "Description", type: "text", label: "Description" },
+      { key: "url", notionProp: "URL", type: "url", label: "URL" },
+      { key: "related_project_ids", notionProp: "Related Project", type: "relation", label: "Related Project", relation: "projects" },
+    ],
+  },
 };
 
 export const ENTITY_TYPES = Object.keys(SCHEMAS) as EntityType[];
+
+// The shared "Area" tag on companies/projects — the mechanism Retainr,
+// Clario, and (previously) creative work were segmented by before Creative
+// got its own dedicated database. Kept here as the single source of truth
+// for what counts as "this business" when merging area-tagged records with
+// records directly related to a business's company row.
+export const AREA_OPTIONS = SCHEMAS.companies.fields.find((f) => f.key === "area")!.options!;

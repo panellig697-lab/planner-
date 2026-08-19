@@ -1,91 +1,75 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Building2, FolderKanban, CheckSquare, Lightbulb, BookOpen } from "lucide-react";
-import { SCHEMAS, type EntityType } from "@/lib/schema";
-import type { AppState, Company } from "@/lib/types";
+import { Plus } from "lucide-react";
+import type { EntitySchema } from "@/lib/schema";
+import type { AppState } from "@/lib/types";
 import type { MutatePayload } from "@/lib/useAppState";
 import EntityForm from "./EntityForm";
-import CompanyWorkspace from "./CompanyWorkspace";
 import { formatGBP } from "@/lib/format";
 import { SkeletonList } from "./ui/Skeleton";
 import EmptyState from "./ui/EmptyState";
 
-// People is covered by the dedicated Contacts tab now, so it's dropped
-// here. Ideas has real content in this workspace (Knowledge doesn't yet),
-// so it takes the featured/default slot People used to occupy.
-const TABS: { key: EntityType; icon: typeof Lightbulb }[] = [
-  { key: "ideas", icon: Lightbulb },
-  { key: "companies", icon: Building2 },
-  { key: "projects", icon: FolderKanban },
-  { key: "tasks", icon: CheckSquare },
-  { key: "knowledge", icon: BookOpen },
-];
-
-export default function Explorer({
+/**
+ * Generic "list of one entity type, with inline add/edit" — the reusable
+ * core Explorer used to keep behind a tab bar. Extracted so any workspace
+ * (Business's Ideas/Knowledge cards, Creative's sections) can drop in a
+ * schema-driven CRUD list without a second copy of this logic — the tab
+ * bar was the only Explorer-specific part, and every workspace that needs
+ * this now supplies its own pre-filtered `rows` instead.
+ */
+export default function EntityList({
+  schema,
+  rows,
   state,
   mutate,
   loading,
+  icon: Icon,
+  emptyTitle,
+  emptyDescription = "Add your first one to get started.",
+  addLabel,
+  newDefaults,
+  onRowClick,
 }: {
+  schema: EntitySchema;
+  rows: Record<string, unknown>[];
   state: AppState;
   mutate: (payload: MutatePayload) => Promise<{ id: string }>;
   loading: boolean;
+  icon: typeof Plus;
+  emptyTitle?: string;
+  emptyDescription?: string;
+  addLabel?: string;
+  newDefaults?: Record<string, unknown>;
+  onRowClick?: (row: Record<string, unknown>) => void;
 }) {
-  const [tab, setTab] = useState<EntityType>("ideas");
   const [editing, setEditing] = useState<string | null>(null); // row id, or "new"
-  const [openCompany, setOpenCompany] = useState<Company | null>(null);
-
-  const schema = SCHEMAS[tab];
-  const rows = state[tab] as unknown as Record<string, unknown>[];
-
-  function selectTab(t: EntityType) {
-    setTab(t);
-    setEditing(null);
-    setOpenCompany(null);
-  }
-
-  if (openCompany) {
-    return (
-      <CompanyWorkspace
-        company={openCompany}
-        state={state}
-        mutate={mutate}
-        onBack={() => setOpenCompany(null)}
-      />
-    );
-  }
 
   return (
     <div>
-      <div className="-mx-4 mb-4 flex gap-1 overflow-x-auto px-4 scrollbar-thin">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            onClick={() => selectTab(t.key)}
-            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm transition ${
-              tab === t.key ? "bg-ink text-paper" : "border border-line text-ink-soft hover:text-ink"
-            }`}
-          >
-            <t.icon className="h-3.5 w-3.5" /> {SCHEMAS[t.key].label}
-          </button>
-        ))}
-      </div>
-
       <div className="mb-3 flex items-center justify-between">
-        <span className="label-caps">{rows.length} {schema.label.toLowerCase()}</span>
+        <span className="label-caps">
+          {rows.length} {schema.label.toLowerCase()}
+        </span>
         {editing !== "new" && (
           <button
             onClick={() => setEditing("new")}
             className="flex items-center gap-1 rounded-lg bg-rust px-3 py-1.5 text-sm font-medium text-paper shadow-soft transition hover:opacity-90"
           >
-            <Plus className="h-3.5 w-3.5" /> Add {schema.singular}
+            <Plus className="h-3.5 w-3.5" /> {addLabel ?? `Add ${schema.singular}`}
           </button>
         )}
       </div>
 
       {editing === "new" && (
         <div className="mb-4">
-          <EntityForm schema={schema} state={state} onDone={() => setEditing(null)} mutate={mutate} />
+          <EntityForm
+            schema={schema}
+            state={state}
+            initial={newDefaults}
+            onDone={() => setEditing(null)}
+            mutate={mutate}
+          />
         </div>
       )}
 
@@ -93,9 +77,9 @@ export default function Explorer({
         <SkeletonList rows={5} />
       ) : rows.length === 0 && editing !== "new" ? (
         <EmptyState
-          icon={TABS.find((t) => t.key === tab)!.icon}
-          title={`No ${schema.label.toLowerCase()} yet`}
-          description="Add your first one to get started."
+          icon={Icon}
+          title={emptyTitle ?? `No ${schema.label.toLowerCase()} yet`}
+          description={emptyDescription}
         />
       ) : (
         <ul className="space-y-2">
@@ -111,11 +95,7 @@ export default function Explorer({
                 />
               ) : (
                 <button
-                  onClick={() =>
-                    tab === "companies"
-                      ? setOpenCompany(row as unknown as Company)
-                      : setEditing(row.id as string)
-                  }
+                  onClick={() => (onRowClick ? onRowClick(row) : setEditing(row.id as string))}
                   className="card block w-full px-3.5 py-3 text-left animate-fade-in"
                 >
                   <RowSummary schema={schema} row={row} />
@@ -129,7 +109,7 @@ export default function Explorer({
   );
 }
 
-function RowSummary({ schema, row }: { schema: (typeof SCHEMAS)[EntityType]; row: Record<string, unknown> }) {
+function RowSummary({ schema, row }: { schema: EntitySchema; row: Record<string, unknown> }) {
   // `||`, not `??`: a Notion title property with no text comes back as ""
   // (not null/undefined), so `?? "Untitled"` never caught it — the row
   // rendered as a real, clickable, but blank list item that looked like it
@@ -139,10 +119,14 @@ function RowSummary({ schema, row }: { schema: (typeof SCHEMAS)[EntityType]; row
   const badge = badgeField ? (row[badgeField.key] as string | null) : null;
   const numberField = schema.fields.find((f) => f.type === "number" && f.currency);
   const amount = numberField ? (row[numberField.key] as number | null) : null;
+  const featured = schema.fields.some((f) => f.type === "checkbox" && f.key === "featured") && Boolean(row.featured);
 
   return (
     <div className="flex items-center justify-between gap-3">
-      <p className="min-w-0 truncate text-sm font-medium text-ink">{title}</p>
+      <p className="min-w-0 truncate text-sm font-medium text-ink">
+        {featured && "★ "}
+        {title}
+      </p>
       <div className="flex shrink-0 items-center gap-2 text-xs text-ink-soft">
         {amount !== null && amount !== undefined && (
           <span className="font-mono text-rust-dark">{formatGBP(amount)}</span>

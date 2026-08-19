@@ -1,21 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { Sun, Briefcase, CalendarDays, Compass, Contact, Circle } from "lucide-react";
+import { Sun, Briefcase, Repeat, Bot, Palette, Contact, Circle } from "lucide-react";
 import { useAppState } from "@/lib/useAppState";
 import CommandCentre from "@/components/CommandCentre";
 import BusinessOverview from "@/components/BusinessOverview";
-import CalendarView from "@/components/CalendarView";
-import Explorer from "@/components/Explorer";
+import BusinessAreaWorkspace from "@/components/BusinessAreaWorkspace";
+import CreativeWorkspace from "@/components/CreativeWorkspace";
 import ContactsView from "@/components/ContactsView";
 import QuickCapture from "@/components/QuickCapture";
 
+// Retainr and Clario aren't separate databases — each is one row in
+// Companies (matched by exact name) plus the shared "Area" tag on
+// Projects/Companies. BusinessAreaWorkspace merges both signals; see that
+// component for why a pure company-relation view isn't enough on its own.
 const TABS = [
   { key: "today", label: "Today", icon: Sun },
   { key: "business", label: "Business", icon: Briefcase },
+  { key: "retainr", label: "Retainr", icon: Repeat },
+  { key: "clario", label: "Clario", icon: Bot },
+  { key: "creative", label: "Creative", icon: Palette },
   { key: "contacts", label: "Contacts", icon: Contact },
-  { key: "calendar", label: "Calendar", icon: CalendarDays },
-  { key: "explorer", label: "Explorer", icon: Compass },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
@@ -39,6 +44,10 @@ export default function Page() {
               {loading ? "syncing" : error ? "offline" : "live"}
             </span>
           </div>
+          {/* Horizontally scrollable, not a fixed grid — 6 tabs don't
+              comfortably fit an iPhone-width screen without either cutting
+              labels off or shrinking them unreadably, and this pattern was
+              already proven in this codebase (Explorer's old tab bar). */}
           <nav className="flex gap-0.5 overflow-x-auto pb-2 scrollbar-thin">
             {TABS.map((t) => (
               <button
@@ -66,9 +75,30 @@ export default function Page() {
         )}
         {tab === "today" && <CommandCentre state={state} mutate={mutate} loading={loading} />}
         {tab === "business" && <BusinessOverview state={state} mutate={mutate} loading={loading} />}
+        {tab === "retainr" && (
+          <BusinessAreaWorkspace
+            label="Retainr"
+            companyName="Retainr"
+            areaValue="Retainr"
+            icon={Repeat}
+            state={state}
+            mutate={mutate}
+            loading={loading}
+          />
+        )}
+        {tab === "clario" && (
+          <BusinessAreaWorkspace
+            label="Clario"
+            companyName="Clario"
+            areaValue="Clario"
+            icon={Bot}
+            state={state}
+            mutate={mutate}
+            loading={loading}
+          />
+        )}
+        {tab === "creative" && <CreativeWorkspace state={state} mutate={mutate} loading={loading} />}
         {tab === "contacts" && <ContactsView state={state} mutate={mutate} loading={loading} />}
-        {tab === "calendar" && <CalendarView state={state} />}
-        {tab === "explorer" && <Explorer state={state} mutate={mutate} loading={loading} />}
       </main>
 
       <QuickCapture onCaptured={refresh} />

@@ -81,6 +81,18 @@ export interface Event {
   related_project_id: string[];
 }
 
+export interface CreativeWork {
+  id: string;
+  name: string;
+  discipline: string | null;
+  status: string | null;
+  category: string | null;
+  featured: boolean;
+  description: string;
+  url: string | null;
+  related_project_ids: string[];
+}
+
 export interface AppState {
   people: Person[];
   companies: Company[];
@@ -89,6 +101,7 @@ export interface AppState {
   ideas: Idea[];
   knowledge: Knowledge[];
   events: Event[];
+  creative: CreativeWork[];
 }
 
 export const EMPTY_STATE: AppState = {
@@ -99,4 +112,5 @@ export const EMPTY_STATE: AppState = {
   ideas: [],
   knowledge: [],
   events: [],
+  creative: [],
 };
