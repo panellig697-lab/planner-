@@ -9,6 +9,7 @@ import BusinessAreaWorkspace from "@/components/BusinessAreaWorkspace";
 import CreativeWorkspace from "@/components/CreativeWorkspace";
 import ContactsView from "@/components/ContactsView";
 import QuickCapture from "@/components/QuickCapture";
+import GlobalSearch, { type SearchResult } from "@/components/GlobalSearch";
 
 // Retainr and Clario aren't separate databases — each is one row in
 // Companies (matched by exact name) plus the shared "Area" tag on
@@ -28,6 +29,31 @@ type TabKey = (typeof TABS)[number]["key"];
 export default function Page() {
   const [tab, setTab] = useState<TabKey>("today");
   const { state, loading, error, mutate, refresh } = useAppState();
+  const [focusPersonId, setFocusPersonId] = useState<{ id: string; nonce: number } | null>(null);
+  const [focusCompanyId, setFocusCompanyId] = useState<{ id: string; nonce: number } | null>(null);
+
+  function handleSearchSelect(result: SearchResult) {
+    const nonce = Date.now();
+    switch (result.type) {
+      case "people":
+        setTab("contacts");
+        setFocusPersonId({ id: result.id, nonce });
+        break;
+      case "companies":
+        setTab("business");
+        setFocusCompanyId({ id: result.id, nonce });
+        break;
+      case "creative":
+        setTab("creative");
+        break;
+      // projects/tasks/ideas/knowledge don't have a single-item deep link
+      // yet — landing on Business's card grid (where each of those lives)
+      // is a reasonable, simple stop short of plumbing a focus id through
+      // every one of BusinessOverview's sub-sections for a first version.
+      default:
+        setTab("business");
+    }
+  }
 
   return (
     <div className="flex min-h-dvh flex-col pb-24">
@@ -35,14 +61,17 @@ export default function Page() {
         <div className="mx-auto max-w-3xl px-4 pt-[calc(14px+env(safe-area-inset-top))]">
           <div className="flex items-center justify-between pb-3">
             <h1 className="text-[15px] font-semibold tracking-tight text-ink">Gio Second Brain</h1>
-            <span className="label-caps flex items-center gap-1.5">
-              <Circle
-                className={`h-2 w-2 ${
-                  loading ? "fill-ink-soft text-ink-soft" : error ? "fill-rust text-rust" : "fill-emerald-500 text-emerald-500"
-                }`}
-              />
-              {loading ? "syncing" : error ? "offline" : "live"}
-            </span>
+            <div className="flex items-center gap-1">
+              <GlobalSearch state={state} onSelect={handleSearchSelect} />
+              <span className="label-caps flex items-center gap-1.5">
+                <Circle
+                  className={`h-2 w-2 ${
+                    loading ? "fill-ink-soft text-ink-soft" : error ? "fill-rust text-rust" : "fill-emerald-500 text-emerald-500"
+                  }`}
+                />
+                {loading ? "syncing" : error ? "offline" : "live"}
+              </span>
+            </div>
           </div>
           {/* Horizontally scrollable, not a fixed grid — 6 tabs don't
               comfortably fit an iPhone-width screen without either cutting
@@ -74,7 +103,14 @@ export default function Page() {
           </div>
         )}
         {tab === "today" && <CommandCentre state={state} mutate={mutate} loading={loading} />}
-        {tab === "business" && <BusinessOverview state={state} mutate={mutate} loading={loading} />}
+        {tab === "business" && (
+          <BusinessOverview
+            state={state}
+            mutate={mutate}
+            loading={loading}
+            focusCompanyId={focusCompanyId}
+          />
+        )}
         {tab === "retainr" && (
           <BusinessAreaWorkspace
             label="Retainr"
@@ -98,7 +134,9 @@ export default function Page() {
           />
         )}
         {tab === "creative" && <CreativeWorkspace state={state} mutate={mutate} loading={loading} />}
-        {tab === "contacts" && <ContactsView state={state} mutate={mutate} loading={loading} />}
+        {tab === "contacts" && (
+          <ContactsView state={state} mutate={mutate} loading={loading} focusPersonId={focusPersonId} />
+        )}
       </main>
 
       <QuickCapture onCaptured={refresh} />

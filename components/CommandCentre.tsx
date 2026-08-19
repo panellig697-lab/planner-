@@ -1,14 +1,32 @@
 "use client";
 
-import { CheckCircle2, Circle, Sparkles, Users2, FolderKanban } from "lucide-react";
+import { CheckCircle2, Circle, Sparkles, CalendarDays, Users2, FolderKanban, Repeat, Bot, Palette, User } from "lucide-react";
 import type { AppState } from "@/lib/types";
 import type { MutatePayload } from "@/lib/useAppState";
 import { byId } from "@/lib/format";
-import { formatDateShort, isPast, isWithinDays } from "@/lib/dateUtils";
+import { formatDateShort, formatDateHeader, isPast, isWithinDays, todayISO, addDaysISO } from "@/lib/dateUtils";
 import EmptyState from "./ui/EmptyState";
 import { SkeletonList } from "./ui/Skeleton";
 
 const PRIORITY_RANK: Record<string, number> = { High: 0, Medium: 1, Low: 2 };
+
+// Which business an active project belongs to, for the grouped overview —
+// the same Area tag Retainr/Clario workspaces read, so this stays in sync
+// with them without a second source of truth.
+type ProjectGroup = "retainr" | "clario" | "creative" | "personal";
+const CREATIVE_AREAS = new Set(["Art", "Photography", "Music"]);
+function projectGroup(area: string | null): ProjectGroup {
+  if (area === "Retainr") return "retainr";
+  if (area === "Clario") return "clario";
+  if (area && CREATIVE_AREAS.has(area)) return "creative";
+  return "personal";
+}
+const GROUP_META: Record<ProjectGroup, { label: string; icon: typeof Repeat }> = {
+  retainr: { label: "Retainr", icon: Repeat },
+  clario: { label: "Clario", icon: Bot },
+  creative: { label: "Creative", icon: Palette },
+  personal: { label: "Personal", icon: User },
+};
 
 export default function CommandCentre({
   state,
@@ -21,7 +39,9 @@ export default function CommandCentre({
 }) {
   const projectsById = byId(state.projects);
   const companiesById = byId(state.companies);
-  const peopleById = byId(state.people);
+
+  const today = todayISO();
+  const tomorrow = addDaysISO(today, 1);
 
   const openTasks = state.tasks
     .filter((t) => t.status !== "Done")
@@ -33,11 +53,45 @@ export default function CommandCentre({
       return da.localeCompare(db);
     });
 
-  const followUps = state.people
-    .filter((p) => p.next_follow_up && (isPast(p.next_follow_up) || isWithinDays(p.next_follow_up, 7)))
-    .sort((a, b) => (a.next_follow_up ?? "").localeCompare(b.next_follow_up ?? ""));
+  // "Today's Calendar" — a short lookahead (today + tomorrow), events only.
+  // Tasks are deliberately not duplicated in here — Priority Tasks below
+  // already covers them, sorted by urgency.
+  const todaysEvents = state.events
+    .filter((e) => e.date === today || e.date === tomorrow)
+    .sort((a, b) => (a.date ?? "").localeCompare(b.date ?? ""));
+
+  // "Upcoming" merges everything with a date in the next week that isn't
+  // already shown elsewhere: events beyond the 2-day calendar strip,
+  // overdue-or-soon follow-ups (this replaces the old standalone
+  // "Follow-ups Due This Week" section rather than duplicating it), and
+  // project target dates.
+  type UpcomingItem = { id: string; kind: "event" | "followup" | "project"; label: string; date: string; meta?: string };
+  const upcoming: UpcomingItem[] = [
+    ...state.events
+      .filter((e) => e.date && e.date > tomorrow && isWithinDays(e.date, 7))
+      .map((e) => ({ id: `event-${e.id}`, kind: "event" as const, label: e.title, date: e.date! })),
+    ...state.people
+      .filter((p) => p.next_follow_up && (isPast(p.next_follow_up) || isWithinDays(p.next_follow_up, 7)))
+      .map((p) => ({
+        id: `followup-${p.id}`,
+        kind: "followup" as const,
+        label: p.name,
+        date: p.next_follow_up!,
+        meta: p.role || (p.company_id[0] ? companiesById.get(p.company_id[0])?.name : undefined),
+      })),
+    ...state.projects
+      .filter((p) => p.target_date && (isPast(p.target_date) || isWithinDays(p.target_date, 7)))
+      .map((p) => ({ id: `project-${p.id}`, kind: "project" as const, label: p.name, date: p.target_date! })),
+  ].sort((a, b) => a.date.localeCompare(b.date));
 
   const activeProjects = state.projects.filter((p) => p.status === "Active");
+  const groupedProjects: Record<ProjectGroup, typeof activeProjects> = {
+    retainr: [],
+    clario: [],
+    creative: [],
+    personal: [],
+  };
+  for (const p of activeProjects) groupedProjects[projectGroup(p.area)].push(p);
 
   async function toggleDone(taskId: string, currentStatus: string | null) {
     await mutate({
@@ -52,6 +106,35 @@ export default function CommandCentre({
 
   return (
     <div className="space-y-8">
+      <div>
+        <p className="text-xs font-medium uppercase tracking-wide text-ink-soft">{formatDateHeader(today)}</p>
+      </div>
+
+      <section>
+        <h2 className="label-caps mb-3 flex items-center gap-1.5">
+          <CalendarDays className="h-3.5 w-3.5" /> Today &amp; Tomorrow
+        </h2>
+        {isEmptyLoad ? (
+          <SkeletonList rows={2} />
+        ) : todaysEvents.length === 0 ? (
+          <p className="text-sm italic text-ink-soft/70">Nothing on the calendar today or tomorrow.</p>
+        ) : (
+          <ul className="space-y-2">
+            {todaysEvents.map((e) => (
+              <li key={e.id} className="card flex items-center justify-between px-3.5 py-3 animate-fade-in">
+                <div>
+                  <p className="text-sm font-medium text-ink">{e.title}</p>
+                  {e.type && <p className="text-xs text-ink-soft">{e.type}</p>}
+                </div>
+                <span className={`text-xs ${e.date === today ? "font-semibold text-rust-dark" : "text-ink-soft"}`}>
+                  {e.date === today ? "Today" : "Tomorrow"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <section>
         <h2 className="label-caps mb-3">Priority Tasks</h2>
         {isEmptyLoad ? (
@@ -97,24 +180,26 @@ export default function CommandCentre({
       </section>
 
       <section>
-        <h2 className="label-caps mb-3">Follow-ups Due This Week</h2>
+        <h2 className="label-caps mb-3">Upcoming</h2>
         {isEmptyLoad ? (
           <SkeletonList rows={2} />
-        ) : followUps.length === 0 ? (
-          <EmptyState icon={Users2} title="No follow-ups pending" />
+        ) : upcoming.length === 0 ? (
+          <EmptyState icon={Users2} title="Nothing else coming up this week" />
         ) : (
           <ul className="space-y-2">
-            {followUps.map((p) => {
-              const company = p.company_id[0] ? companiesById.get(p.company_id[0]) : undefined;
-              const overdue = isPast(p.next_follow_up);
+            {upcoming.slice(0, 12).map((item) => {
+              const overdue = isPast(item.date);
               return (
-                <li key={p.id} className="card flex items-center justify-between px-3.5 py-3 animate-fade-in">
-                  <div>
-                    <p className="text-sm font-medium text-ink">{p.name}</p>
-                    <p className="text-xs text-ink-soft">{p.role || company?.name || "—"}</p>
+                <li key={item.id} className="card flex items-center justify-between px-3.5 py-3 animate-fade-in">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-ink">{item.label}</p>
+                    <p className="text-xs text-ink-soft">
+                      {item.kind === "followup" ? "Follow-up" : item.kind === "project" ? "Project due" : "Event"}
+                      {item.meta ? ` · ${item.meta}` : ""}
+                    </p>
                   </div>
-                  <span className={`text-xs ${overdue ? "font-semibold text-rust-dark" : "text-ink-soft"}`}>
-                    {formatDateShort(p.next_follow_up)}
+                  <span className={`shrink-0 text-xs ${overdue ? "font-semibold text-rust-dark" : "text-ink-soft"}`}>
+                    {formatDateShort(item.date)}
                   </span>
                 </li>
               );
@@ -130,27 +215,32 @@ export default function CommandCentre({
         ) : activeProjects.length === 0 ? (
           <EmptyState icon={FolderKanban} title="No active projects" />
         ) : (
-          <ul className="space-y-2">
-            {activeProjects.map((p) => {
-              const person = p.client_person_id[0] ? peopleById.get(p.client_person_id[0]) : undefined;
-              const company = p.client_company_id[0] ? companiesById.get(p.client_company_id[0]) : undefined;
+          <div className="space-y-4">
+            {(Object.keys(GROUP_META) as ProjectGroup[]).map((group) => {
+              const projects = groupedProjects[group];
+              if (projects.length === 0) return null;
+              const meta = GROUP_META[group];
               return (
-                <li key={p.id} className="card px-3.5 py-3 animate-fade-in">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-ink">{p.name}</p>
-                    {p.area && <Tag>{p.area}</Tag>}
-                  </div>
-                  <p className="mt-1 text-xs text-ink-soft">
-                    {[person?.name, company?.name].filter(Boolean).join(" · ") || p.purpose || "—"}
-                  </p>
-                </li>
+                <div key={group}>
+                  <h3 className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-ink-soft">
+                    <meta.icon className="h-3 w-3" /> {meta.label}
+                  </h3>
+                  <ul className="space-y-2">
+                    {projects.map((p) => (
+                      <li key={p.id} className="card px-3.5 py-3 animate-fade-in">
+                        <p className="text-sm font-medium text-ink">{p.name}</p>
+                        {p.purpose && <p className="mt-0.5 text-xs text-ink-soft">{p.purpose}</p>}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               );
             })}
-          </ul>
+          </div>
         )}
       </section>
 
-      {!loading && openTasks.length === 0 && followUps.length === 0 && activeProjects.length === 0 && (
+      {!loading && openTasks.length === 0 && upcoming.length === 0 && activeProjects.length === 0 && (
         <div className="flex flex-col items-center gap-2 pt-6 text-center text-ink-soft">
           <Sparkles className="h-5 w-5" strokeWidth={1.5} />
           <p className="text-sm">You're fully caught up.</p>

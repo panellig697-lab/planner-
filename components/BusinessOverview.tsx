@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   PoundSterling,
@@ -46,13 +46,23 @@ export default function BusinessOverview({
   state,
   mutate,
   loading,
+  focusCompanyId,
 }: {
   state: AppState;
   mutate: (payload: MutatePayload) => Promise<{ id: string }>;
   loading: boolean;
+  // Set by GlobalSearch to jump straight into a company's workspace. Keyed
+  // with a nonce so re-selecting the same company from search re-opens it.
+  focusCompanyId?: { id: string; nonce: number } | null;
 }) {
   const [section, setSection] = useState<Section | null>(null);
   const [openCompany, setOpenCompany] = useState<Company | null>(null);
+
+  useEffect(() => {
+    if (!focusCompanyId) return;
+    const company = state.companies.find((c) => c.id === focusCompanyId.id);
+    if (company) setOpenCompany(company);
+  }, [focusCompanyId, state.companies]);
 
   if (openCompany) {
     return (

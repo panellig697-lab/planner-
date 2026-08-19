@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Mail, Phone, Search, ArrowLeft, Building2, FolderKanban, CheckSquare, Globe, Plus } from "lucide-react";
 import type { AppState, Person } from "@/lib/types";
 import type { MutatePayload } from "@/lib/useAppState";
@@ -15,14 +15,23 @@ export default function ContactsView({
   state,
   mutate,
   loading,
+  focusPersonId,
 }: {
   state: AppState;
   mutate: (payload: MutatePayload) => Promise<{ id: string }>;
   loading: boolean;
+  // Set by GlobalSearch to jump straight to a contact's profile. Every
+  // change (even to the same id re-clicked) should re-open the profile, so
+  // this is consumed via an id+nonce pair rather than a plain id.
+  focusPersonId?: { id: string; nonce: number } | null;
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [query, setQuery] = useState("");
+
+  useEffect(() => {
+    if (focusPersonId) setSelectedId(focusPersonId.id);
+  }, [focusPersonId]);
 
   const companiesById = byId(state.companies);
   const selected = selectedId ? state.people.find((p) => p.id === selectedId) ?? null : null;
