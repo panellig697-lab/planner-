@@ -7,7 +7,6 @@ export type EntityType =
   | "tasks"
   | "ideas"
   | "knowledge"
-  | "events"
   | "creative";
 
 export type FieldType =
@@ -187,26 +186,6 @@ export const SCHEMAS: Record<EntityType, EntitySchema> = {
       { key: "summary", notionProp: "Summary", type: "text", label: "Summary" },
       { key: "tags", notionProp: "Tags", type: "multiselect", label: "Tags" },
       { key: "related_project_ids", notionProp: "Related Projects", type: "relation", label: "Related Projects", relation: "projects" },
-    ],
-  },
-  events: {
-    type: "events",
-    label: "Events",
-    singular: "Event",
-    dataSourceId: "38d93ce8-5cea-4bb3-96a8-fe72e5bf61e5",
-    titleField: "title",
-    fields: [
-      { key: "title", notionProp: "Title", type: "title", label: "Title" },
-      { key: "date", notionProp: "Date", type: "date", label: "Date" },
-      {
-        key: "type",
-        notionProp: "Type",
-        type: "select",
-        label: "Type",
-        options: ["Meeting", "Call", "Follow-up", "Deadline", "Personal"],
-      },
-      { key: "notes", notionProp: "Notes", type: "text", label: "Notes" },
-      { key: "related_project_id", notionProp: "Related Project", type: "relation", label: "Related Project", relation: "projects" },
     ],
   },
   creative: {

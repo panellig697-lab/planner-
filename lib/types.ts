@@ -72,15 +72,6 @@ export interface Knowledge {
   related_project_ids: string[];
 }
 
-export interface Event {
-  id: string;
-  title: string;
-  date: string | null;
-  type: string | null;
-  notes: string;
-  related_project_id: string[];
-}
-
 export interface CreativeWork {
   id: string;
   name: string;
@@ -100,7 +91,6 @@ export interface AppState {
   tasks: Task[];
   ideas: Idea[];
   knowledge: Knowledge[];
-  events: Event[];
   creative: CreativeWork[];
 }
 
@@ -111,6 +101,5 @@ export const EMPTY_STATE: AppState = {
   tasks: [],
   ideas: [],
   knowledge: [],
-  events: [],
   creative: [],
 };

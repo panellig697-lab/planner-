@@ -1,10 +1,10 @@
 "use client";
 
-import { CheckCircle2, Circle, Sparkles, CalendarDays, Users2, FolderKanban, Repeat, Bot, Palette, User } from "lucide-react";
+import { CheckCircle2, Circle, Sparkles, Users2, FolderKanban, Repeat, Bot, Palette, User } from "lucide-react";
 import type { AppState } from "@/lib/types";
 import type { MutatePayload } from "@/lib/useAppState";
 import { byId } from "@/lib/format";
-import { formatDateShort, formatDateHeader, isPast, isWithinDays, todayISO, addDaysISO } from "@/lib/dateUtils";
+import { formatDateShort, formatDateHeader, isPast, isWithinDays, todayISO } from "@/lib/dateUtils";
 import EmptyState from "./ui/EmptyState";
 import { SkeletonList } from "./ui/Skeleton";
 
@@ -41,7 +41,6 @@ export default function CommandCentre({
   const companiesById = byId(state.companies);
 
   const today = todayISO();
-  const tomorrow = addDaysISO(today, 1);
 
   const openTasks = state.tasks
     .filter((t) => t.status !== "Done")
@@ -53,23 +52,13 @@ export default function CommandCentre({
       return da.localeCompare(db);
     });
 
-  // "Today's Calendar" — a short lookahead (today + tomorrow), events only.
-  // Tasks are deliberately not duplicated in here — Priority Tasks below
-  // already covers them, sorted by urgency.
-  const todaysEvents = state.events
-    .filter((e) => e.date === today || e.date === tomorrow)
-    .sort((a, b) => (a.date ?? "").localeCompare(b.date ?? ""));
-
   // "Upcoming" merges everything with a date in the next week that isn't
-  // already shown elsewhere: events beyond the 2-day calendar strip,
-  // overdue-or-soon follow-ups (this replaces the old standalone
-  // "Follow-ups Due This Week" section rather than duplicating it), and
-  // project target dates.
-  type UpcomingItem = { id: string; kind: "event" | "followup" | "project"; label: string; date: string; meta?: string };
+  // already shown elsewhere: overdue-or-soon follow-ups (this replaces the
+  // old standalone "Follow-ups Due This Week" section rather than
+  // duplicating it) and project target dates. No calendar/events data
+  // feeds this — the app doesn't read or write the Events database at all.
+  type UpcomingItem = { id: string; kind: "followup" | "project"; label: string; date: string; meta?: string };
   const upcoming: UpcomingItem[] = [
-    ...state.events
-      .filter((e) => e.date && e.date > tomorrow && isWithinDays(e.date, 7))
-      .map((e) => ({ id: `event-${e.id}`, kind: "event" as const, label: e.title, date: e.date! })),
     ...state.people
       .filter((p) => p.next_follow_up && (isPast(p.next_follow_up) || isWithinDays(p.next_follow_up, 7)))
       .map((p) => ({
@@ -109,31 +98,6 @@ export default function CommandCentre({
       <div>
         <p className="text-xs font-medium uppercase tracking-wide text-ink-soft">{formatDateHeader(today)}</p>
       </div>
-
-      <section>
-        <h2 className="label-caps mb-3 flex items-center gap-1.5">
-          <CalendarDays className="h-3.5 w-3.5" /> Today &amp; Tomorrow
-        </h2>
-        {isEmptyLoad ? (
-          <SkeletonList rows={2} />
-        ) : todaysEvents.length === 0 ? (
-          <p className="text-sm italic text-ink-soft/70">Nothing on the calendar today or tomorrow.</p>
-        ) : (
-          <ul className="space-y-2">
-            {todaysEvents.map((e) => (
-              <li key={e.id} className="card flex items-center justify-between px-3.5 py-3 animate-fade-in">
-                <div>
-                  <p className="text-sm font-medium text-ink">{e.title}</p>
-                  {e.type && <p className="text-xs text-ink-soft">{e.type}</p>}
-                </div>
-                <span className={`text-xs ${e.date === today ? "font-semibold text-rust-dark" : "text-ink-soft"}`}>
-                  {e.date === today ? "Today" : "Tomorrow"}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
 
       <section>
         <h2 className="label-caps mb-3">Priority Tasks</h2>
@@ -194,7 +158,7 @@ export default function CommandCentre({
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-ink">{item.label}</p>
                     <p className="text-xs text-ink-soft">
-                      {item.kind === "followup" ? "Follow-up" : item.kind === "project" ? "Project due" : "Event"}
+                      {item.kind === "followup" ? "Follow-up" : "Project due"}
                       {item.meta ? ` · ${item.meta}` : ""}
                     </p>
                   </div>
