@@ -41,8 +41,15 @@ const TOOL_NAME = "decide_action";
 export async function classify(text: string, state: AppState): Promise<ClassifyResult> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
+    // ".env.local" only means anything for local dev — on a deployed
+    // instance this same check fails because the env var isn't set in the
+    // host's project settings (Vercel: Settings → Environment Variables),
+    // and telling someone looking at the live app to edit a file on their
+    // laptop is actively misleading.
     throw new Error(
-      "ANTHROPIC_API_KEY is not set. Add it to .env.local to use Quick Capture."
+      "ANTHROPIC_API_KEY is not set for this deployment. Add it in your hosting " +
+        "provider's project environment variables (locally, add it to .env.local " +
+        "instead) and redeploy to use Quick Capture."
     );
   }
 
