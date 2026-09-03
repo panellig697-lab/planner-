@@ -1,0 +1,46 @@
+# Retainr — retainr.studio
+
+Single-page marketing site. Plain HTML/CSS/JS — no build step, no framework,
+no runtime dependencies. Open `index.html` in a browser to preview, or serve
+the folder with anything (`npx serve site`, `python3 -m http.server`).
+
+```
+site/
+  index.html      all markup + inline TODO comments
+  styles.css      design tokens at the top of the file (:root)
+  script.js       nav drawer, sticky-nav border, footer year, Loom loader
+  assets/
+    retainr-logo.png
+```
+
+## What to fill in
+
+| Where | What |
+| --- | --- |
+| `assets/retainr-logo.png` | Final logo file (transparent PNG or SVG is ideal — the current file has a baked-in black background, which works on this black page but not elsewhere). Referenced twice in `index.html` (nav + hero) and in the favicon/OG tags. |
+| `index.html` → `data-loom-src` on `.demo__video` | Real Loom embed URL (`https://www.loom.com/embed/ID`). The placeholder card disappears automatically once it's set. |
+| `index.html` → `.pkg__amount` | Replace `£[XXX]` with the real monthly price. |
+| `index.html` → contact section | Confirm `gio@retainr.studio`, replace `YOUR-PERSONAL-EMAIL@example.com`, and swap the CTA `href` for a booking link (Calendly / Cal.com / TidyCal) when you have one. |
+| `index.html` → OG image | A 1200×630 share image. |
+
+## Adding content later
+
+**Another package** — copy one `<article class="pkg"> … </article>` block inside
+`.grid--packages` and edit it. The grid re-flows on its own; add `pkg--featured`
+to highlight one card.
+
+**A testimonial** — a commented-out `<figure class="quote">` template sits inside
+`.grid--quotes`. Uncomment, fill in, and delete the `quote--empty` placeholder
+card once you have a real quote.
+
+**A feature block** — copy an `<article class="feature">` inside `.grid--features`.
+
+## Deploying
+
+Static hosting, root = `site/`:
+
+- **Cloudflare Pages / Netlify** — build command: none, publish directory: `site`
+- **Vercel** — framework preset "Other", output directory `site`
+- **GitHub Pages** — serve the folder directly
+
+Then point `retainr.studio` at it.
