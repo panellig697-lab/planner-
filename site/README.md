@@ -19,7 +19,6 @@ site/
 | --- | --- |
 | `assets/retainr-logo.png` | Final logo file (transparent PNG or SVG is ideal — the current file has a baked-in black background, which works on this black page but not elsewhere). Referenced twice in `index.html` (nav + hero) and in the favicon/OG tags. |
 | `index.html` → `data-loom-src` on `.demo__video` | Real Loom embed URL (`https://www.loom.com/embed/ID`). The placeholder card disappears automatically once it's set. |
-| `index.html` → `.pkg__amount` | Replace `£[XXX]` with the real monthly price. |
 | `index.html` → contact section | Confirm `gio@retainr.studio`, replace `YOUR-PERSONAL-EMAIL@example.com`, and swap the CTA `href` for a booking link (Calendly / Cal.com / TidyCal) when you have one. |
 | `index.html` → OG image | A 1200×630 share image. |
 
