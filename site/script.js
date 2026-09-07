@@ -40,19 +40,13 @@
   });
 
   /* ---- Loom embed ----------------------------------------------------
-     Paste your real embed URL into data-loom-src on the iframe in
-     index.html (Loom → Share → Embed → the .../embed/ID URL).
-     Until then the styled placeholder stays visible.
+     The iframe carries the URL in data-loom-src and is only pointed at it
+     here, so the video never loads until the rest of the page has.
+     To swap videos, edit data-loom-src in index.html.
   --------------------------------------------------------------------- */
   var video = document.querySelector(".demo__video");
   if (video) {
-    var src = video.getAttribute("data-loom-src") || "";
-    var ready = src && src.indexOf("YOUR_VIDEO_ID") === -1;
-
-    if (ready) {
-      video.src = src;
-      var placeholder = document.querySelector(".demo__placeholder");
-      if (placeholder) placeholder.remove();
-    }
+    var src = video.getAttribute("data-loom-src");
+    if (src) video.src = src;
   }
 })();
