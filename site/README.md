@@ -18,7 +18,7 @@ site/
 | Where | What |
 | --- | --- |
 | `assets/retainr-logo.png` | Final logo file (transparent PNG or SVG is ideal — the current file has a baked-in black background, which works on this black page but not elsewhere). Referenced twice in `index.html` (nav + hero) and in the favicon/OG tags. |
-| `index.html` → contact section | Contact currently goes to `panellig697@gmail.com`; promote `gio@retainr.studio` to primary once it's receiving. Booking buttons point at Calendly. |
+| `index.html` → contact section | Contact email is `gio@retainr.studio`; all five buttons open the Calendly link in a new tab. |
 | `index.html` → OG image | A 1200×630 share image. |
 
 ## Adding content later

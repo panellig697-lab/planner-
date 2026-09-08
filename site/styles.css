@@ -584,13 +584,6 @@ h1, h2, h3 {
   padding-bottom: 2px;
 }
 .cta__email:hover { color: var(--green); }
-.cta__fallback {
-  margin: 14px 0 0;
-  font-size: 14px;
-  color: #7b7e86;
-}
-.cta__fallback a { color: var(--muted); }
-
 .cta__closing {
   margin: clamp(38px, 6vw, 54px) 0 0;
   font-size: 13px;
