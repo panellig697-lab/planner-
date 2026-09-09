@@ -59,8 +59,8 @@ against the booking:
 
 | Parameter | Carries |
 | --- | --- |
-| `utm_campaign` | main goal |
-| `utm_content` | revenue band, current platform, start timing |
+| `utm_campaign` | whether retention email is running, neglected, or absent |
+| `utm_content` | revenue band, current platform, start timing, product focus |
 | `utm_term` | the optional notes, first 180 characters |
 
 Calendly discards query parameters it doesn't recognise, which is why the answers

@@ -175,12 +175,23 @@ footer{
       <legend>Roughly what's your monthly revenue?</legend>
       <p class="hint">A ballpark is fine — it tells me which flows will move the needle first.</p>
       <div class="options options--split">
-        <label class="opt"><input type="radio" name="revenue" value="Under £10k" required /><span>Under £10k</span></label>
-        <label class="opt"><input type="radio" name="revenue" value="£10k–£50k" /><span>£10k – £50k</span></label>
+        <label class="opt"><input type="radio" name="revenue" value="£10k–£50k" required /><span>£10k – £50k</span></label>
         <label class="opt"><input type="radio" name="revenue" value="£50k–£150k" /><span>£50k – £150k</span></label>
-        <label class="opt"><input type="radio" name="revenue" value="£150k+" /><span>£150k+</span></label>
+        <label class="opt"><input type="radio" name="revenue" value="£150k–£500k" /><span>£150k – £500k</span></label>
+        <label class="opt"><input type="radio" name="revenue" value="£500k+" /><span>£500k+</span></label>
       </div>
       <p class="error">Pick the range closest to where you are.</p>
+    </fieldset>
+
+    <fieldset id="q-retention">
+      <legend>Are you sending any automated retention emails today?</legend>
+      <p class="hint">Flows that fire on their own — carts, welcome, win-back — not one-off campaigns.</p>
+      <div class="options">
+        <label class="opt"><input type="radio" name="retention" value="Actively running sequences" required /><span>Yes, actively running sequences</span></label>
+        <label class="opt"><input type="radio" name="retention" value="Neglected or outdated" /><span>Yes, but neglected or outdated</span></label>
+        <label class="opt"><input type="radio" name="retention" value="Starting from zero" /><span>No, starting from zero</span></label>
+      </div>
+      <p class="error">Pick whichever is closest — all three are workable.</p>
     </fieldset>
 
     <fieldset id="q-platform">
@@ -194,16 +205,6 @@ footer{
       <p class="error">Let me know what you're on — "nothing yet" is a fine answer.</p>
     </fieldset>
 
-    <fieldset id="q-goal">
-      <legend>What's the main thing you want to fix?</legend>
-      <div class="options">
-        <label class="opt"><input type="radio" name="goal" value="Increase repeat purchases" required /><span>Increase repeat purchases</span></label>
-        <label class="opt"><input type="radio" name="goal" value="Reduce customer churn" /><span>Reduce customer churn</span></label>
-        <label class="opt"><input type="radio" name="goal" value="Build customer lifetime value" /><span>Build customer lifetime value</span></label>
-      </div>
-      <p class="error">Choose the one that matters most right now.</p>
-    </fieldset>
-
     <fieldset id="q-timing">
       <legend>When would you want to start?</legend>
       <div class="options">
@@ -215,9 +216,19 @@ footer{
     </fieldset>
 
     <fieldset>
-      <legend>Anything else I should know? <span class="hint" style="display:inline">(optional)</span></legend>
+      <legend>What's your product focus? <span class="hint" style="display:inline">(optional)</span></legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="focus" value="Supplements" /><span>Supplements</span></label>
+        <label class="opt"><input type="radio" name="focus" value="Wellness/Health" /><span>Wellness / health</span></label>
+        <label class="opt"><input type="radio" name="focus" value="Skincare/Beauty" /><span>Skincare / beauty</span></label>
+        <label class="opt"><input type="radio" name="focus" value="Other" /><span>Something else</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Anything else we should know? <span class="hint" style="display:inline">(optional)</span></legend>
       <textarea name="notes" rows="4" maxlength="1000"
-        placeholder="Product line, list size, what you've already tried — whatever's useful."></textarea>
+        placeholder="Current systems, team size, main challenges — whatever's useful."></textarea>
     </fieldset>
 
     <div class="actions">
@@ -238,7 +249,7 @@ footer{
 
   var form   = document.getElementById("qualify");
   var button = document.getElementById("submit");
-  var REQUIRED = ["revenue", "platform", "goal", "timing"];
+  var REQUIRED = ["revenue", "retention", "platform", "timing"];
 
   /* Answers ride along as UTM parameters, which Calendly stores against the
      booking — so they show up next to the invitee rather than being lost in a
@@ -249,11 +260,12 @@ footer{
     var p = url.searchParams;
     p.set("utm_source", "retainr.studio");
     p.set("utm_medium", "qualification-form");
-    p.set("utm_campaign", data.goal || "");
+    p.set("utm_campaign", data.retention || "");
     p.set("utm_content",
       "revenue: " + (data.revenue || "—") +
       " | platform: " + (data.platform || "—") +
-      " | start: " + (data.timing || "—"));
+      " | start: " + (data.timing || "—") +
+      " | focus: " + (data.focus || "not given"));
     if (data.notes) p.set("utm_term", data.notes.slice(0, 180));
     return url.toString();
   }
