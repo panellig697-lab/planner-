@@ -102,13 +102,6 @@ textarea{
 textarea::placeholder{color:#5f626a}
 textarea:focus{outline:none; border-color:var(--green)}
 
-/* Inline validation: only shown after a failed submit. */
-.error{
-  display:none; margin:0; color:#f87171; font-size:13.5px; font-weight:550;
-}
-fieldset[data-invalid] .error{display:block}
-fieldset[data-invalid] .opt span{border-color:rgba(248,113,113,.5)}
-
 /* ---------------------------- submit ---------------------------- */
 .actions{border-top:1px solid var(--line); padding-top:26px; display:grid; gap:14px}
 
@@ -144,6 +137,9 @@ footer{
 
 
 /* ---- stage 2 additions ---- */
+/* .done and form both set display, which outranks the browser's [hidden]
+   rule — without this the confirmation shows before anything is sent. */
+[hidden]{ display:none !important; }
 .opt--check span::before{ border-radius:5px; }
 .opt--check input:checked + span::before{
   border-color:var(--green); background:var(--green);
@@ -175,8 +171,8 @@ footer{
     <a class="wordmark" href="https://retainr.studio">Retain<span>r</span></a>
     <h1>You're booked in.</h1>
     <p class="lede">
-      Five quick questions about how your store sells today, so we can spend the call on
-      what to do about it rather than on background.
+      Five more, so I can come to the call with your numbers already worked out rather than
+      spending our fifteen minutes asking for them.
     </p>
   </header>
 
@@ -195,80 +191,68 @@ footer{
     <input type="hidden" name="form-name" value="retainr-stage-2" />
     <p class="hp"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
 
-    <fieldset id="q-customers">
-      <legend>New customers per month</legend>
-      <p class="hint">First-time buyers, not total orders.</p>
+    <fieldset>
+      <legend>Roughly how many new customers do you get in a month?</legend>
       <div class="options options--split">
-        <label class="opt"><input type="radio" name="customers" value="Under 50" required /><span>Under 50</span></label>
-        <label class="opt"><input type="radio" name="customers" value="50 – 200" /><span>50 – 200</span></label>
-        <label class="opt"><input type="radio" name="customers" value="200 – 500" /><span>200 – 500</span></label>
+        <label class="opt"><input type="radio" name="customers" value="Under 100" /><span>Under 100</span></label>
+        <label class="opt"><input type="radio" name="customers" value="100 – 500" /><span>100 – 500</span></label>
         <label class="opt"><input type="radio" name="customers" value="500 – 2,000" /><span>500 – 2,000</span></label>
-        <label class="opt"><input type="radio" name="customers" value="2,000+" /><span>2,000+</span></label>
-        <label class="opt"><input type="radio" name="customers" value="We don't track this" /><span>We don't track this</span></label>
+        <label class="opt"><input type="radio" name="customers" value="2,000 – 10,000" /><span>2,000 – 10,000</span></label>
+        <label class="opt"><input type="radio" name="customers" value="10,000+" /><span>10,000+</span></label>
+        <label class="opt"><input type="radio" name="customers" value="Not sure" /><span>Not sure</span></label>
       </div>
-      <p class="error">Pick the closest band — an estimate is fine.</p>
-    </fieldset>
-    <fieldset id="q-aov">
-      <legend>Average order value</legend>
-      <div class="options options--split">
-        <label class="opt"><input type="radio" name="aov" value="Under £25" required /><span>Under £25</span></label>
-        <label class="opt"><input type="radio" name="aov" value="£25 – £50" /><span>£25 – £50</span></label>
-        <label class="opt"><input type="radio" name="aov" value="£50 – £100" /><span>£50 – £100</span></label>
-        <label class="opt"><input type="radio" name="aov" value="£100 – £200" /><span>£100 – £200</span></label>
-        <label class="opt"><input type="radio" name="aov" value="£200+" /><span>£200+</span></label>
-        <label class="opt"><input type="radio" name="aov" value="We don't track this" /><span>We don't track this</span></label>
-      </div>
-      <p class="error">Pick the closest band — an estimate is fine.</p>
-    </fieldset>
-    <fieldset id="q-margin">
-      <legend>Gross margin</legend>
-      <p class="hint">After cost of goods, before overheads.</p>
-      <div class="options options--split">
-        <label class="opt"><input type="radio" name="margin" value="Under 30%" required /><span>Under 30%</span></label>
-        <label class="opt"><input type="radio" name="margin" value="30 – 45%" /><span>30 – 45%</span></label>
-        <label class="opt"><input type="radio" name="margin" value="45 – 60%" /><span>45 – 60%</span></label>
-        <label class="opt"><input type="radio" name="margin" value="60 – 75%" /><span>60 – 75%</span></label>
-        <label class="opt"><input type="radio" name="margin" value="75%+" /><span>75%+</span></label>
-        <label class="opt"><input type="radio" name="margin" value="We don't track this" /><span>We don't track this</span></label>
-      </div>
-      <p class="error">Pick the closest band — an estimate is fine.</p>
-    </fieldset>
-    <fieldset id="q-repeat">
-      <legend>Current repeat purchase rate</legend>
-      <p class="hint">The share of customers who have ordered more than once.</p>
-      <div class="options options--split">
-        <label class="opt"><input type="radio" name="repeat" value="Under 10%" required /><span>Under 10%</span></label>
-        <label class="opt"><input type="radio" name="repeat" value="10 – 20%" /><span>10 – 20%</span></label>
-        <label class="opt"><input type="radio" name="repeat" value="20 – 30%" /><span>20 – 30%</span></label>
-        <label class="opt"><input type="radio" name="repeat" value="30 – 45%" /><span>30 – 45%</span></label>
-        <label class="opt"><input type="radio" name="repeat" value="45%+" /><span>45%+</span></label>
-        <label class="opt"><input type="radio" name="repeat" value="We don't track this" /><span>We don't track this</span></label>
-      </div>
-      <p class="error">Pick the closest band — an estimate is fine.</p>
-    </fieldset>
-    <fieldset id="q-depth">
-      <legend>When someone does come back, do they usually buy once more, or keep buying repeatedly?</legend>
-      <div class="options">
-        <label class="opt"><input type="radio" name="depth" value="Usually one more order, then they stop" required /><span>Usually one more order, then they stop</span></label>
-        <label class="opt"><input type="radio" name="depth" value="A few more orders, then they drift away" /><span>A few more orders, then they drift away</span></label>
-        <label class="opt"><input type="radio" name="depth" value="A core group keeps buying regularly" /><span>A core group keeps buying regularly</span></label>
-        <label class="opt"><input type="radio" name="depth" value="We don't track this" /><span>We don't track this</span></label>
-      </div>
-      <p class="error">Your best read on it is enough.</p>
     </fieldset>
     <fieldset>
-      <legend>Which of these do you already have live? <span class="hint" style="display:inline">(optional)</span></legend>
-      <p class="hint">Tick everything that's currently sending.</p>
-      <div class="options options--split" id="q-live">
-        <label class="opt opt--check"><input type="checkbox" name="live" value="Welcome series" /><span>Welcome series</span></label>
-        <label class="opt opt--check"><input type="checkbox" name="live" value="Abandoned cart" /><span>Abandoned cart</span></label>
-        <label class="opt opt--check"><input type="checkbox" name="live" value="Post-purchase" /><span>Post-purchase</span></label>
-        <label class="opt opt--check"><input type="checkbox" name="live" value="Win-back" /><span>Win-back</span></label>
-        <label class="opt opt--check"><input type="checkbox" name="live" value="Replenishment" /><span>Replenishment</span></label>
-        <label class="opt opt--check"><input type="checkbox" name="live" value="None yet" data-none /><span>None yet</span></label>
+      <legend>What's a typical order worth?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="aov" value="Under £30" /><span>Under £30</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£30 – 50" /><span>£30 – 50</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£50 – 100" /><span>£50 – 100</span></label>
+        <label class="opt"><input type="radio" name="aov" value="Over £100" /><span>Over £100</span></label>
+        <label class="opt"><input type="radio" name="aov" value="Not sure" /><span>Not sure</span></label>
       </div>
     </fieldset>
-
+    <fieldset>
+      <legend>Roughly what's your gross margin, after cost of goods?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="margin" value="Under 30%" /><span>Under 30%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="30 – 50%" /><span>30 – 50%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="50 – 70%" /><span>50 – 70%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="Over 70%" /><span>Over 70%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="Not sure / rather not say" /><span>Not sure / rather not say</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Of the customers who buy once, roughly what share ever buy again?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="repeat" value="We don't track that" /><span>We don't track that</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="Under 10%" /><span>Under 10%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="10 – 25%" /><span>10 – 25%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="25 – 40%" /><span>25 – 40%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="Over 40%" /><span>Over 40%</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>When someone does come back, do they usually buy once more, or keep buying?</legend>
+      <div class="options">
+        <label class="opt"><input type="radio" name="depth" value="Usually just once more" /><span>Usually just once more</span></label>
+        <label class="opt"><input type="radio" name="depth" value="A few more times" /><span>A few more times</span></label>
+        <label class="opt"><input type="radio" name="depth" value="Most go on to subscribe" /><span>Most go on to subscribe</span></label>
+        <label class="opt"><input type="radio" name="depth" value="Not sure" /><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Which of these are running right now? <span class="hint" style="display:inline">(tick all that apply)</span></legend>
+      <div class="options options--split" id="q-live">
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Welcome" /><span>Welcome</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Abandoned cart" /><span>Abandoned cart</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Post-purchase" /><span>Post-purchase</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Reorder reminder" /><span>Reorder reminder</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Win-back" /><span>Win-back</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="None of these" data-solo /><span>None of these</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Not sure" data-solo /><span>Not sure</span></label>
+      </div>
+    </fieldset>
     <fieldset>
       <legend>Anything else worth knowing? <span class="hint" style="display:inline">(optional)</span></legend>
       <textarea name="notes" rows="4" maxlength="1000"
@@ -277,7 +261,7 @@ footer{
 
     <div class="actions">
       <button type="submit" id="submit">Send my answers</button>
-      <p class="note">Estimates are fine — nothing here needs to be exact.</p>
+      <p class="note">Estimates are fine, and you can skip anything you'd rather not answer.</p>
     </div>
   </form>
 
@@ -298,50 +282,35 @@ footer{
   var form   = document.getElementById("stage2");
   var button = document.getElementById("submit");
   var done   = document.getElementById("done");
-  var REQUIRED = ["customers", "aov", "margin", "repeat", "depth"];
 
-  /* "None yet" and the individual flows contradict each other, so ticking
-     either side clears the other. */
+  /* Nothing here is required — a skipped question is a legitimate answer, so
+     the form submits whatever has been filled in. */
+
+  /* "None of these" and "Not sure" each rule out the individual flows, and
+     each other. */
   var live = document.getElementById("q-live");
-  var none = live.querySelector("input[data-none]");
   live.addEventListener("change", function (e) {
-    if (e.target === none) {
-      if (none.checked) {
-        live.querySelectorAll("input:not([data-none])").forEach(function (i) { i.checked = false; });
-      }
-    } else if (e.target.checked) {
-      none.checked = false;
+    var box = e.target;
+    if (!box.checked) return;
+    if (box.hasAttribute("data-solo")) {
+      live.querySelectorAll("input").forEach(function (i) {
+        if (i !== box) i.checked = false;
+      });
+    } else {
+      live.querySelectorAll("input[data-solo]").forEach(function (i) { i.checked = false; });
     }
-  });
-
-  form.addEventListener("change", function (e) {
-    var group = e.target.closest("fieldset[data-invalid]");
-    if (group) group.removeAttribute("data-invalid");
   });
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    var fd = new FormData(form);
-    var firstBad = null;
-    REQUIRED.forEach(function (name) {
-      var group = document.getElementById("q-" + name);
-      if (fd.get(name)) { group.removeAttribute("data-invalid"); return; }
-      group.setAttribute("data-invalid", "");
-      if (!firstBad) firstBad = group;
-    });
-    if (firstBad) {
-      firstBad.scrollIntoView({ behavior: "smooth", block: "center" });
-      var input = firstBad.querySelector("input");
-      if (input) input.focus({ preventScroll: true });
-      return;
-    }
-
     button.disabled = true;
     button.textContent = "Sending…";
 
     var body = new URLSearchParams();
-    fd.forEach(function (v, k) { if (typeof v === "string") body.append(k, v); });
+    new FormData(form).forEach(function (v, k) {
+      if (typeof v === "string") body.append(k, v);
+    });
 
     var finish = function () {
       form.hidden = true;
