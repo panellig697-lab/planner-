@@ -8,8 +8,11 @@ the folder with anything (`npx serve site`, `python3 -m http.server`).
 site/
   index.html      all markup + inline TODO comments
   start/
-    index.html    qualification form (/start/) — self-contained, posts to
+    index.html    stage 1 qualifier (/start/) — self-contained, posts to
                   Netlify Forms then redirects to Calendly
+  booked/
+    index.html    stage 2 (/booked/) — set as Calendly's post-booking
+                  redirect; posts to Netlify Forms, no onward redirect
   styles.css      design tokens at the top of the file (:root)
   script.js       nav drawer, sticky-nav border, footer year, Loom loader
   assets/
@@ -68,3 +71,16 @@ travel as UTM values rather than under their own names.
 
 To send traffic here, point the site's booking buttons at `/start/` instead of
 the Calendly URL.
+
+## Stage 2 (`/booked/`)
+
+Asks for the numbers behind the quote — new customers, AOV, margin, repeat rate,
+repeat depth, and which flows are already live. Every band carries a
+"We don't track this" option, because a forced guess is worse than a known gap.
+
+Submissions land in Netlify Forms under `retainr-stage-2`. Nothing redirects
+onward; the page confirms in place.
+
+**This page only gets traffic once you wire it up:** in Calendly, open the event
+→ *Confirmation Page* → *Redirect to an external site* → `https://retainr.studio/booked/`.
+Until then it's live but unreachable.

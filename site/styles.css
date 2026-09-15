@@ -389,7 +389,6 @@ h1, h2, h3 {
 .grid--features { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
 
 /* Packages + quotes: cards stay a readable width and centre when there are few. */
-.grid--packages,
 .grid--quotes {
   grid-template-columns: repeat(auto-fit, minmax(300px, 380px));
   justify-content: center;
@@ -457,63 +456,36 @@ h1, h2, h3 {
   color: #7b7e86;
 }
 
-/* ---------------------------- packages ---------------------------- */
-.pkg {
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(180deg, #131316, var(--surface));
+/* ----------------------------- pricing ---------------------------- */
+.price {
+  max-width: 62ch;
+  margin-inline: auto;
+  display: grid;
+  gap: 20px;
+  font-size: 1.02rem;
+}
+.price p { margin: 0; }
+
+.price__parts-intro { color: var(--white); font-weight: 600; margin-top: 4px; }
+
+/* the deliverables are a spec, so they get the panel; the argument above
+   stays plain prose */
+.price__parts {
+  list-style: none;
+  margin: 0;
+  padding: 24px 26px;
+  display: grid;
+  gap: 14px;
+  background: var(--surface-2);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-lg);
-  padding: 30px 28px 32px;
 }
-.pkg--featured {
-  border-color: rgba(34,197,94,.5);
-  box-shadow: 0 24px 70px -46px rgba(34,197,94,.9);
-}
-.pkg__badge {
-  align-self: flex-start;
-  margin: 0 0 16px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: rgba(34,197,94,.12);
-  border: 1px solid rgba(34,197,94,.3);
-  color: var(--green);
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.pkg__name { font-size: 1.35rem; }
-.pkg__price {
-  margin: 14px 0 22px;
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-}
-.pkg__amount {
-  font-size: clamp(2.1rem, 5vw, 2.6rem);
-  font-weight: 750;
-  color: var(--white);
-  letter-spacing: -0.03em;
-}
-.pkg__period { color: var(--muted); font-size: 1rem; }
-
-.pkg__list {
-  list-style: none;
-  margin: 0 0 28px;
-  padding: 0;
-  display: grid;
-  gap: 13px;
-  border-top: 1px solid var(--line);
-  padding-top: 22px;
-}
-.pkg__list li {
+.price__parts li {
   position: relative;
   padding-left: 28px;
-  font-size: 15px;
-  color: var(--silver);
+  font-size: 15.5px;
 }
-.pkg__list li::before {
+.price__parts li::before {
   content: "";
   position: absolute;
   left: 0; top: 7px;
@@ -522,7 +494,21 @@ h1, h2, h3 {
   border-bottom: 2px solid var(--green);
   transform: rotate(-45deg);
 }
-.pkg .btn { margin-top: auto; }
+
+.price__terms { color: var(--white); font-weight: 600; }
+
+.price__cta {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  margin-top: 10px;
+  text-align: center;
+}
+.price__after {
+  max-width: 52ch;
+  color: var(--faint, #7b7e86);
+  font-size: 14.5px;
+}
 
 /* --------------------------- testimonials -------------------------- */
 .quote {

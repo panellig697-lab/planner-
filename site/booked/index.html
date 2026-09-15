@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Your Numbers Before the Call</title>
+<meta name="description" content="Five quick questions after booking, so the call starts with your numbers already worked out." />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#000000" />
+
+<style>
+
+/* =============================================================
+   Retainr — qualification form.
+   Tokens mirror the main site (styles.css) so the two match.
+   ============================================================= */
+:root {
+  --black:#000; --surface:#0a0a0b; --surface-2:#101012;
+  --line:#1e1e21; --line-strong:#2a2a2f;
+  --white:#fff; --silver:#d6d8dc; --muted:#9a9da4; --faint:#7b7e86;
+  --green:#22c55e; --green-bright:#4ade80;
+  --radius:12px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+body{
+  margin:0; background:var(--black); color:var(--silver);
+  font-family:var(--font); font-size:17px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
+.wrap{width:100%; max-width:620px; margin-inline:auto; padding:36px 20px 64px}
+
+/* ---------------------------- header ---------------------------- */
+.masthead{text-align:center; display:grid; gap:14px; padding-bottom:30px}
+.wordmark{
+  margin:0; font-size:19px; font-weight:750; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--white); text-decoration:none;
+}
+.wordmark span{color:var(--green)}
+h1{
+  margin:0; color:var(--white); font-size:clamp(1.6rem,5vw,2.1rem);
+  line-height:1.15; letter-spacing:-.025em; font-weight:700; text-wrap:balance;
+}
+.lede{margin:0; color:var(--muted); font-size:15.5px}
+
+/* --------------------------- questions -------------------------- */
+form{display:grid; gap:0}
+
+fieldset{
+  margin:0; padding:26px 0; border:0; border-top:1px solid var(--line);
+  display:grid; gap:14px;
+}
+fieldset:first-of-type{border-top:0; padding-top:8px}
+
+legend{
+  padding:0; color:var(--white); font-size:16.5px; font-weight:650;
+  letter-spacing:-.01em;
+}
+.hint{margin:0; color:var(--faint); font-size:13.5px}
+
+.options{display:grid; gap:9px}
+/* two columns once there's room for them */
+@media (min-width:520px){ .options--split{grid-template-columns:1fr 1fr} }
+
+/* Each option is a full-width hit target — thumb-sized on mobile. */
+.opt{position:relative; display:block}
+.opt input{
+  position:absolute; inset:0; width:100%; height:100%;
+  margin:0; opacity:0; cursor:pointer;
+}
+.opt span{
+  display:flex; align-items:center; gap:11px;
+  padding:13px 16px; min-height:52px;
+  background:var(--surface-2); border:1px solid var(--line-strong);
+  border-radius:var(--radius); color:var(--silver); font-size:15.5px;
+  transition:border-color .15s ease, background-color .15s ease, color .15s ease;
+}
+.opt span::before{
+  content:""; flex:none; width:17px; height:17px; border-radius:50%;
+  border:1.5px solid #4a4d55; transition:border-color .15s ease, box-shadow .15s ease;
+}
+.opt input:checked + span{
+  border-color:var(--green); background:rgba(34,197,94,.08); color:var(--white);
+}
+.opt input:checked + span::before{
+  border-color:var(--green); box-shadow:inset 0 0 0 4px var(--green);
+}
+.opt input:focus-visible + span{outline:2px solid var(--green); outline-offset:2px}
+@media (hover:hover){ .opt:hover span{border-color:#3d4048} }
+
+textarea{
+  width:100%; padding:14px 16px; min-height:104px; resize:vertical;
+  background:var(--surface-2); border:1px solid var(--line-strong);
+  border-radius:var(--radius); color:var(--silver);
+  font-family:inherit; font-size:15.5px; line-height:1.55;
+}
+textarea::placeholder{color:#5f626a}
+textarea:focus{outline:none; border-color:var(--green)}
+
+/* Inline validation: only shown after a failed submit. */
+.error{
+  display:none; margin:0; color:#f87171; font-size:13.5px; font-weight:550;
+}
+fieldset[data-invalid] .error{display:block}
+fieldset[data-invalid] .opt span{border-color:rgba(248,113,113,.5)}
+
+/* ---------------------------- submit ---------------------------- */
+.actions{border-top:1px solid var(--line); padding-top:26px; display:grid; gap:14px}
+
+button{
+  width:100%; padding:16px 24px; border:0; border-radius:999px;
+  background:var(--green); color:#03170c;
+  font-family:inherit; font-size:16.5px; font-weight:650; letter-spacing:-.01em;
+  cursor:pointer;
+  box-shadow:0 0 0 1px rgba(34,197,94,.35), 0 10px 30px -12px rgba(34,197,94,.6);
+  transition:background-color .15s ease, transform .15s ease;
+}
+button:hover:not(:disabled){background:var(--green-bright)}
+button:active:not(:disabled){transform:translateY(1px)}
+button:disabled{opacity:.65; cursor:progress}
+button:focus-visible{outline:2px solid var(--white); outline-offset:3px}
+
+.note{margin:0; text-align:center; color:var(--faint); font-size:13px}
+.note a{color:var(--muted)}
+
+noscript p{
+  margin:0 0 18px; padding:13px 16px; border-radius:var(--radius);
+  background:rgba(248,113,113,.08); border:1px solid rgba(248,113,113,.35);
+  color:#fca5a5; font-size:14px;
+}
+
+.hp{position:absolute; left:-9999px}
+
+footer{
+  border-top:1px solid var(--line); margin-top:36px; padding-top:22px;
+  text-align:center; color:var(--faint); font-size:12.5px;
+  letter-spacing:.18em; text-transform:uppercase;
+}
+
+
+/* ---- stage 2 additions ---- */
+.opt--check span::before{ border-radius:5px; }
+.opt--check input:checked + span::before{
+  border-color:var(--green); background:var(--green);
+  box-shadow:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.4l2.6 2.6L10 3.4' fill='none' stroke='%2303170c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size:12px; background-position:center; background-repeat:no-repeat;
+}
+.done{
+  display:grid; gap:12px; padding:34px 28px; text-align:center;
+  background:var(--surface-2); border:1px solid rgba(34,197,94,.45);
+  border-radius:var(--radius);
+}
+.done h2{ margin:0; color:var(--white); font-size:1.35rem; letter-spacing:-.02em }
+.done p{ margin:0; color:var(--muted); font-size:15.5px }
+.done .tick{
+  justify-self:center; display:grid; place-items:center;
+  width:46px; height:46px; border-radius:50%;
+  background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.4);
+  color:var(--green); font-size:20px;
+}
+
+</style>
+</head>
+
+<body>
+<main class="wrap">
+
+  <header class="masthead">
+    <a class="wordmark" href="https://retainr.studio">Retain<span>r</span></a>
+    <h1>You're booked in.</h1>
+    <p class="lede">
+      Five more questions, so I can come to the call with your numbers already worked out
+      rather than spending our fifteen minutes asking for them.
+    </p>
+  </header>
+
+  <noscript>
+    <p>This form needs JavaScript to send your answers. With it off, bring the numbers to
+       the call instead — we'll work through them there.</p>
+  </noscript>
+
+  <!--
+    Netlify Forms: submissions land under "retainr-stage-2".
+    Nothing redirects here — the booking is already made, so the page just
+    confirms and stops.
+  -->
+  <form id="stage2" name="retainr-stage-2" method="POST"
+        data-netlify="true" data-netlify-honeypot="bot-field" novalidate>
+    <input type="hidden" name="form-name" value="retainr-stage-2" />
+    <p class="hp"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+
+    <fieldset id="q-customers">
+      <legend>New customers per month</legend>
+      <p class="hint">First-time buyers, not total orders.</p>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="customers" value="Under 50" required /><span>Under 50</span></label>
+        <label class="opt"><input type="radio" name="customers" value="50 – 200" /><span>50 – 200</span></label>
+        <label class="opt"><input type="radio" name="customers" value="200 – 500" /><span>200 – 500</span></label>
+        <label class="opt"><input type="radio" name="customers" value="500 – 2,000" /><span>500 – 2,000</span></label>
+        <label class="opt"><input type="radio" name="customers" value="2,000+" /><span>2,000+</span></label>
+        <label class="opt"><input type="radio" name="customers" value="We don't track this" /><span>We don't track this</span></label>
+      </div>
+      <p class="error">Pick the closest band — an estimate is fine.</p>
+    </fieldset>
+    <fieldset id="q-aov">
+      <legend>Average order value</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="aov" value="Under £25" required /><span>Under £25</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£25 – £50" /><span>£25 – £50</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£50 – £100" /><span>£50 – £100</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£100 – £200" /><span>£100 – £200</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£200+" /><span>£200+</span></label>
+        <label class="opt"><input type="radio" name="aov" value="We don't track this" /><span>We don't track this</span></label>
+      </div>
+      <p class="error">Pick the closest band — an estimate is fine.</p>
+    </fieldset>
+    <fieldset id="q-margin">
+      <legend>Gross margin</legend>
+      <p class="hint">After cost of goods, before overheads.</p>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="margin" value="Under 30%" required /><span>Under 30%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="30 – 45%" /><span>30 – 45%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="45 – 60%" /><span>45 – 60%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="60 – 75%" /><span>60 – 75%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="75%+" /><span>75%+</span></label>
+        <label class="opt"><input type="radio" name="margin" value="We don't track this" /><span>We don't track this</span></label>
+      </div>
+      <p class="error">Pick the closest band — an estimate is fine.</p>
+    </fieldset>
+    <fieldset id="q-repeat">
+      <legend>Current repeat purchase rate</legend>
+      <p class="hint">The share of customers who have ordered more than once.</p>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="repeat" value="Under 10%" required /><span>Under 10%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="10 – 20%" /><span>10 – 20%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="20 – 30%" /><span>20 – 30%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="30 – 45%" /><span>30 – 45%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="45%+" /><span>45%+</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="We don't track this" /><span>We don't track this</span></label>
+      </div>
+      <p class="error">Pick the closest band — an estimate is fine.</p>
+    </fieldset>
+    <fieldset id="q-depth">
+      <legend>When someone does come back, do they usually buy once more, or keep buying repeatedly?</legend>
+      <div class="options">
+        <label class="opt"><input type="radio" name="depth" value="Usually one more order, then they stop" required /><span>Usually one more order, then they stop</span></label>
+        <label class="opt"><input type="radio" name="depth" value="A few more orders, then they drift away" /><span>A few more orders, then they drift away</span></label>
+        <label class="opt"><input type="radio" name="depth" value="A core group keeps buying regularly" /><span>A core group keeps buying regularly</span></label>
+        <label class="opt"><input type="radio" name="depth" value="We don't track this" /><span>We don't track this</span></label>
+      </div>
+      <p class="error">Your best read on it is enough.</p>
+    </fieldset>
+    <fieldset>
+      <legend>Which of these do you already have live? <span class="hint" style="display:inline">(optional)</span></legend>
+      <p class="hint">Tick everything that's currently sending.</p>
+      <div class="options options--split" id="q-live">
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Welcome series" /><span>Welcome series</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Abandoned cart" /><span>Abandoned cart</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Post-purchase" /><span>Post-purchase</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Win-back" /><span>Win-back</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Replenishment" /><span>Replenishment</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="None yet" data-none /><span>None yet</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Anything else worth knowing? <span class="hint" style="display:inline">(optional)</span></legend>
+      <textarea name="notes" rows="4" maxlength="1000"
+        placeholder="Seasonality, a product that drives most repeat orders, a number you're unsure about — whatever's useful."></textarea>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" id="submit">Send my numbers</button>
+      <p class="note">Estimates are fine — nothing here needs to be exact.</p>
+    </div>
+  </form>
+
+  <div class="done" id="done" hidden>
+    <span class="tick" aria-hidden="true">&#10003;</span>
+    <h2>Got it.</h2>
+    <p>I'll have these worked through before we speak. See you on the call.</p>
+  </div>
+
+  <footer>Convert. Retain. Grow.</footer>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var form   = document.getElementById("stage2");
+  var button = document.getElementById("submit");
+  var done   = document.getElementById("done");
+  var REQUIRED = ["customers", "aov", "margin", "repeat", "depth"];
+
+  /* "None yet" and the individual flows contradict each other, so ticking
+     either side clears the other. */
+  var live = document.getElementById("q-live");
+  var none = live.querySelector("input[data-none]");
+  live.addEventListener("change", function (e) {
+    if (e.target === none) {
+      if (none.checked) {
+        live.querySelectorAll("input:not([data-none])").forEach(function (i) { i.checked = false; });
+      }
+    } else if (e.target.checked) {
+      none.checked = false;
+    }
+  });
+
+  form.addEventListener("change", function (e) {
+    var group = e.target.closest("fieldset[data-invalid]");
+    if (group) group.removeAttribute("data-invalid");
+  });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    var fd = new FormData(form);
+    var firstBad = null;
+    REQUIRED.forEach(function (name) {
+      var group = document.getElementById("q-" + name);
+      if (fd.get(name)) { group.removeAttribute("data-invalid"); return; }
+      group.setAttribute("data-invalid", "");
+      if (!firstBad) firstBad = group;
+    });
+    if (firstBad) {
+      firstBad.scrollIntoView({ behavior: "smooth", block: "center" });
+      var input = firstBad.querySelector("input");
+      if (input) input.focus({ preventScroll: true });
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Sending…";
+
+    var body = new URLSearchParams();
+    fd.forEach(function (v, k) { if (typeof v === "string") body.append(k, v); });
+
+    var finish = function () {
+      form.hidden = true;
+      done.hidden = false;
+      done.scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+
+    fetch(form.getAttribute("action") || window.location.pathname, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString()
+    }).then(finish, finish);
+  });
+})();
+</script>
+</body>
+</html>
