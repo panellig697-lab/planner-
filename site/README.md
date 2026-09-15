@@ -33,9 +33,54 @@ site/
 `.grid--packages` and edit it. The grid re-flows on its own; add `pkg--featured`
 to highlight one card.
 
-**A testimonial** — a commented-out `<figure class="quote">` template sits inside
-`.grid--quotes`. Uncomment, fill in, and delete the `quote--empty` placeholder
-card once you have a real quote.
+**A testimonial** — the whole section is currently off the page. An empty
+"testimonials coming soon" block tells a prospect nobody has hired you yet, so
+it comes back at the point you have one real quote, not before. The styles are
+still in `styles.css`; paste this back between How It Works and the contact
+section, and re-add `<a href="#testimonials">Testimonials</a>` to both nav lists:
+
+```html
+  <!-- ======================== TESTIMONIALS ======================== -->
+  <section class="section" id="testimonials">
+    <div class="wrap">
+      <header class="section__head">
+        <p class="section__kicker">Social Proof</p>
+        <h2 class="section__title">What Clients Say</h2>
+      </header>
+
+      <!--
+        TESTIMONIAL GRID
+        Same pattern as packages: copy a <figure class="quote"> block per testimonial.
+        Delete the .quote--empty placeholder card once you have a real one.
+      -->
+      <div class="grid grid--quotes">
+
+        <figure class="quote quote--empty">
+          <blockquote>
+            Testimonials coming soon — Retainr is currently onboarding founding clients.
+            Want to be one of the first?
+          </blockquote>
+          <figcaption>
+            <a class="link-accent" href="#contact">Get in touch →</a>
+          </figcaption>
+        </figure>
+
+        <!--
+        Real testimonial template — uncomment and fill in:
+
+        <figure class="quote">
+          <blockquote>“Quote text goes here.”</blockquote>
+          <figcaption>
+            <span class="quote__name">First Last</span>
+            <span class="quote__role">Founder, Brand Name</span>
+          </figcaption>
+        </figure>
+        -->
+
+      </div>
+    </div>
+  </section>
+```
 
 **A feature block** — copy an `<article class="feature">` inside `.grid--features`.
 

@@ -504,7 +504,10 @@ h1, h2, h3 {
   font-size: 14.5px;
 }
 
-/* --------------------------- testimonials -------------------------- */
+/* --------------------------- testimonials --------------------------
+   The section is off the page until there's a real quote — see the README
+   for the markup to paste back in. These styles stay so it drops straight
+   back in when that happens. */
 .quote {
   margin: 0;
   display: flex;

@@ -99,7 +99,14 @@ textarea{
   border-radius:var(--radius); color:var(--silver);
   font-family:inherit; font-size:15.5px; line-height:1.55;
 }
-textarea::placeholder{color:#5f626a}
+.text-input{
+  width:100%; padding:14px 16px;
+  background:var(--surface-2); border:1px solid var(--line-strong);
+  border-radius:var(--radius); color:var(--silver);
+  font-family:inherit; font-size:15.5px;
+}
+.text-input:focus{outline:none; border-color:var(--green)}
+textarea::placeholder,.text-input::placeholder{color:#5f626a}
 textarea:focus{outline:none; border-color:var(--green)}
 
 /* ---------------------------- submit ---------------------------- */
@@ -169,7 +176,7 @@ footer{
 
   <header class="masthead">
     <a class="wordmark" href="https://retainr.studio">Retain<span>r</span></a>
-    <h1>You're booked in.</h1>
+    <h1 id="greeting">You're booked in.</h1>
     <p class="lede">
       Five more, so I can come to the call with your numbers already worked out rather than
       spending our fifteen minutes asking for them.
@@ -190,6 +197,16 @@ footer{
         data-netlify="true" data-netlify-honeypot="bot-field" novalidate>
     <input type="hidden" name="form-name" value="retainr-stage-2" />
     <p class="hp"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+
+    <!--
+      Calendly appends the invitee's details to this page's URL when
+      "pass event details to your redirect page" is switched on for the event.
+      The script reads them into these fields so the answers arrive attached to
+      a booking rather than anonymous.
+    -->
+    <input type="hidden" name="name" id="f-name" value="" />
+    <input type="hidden" name="email" id="f-email" value="" />
+    <input type="hidden" name="booked_for" id="f-when" value="" />
 
     <fieldset>
       <legend>Roughly how many new customers do you get in a month?</legend>
@@ -253,6 +270,13 @@ footer{
         <label class="opt opt--check"><input type="checkbox" name="live" value="Not sure" data-solo /><span>Not sure</span></label>
       </div>
     </fieldset>
+    <fieldset id="q-email" hidden>
+      <legend>What email did you book with?</legend>
+      <p class="hint">So I can match these answers to your booking.</p>
+      <input class="text-input" type="email" name="email_typed" autocomplete="email"
+             inputmode="email" placeholder="you@yourbrand.com" />
+    </fieldset>
+
     <fieldset>
       <legend>Anything else worth knowing? <span class="hint" style="display:inline">(optional)</span></legend>
       <textarea name="notes" rows="4" maxlength="1000"
@@ -278,6 +302,23 @@ footer{
 <script>
 (function () {
   "use strict";
+
+  /* Calendly's redirect carries the booking details; take what's there and
+     fall back to asking when it isn't. */
+  var params = new URLSearchParams(window.location.search);
+  var invitee = params.get("invitee_full_name") || params.get("name") || "";
+  var email   = params.get("invitee_email") || params.get("email") || "";
+  var startsAt = params.get("event_start_time") || "";
+
+  document.getElementById("f-name").value  = invitee;
+  document.getElementById("f-email").value = email;
+  document.getElementById("f-when").value  = startsAt;
+
+  if (invitee) {
+    var first = invitee.trim().split(/\s+/)[0];
+    document.getElementById("greeting").textContent = "You're booked in, " + first + ".";
+  }
+  if (!email) document.getElementById("q-email").hidden = false;
 
   var form   = document.getElementById("stage2");
   var button = document.getElementById("submit");
