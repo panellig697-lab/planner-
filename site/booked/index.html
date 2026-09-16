@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Before Your Retainr Call</title>
+<meta name="description" content="A few quick questions after booking, so the call can start on what to do rather than on background." />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#000000" />
+
+<style>
+
+/* =============================================================
+   Retainr — qualification form.
+   Tokens mirror the main site (styles.css) so the two match.
+   ============================================================= */
+:root {
+  --black:#000; --surface:#0a0a0b; --surface-2:#101012;
+  --line:#1e1e21; --line-strong:#2a2a2f;
+  --white:#fff; --silver:#d6d8dc; --muted:#9a9da4; --faint:#7b7e86;
+  --green:#22c55e; --green-bright:#4ade80;
+  --radius:12px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+body{
+  margin:0; background:var(--black); color:var(--silver);
+  font-family:var(--font); font-size:17px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
+.wrap{width:100%; max-width:620px; margin-inline:auto; padding:36px 20px 64px}
+
+/* ---------------------------- header ---------------------------- */
+.masthead{text-align:center; display:grid; gap:14px; padding-bottom:30px}
+.wordmark{
+  margin:0; font-size:19px; font-weight:750; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--white); text-decoration:none;
+}
+.wordmark span{color:var(--green)}
+h1{
+  margin:0; color:var(--white); font-size:clamp(1.6rem,5vw,2.1rem);
+  line-height:1.15; letter-spacing:-.025em; font-weight:700; text-wrap:balance;
+}
+.lede{margin:0; color:var(--muted); font-size:15.5px}
+
+/* --------------------------- questions -------------------------- */
+form{display:grid; gap:0}
+
+fieldset{
+  margin:0; padding:26px 0; border:0; border-top:1px solid var(--line);
+  display:grid; gap:14px;
+}
+fieldset:first-of-type{border-top:0; padding-top:8px}
+
+legend{
+  padding:0; color:var(--white); font-size:16.5px; font-weight:650;
+  letter-spacing:-.01em;
+}
+.hint{margin:0; color:var(--faint); font-size:13.5px}
+
+.options{display:grid; gap:9px}
+/* two columns once there's room for them */
+@media (min-width:520px){ .options--split{grid-template-columns:1fr 1fr} }
+
+/* Each option is a full-width hit target — thumb-sized on mobile. */
+.opt{position:relative; display:block}
+.opt input{
+  position:absolute; inset:0; width:100%; height:100%;
+  margin:0; opacity:0; cursor:pointer;
+}
+.opt span{
+  display:flex; align-items:center; gap:11px;
+  padding:13px 16px; min-height:52px;
+  background:var(--surface-2); border:1px solid var(--line-strong);
+  border-radius:var(--radius); color:var(--silver); font-size:15.5px;
+  transition:border-color .15s ease, background-color .15s ease, color .15s ease;
+}
+.opt span::before{
+  content:""; flex:none; width:17px; height:17px; border-radius:50%;
+  border:1.5px solid #4a4d55; transition:border-color .15s ease, box-shadow .15s ease;
+}
+.opt input:checked + span{
+  border-color:var(--green); background:rgba(34,197,94,.08); color:var(--white);
+}
+.opt input:checked + span::before{
+  border-color:var(--green); box-shadow:inset 0 0 0 4px var(--green);
+}
+.opt input:focus-visible + span{outline:2px solid var(--green); outline-offset:2px}
+@media (hover:hover){ .opt:hover span{border-color:#3d4048} }
+
+textarea{
+  width:100%; padding:14px 16px; min-height:104px; resize:vertical;
+  background:var(--surface-2); border:1px solid var(--line-strong);
+  border-radius:var(--radius); color:var(--silver);
+  font-family:inherit; font-size:15.5px; line-height:1.55;
+}
+.text-input{
+  width:100%; padding:14px 16px;
+  background:var(--surface-2); border:1px solid var(--line-strong);
+  border-radius:var(--radius); color:var(--silver);
+  font-family:inherit; font-size:15.5px;
+}
+.text-input:focus{outline:none; border-color:var(--green)}
+textarea::placeholder,.text-input::placeholder{color:#5f626a}
+textarea:focus{outline:none; border-color:var(--green)}
+
+/* ---------------------------- submit ---------------------------- */
+.actions{border-top:1px solid var(--line); padding-top:26px; display:grid; gap:14px}
+
+button{
+  width:100%; padding:16px 24px; border:0; border-radius:999px;
+  background:var(--green); color:#03170c;
+  font-family:inherit; font-size:16.5px; font-weight:650; letter-spacing:-.01em;
+  cursor:pointer;
+  box-shadow:0 0 0 1px rgba(34,197,94,.35), 0 10px 30px -12px rgba(34,197,94,.6);
+  transition:background-color .15s ease, transform .15s ease;
+}
+button:hover:not(:disabled){background:var(--green-bright)}
+button:active:not(:disabled){transform:translateY(1px)}
+button:disabled{opacity:.65; cursor:progress}
+button:focus-visible{outline:2px solid var(--white); outline-offset:3px}
+
+.note{margin:0; text-align:center; color:var(--faint); font-size:13px}
+.note a{color:var(--muted)}
+
+noscript p{
+  margin:0 0 18px; padding:13px 16px; border-radius:var(--radius);
+  background:rgba(248,113,113,.08); border:1px solid rgba(248,113,113,.35);
+  color:#fca5a5; font-size:14px;
+}
+
+.hp{position:absolute; left:-9999px}
+
+footer{
+  border-top:1px solid var(--line); margin-top:36px; padding-top:22px;
+  text-align:center; color:var(--faint); font-size:12.5px;
+  letter-spacing:.18em; text-transform:uppercase;
+}
+
+
+/* ---- stage 2 additions ---- */
+/* .done and form both set display, which outranks the browser's [hidden]
+   rule — without this the confirmation shows before anything is sent. */
+[hidden]{ display:none !important; }
+.opt--check span::before{ border-radius:5px; }
+.opt--check input:checked + span::before{
+  border-color:var(--green); background:var(--green);
+  box-shadow:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.4l2.6 2.6L10 3.4' fill='none' stroke='%2303170c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size:12px; background-position:center; background-repeat:no-repeat;
+}
+.done{
+  display:grid; gap:12px; padding:34px 28px; text-align:center;
+  background:var(--surface-2); border:1px solid rgba(34,197,94,.45);
+  border-radius:var(--radius);
+}
+.done h2{ margin:0; color:var(--white); font-size:1.35rem; letter-spacing:-.02em }
+.done p{ margin:0; color:var(--muted); font-size:15.5px }
+.done .tick{
+  justify-self:center; display:grid; place-items:center;
+  width:46px; height:46px; border-radius:50%;
+  background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.4);
+  color:var(--green); font-size:20px;
+}
+
+</style>
+</head>
+
+<body>
+<main class="wrap">
+
+  <header class="masthead">
+    <a class="wordmark" href="https://retainr.studio">Retain<span>r</span></a>
+    <h1 id="greeting">You're booked in.</h1>
+    <p class="lede">
+      Five more, so I can come to the call with your numbers already worked out rather than
+      spending our fifteen minutes asking for them.
+    </p>
+  </header>
+
+  <noscript>
+    <p>This form needs JavaScript to send your answers. With it off, bring the numbers to
+       the call instead — we'll work through them there.</p>
+  </noscript>
+
+  <!--
+    Netlify Forms: submissions land under "retainr-stage-2".
+    Nothing redirects here — the booking is already made, so the page just
+    confirms and stops.
+  -->
+  <form id="stage2" name="retainr-stage-2" method="POST"
+        data-netlify="true" data-netlify-honeypot="bot-field" novalidate>
+    <input type="hidden" name="form-name" value="retainr-stage-2" />
+    <p class="hp"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+
+    <!--
+      Calendly appends the invitee's details to this page's URL when
+      "pass event details to your redirect page" is switched on for the event.
+      The script reads them into these fields so the answers arrive attached to
+      a booking rather than anonymous.
+    -->
+    <input type="hidden" name="name" id="f-name" value="" />
+    <input type="hidden" name="email" id="f-email" value="" />
+    <input type="hidden" name="booked_for" id="f-when" value="" />
+
+    <fieldset>
+      <legend>Roughly how many new customers do you get in a month?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="customers" value="Under 100" /><span>Under 100</span></label>
+        <label class="opt"><input type="radio" name="customers" value="100 – 500" /><span>100 – 500</span></label>
+        <label class="opt"><input type="radio" name="customers" value="500 – 2,000" /><span>500 – 2,000</span></label>
+        <label class="opt"><input type="radio" name="customers" value="2,000 – 10,000" /><span>2,000 – 10,000</span></label>
+        <label class="opt"><input type="radio" name="customers" value="10,000+" /><span>10,000+</span></label>
+        <label class="opt"><input type="radio" name="customers" value="Not sure" /><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>What's a typical order worth?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="aov" value="Under £30" /><span>Under £30</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£30 – 50" /><span>£30 – 50</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£50 – 100" /><span>£50 – 100</span></label>
+        <label class="opt"><input type="radio" name="aov" value="Over £100" /><span>Over £100</span></label>
+        <label class="opt"><input type="radio" name="aov" value="Not sure" /><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Roughly what's your gross margin, after cost of goods?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="margin" value="Under 30%" /><span>Under 30%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="30 – 50%" /><span>30 – 50%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="50 – 70%" /><span>50 – 70%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="Over 70%" /><span>Over 70%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="Not sure / rather not say" /><span>Not sure / rather not say</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Of the customers who buy once, roughly what share ever buy again?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="repeat" value="We don't track that" /><span>We don't track that</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="Under 10%" /><span>Under 10%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="10 – 25%" /><span>10 – 25%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="25 – 40%" /><span>25 – 40%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="Over 40%" /><span>Over 40%</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>When someone does come back, do they usually buy once more, or keep buying?</legend>
+      <div class="options">
+        <label class="opt"><input type="radio" name="depth" value="Usually just once more" /><span>Usually just once more</span></label>
+        <label class="opt"><input type="radio" name="depth" value="A few more times" /><span>A few more times</span></label>
+        <label class="opt"><input type="radio" name="depth" value="Most go on to subscribe" /><span>Most go on to subscribe</span></label>
+        <label class="opt"><input type="radio" name="depth" value="Not sure" /><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Which of these are running right now? <span class="hint" style="display:inline">(tick all that apply)</span></legend>
+      <div class="options options--split" id="q-live">
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Welcome" /><span>Welcome</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Abandoned cart" /><span>Abandoned cart</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Post-purchase" /><span>Post-purchase</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Reorder reminder" /><span>Reorder reminder</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Win-back" /><span>Win-back</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="None of these" data-solo /><span>None of these</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Not sure" data-solo /><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset id="q-email" hidden>
+      <legend>What email did you book with?</legend>
+      <p class="hint">So I can match these answers to your booking.</p>
+      <input class="text-input" type="email" name="email_typed" autocomplete="email"
+             inputmode="email" placeholder="you@yourbrand.com" />
+    </fieldset>
+
+    <fieldset>
+      <legend>Anything else worth knowing? <span class="hint" style="display:inline">(optional)</span></legend>
+      <textarea name="notes" rows="4" maxlength="1000"
+        placeholder="Seasonality, a product that drives most repeat orders, a number you're unsure about — whatever's useful."></textarea>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" id="submit">Send my answers</button>
+      <p class="note" id="empty-warning" hidden>
+        Nothing's answered yet — tap again if you'd rather send it blank.
+      </p>
+      <p class="note">Estimates are fine, and you can skip anything you'd rather not answer.</p>
+    </div>
+  </form>
+
+  <div class="done" id="done" hidden>
+    <span class="tick" aria-hidden="true">&#10003;</span>
+    <h2>Got it.</h2>
+    <p>That's everything I need before we speak. See you on the call.</p>
+    <p class="note"><a href="" id="again">Answer again</a></p>
+  </div>
+
+  <footer>Convert. Retain. Grow.</footer>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  /* Calendly's redirect carries the booking details; take what's there and
+     fall back to asking when it isn't. */
+  var params = new URLSearchParams(window.location.search);
+  var invitee = params.get("invitee_full_name") || params.get("name") || "";
+  var email   = params.get("invitee_email") || params.get("email") || "";
+  var startsAt = params.get("event_start_time") || "";
+
+  document.getElementById("f-name").value  = invitee;
+  document.getElementById("f-email").value = email;
+  document.getElementById("f-when").value  = startsAt;
+
+  if (invitee) {
+    var first = invitee.trim().split(/\s+/)[0];
+    document.getElementById("greeting").textContent = "You're booked in, " + first + ".";
+  }
+  if (!email) document.getElementById("q-email").hidden = false;
+
+  var form   = document.getElementById("stage2");
+  var button = document.getElementById("submit");
+  var done   = document.getElementById("done");
+
+  /* Nothing here is required — a skipped question is a legitimate answer, so
+     the form submits whatever has been filled in. */
+
+  /* "None of these" and "Not sure" each rule out the individual flows, and
+     each other. */
+  var live = document.getElementById("q-live");
+  live.addEventListener("change", function (e) {
+    var box = e.target;
+    if (!box.checked) return;
+    if (box.hasAttribute("data-solo")) {
+      live.querySelectorAll("input").forEach(function (i) {
+        if (i !== box) i.checked = false;
+      });
+    } else {
+      live.querySelectorAll("input[data-solo]").forEach(function (i) { i.checked = false; });
+    }
+  });
+
+  /* Nothing is required, so a stray tap on the button would otherwise send an
+     empty form and replace the questions with a thank-you. Ask once first. */
+  var confirmedEmpty = false;
+  var warning = document.getElementById("empty-warning");
+
+  function answerCount() {
+    var n = 0;
+    form.querySelectorAll("input[type=radio], input[type=checkbox]").forEach(function (i) {
+      if (i.checked && i.name !== "bot-field") n++;
+    });
+    ["notes", "email_typed"].forEach(function (name) {
+      var el = form.querySelector("[name=" + name + "]");
+      if (el && el.value.trim()) n++;
+    });
+    return n;
+  }
+
+  document.getElementById("again").addEventListener("click", function (e) {
+    e.preventDefault();
+    window.location.reload();
+  });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    if (answerCount() === 0 && !confirmedEmpty) {
+      confirmedEmpty = true;
+      warning.hidden = false;
+      button.textContent = "Send without answering";
+      warning.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Sending…";
+
+    var body = new URLSearchParams();
+    new FormData(form).forEach(function (v, k) {
+      if (typeof v === "string") body.append(k, v);
+    });
+
+    var finish = function () {
+      form.hidden = true;
+      done.hidden = false;
+      done.scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+
+    fetch(form.getAttribute("action") || window.location.pathname, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString()
+    }).then(finish, finish);
+  });
+})();
+</script>
+</body>
+</html>
