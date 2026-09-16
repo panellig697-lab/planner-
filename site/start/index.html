@@ -98,6 +98,23 @@ textarea{
   border-radius:var(--radius); color:var(--silver);
   font-family:inherit; font-size:15.5px; line-height:1.55;
 }
+.opt--check span::before{ border-radius:5px; }
+.opt--check input:checked + span::before{
+  border-color:var(--green); background:var(--green); box-shadow:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.4l2.6 2.6L10 3.4' fill='none' stroke='%2303170c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size:12px; background-position:center; background-repeat:no-repeat;
+}
+
+/* marks where the qualifying questions end and the metrics begin */
+.group-break{
+  border-top:1px solid var(--line); margin-top:8px; padding:30px 0 4px;
+  display:grid; gap:10px; text-align:center;
+}
+.group-break h2{
+  margin:0; color:var(--white); font-size:1.3rem; letter-spacing:-.02em; font-weight:700;
+}
+.group-break p{ margin:0; color:var(--muted); font-size:14.5px }
+
 textarea::placeholder{color:#5f626a}
 textarea:focus{outline:none; border-color:var(--green)}
 
@@ -148,10 +165,11 @@ footer{
 
   <header class="masthead">
     <a class="wordmark" href="https://retainr.studio">Retain<span>r</span></a>
-    <h1>Four questions before we talk</h1>
+    <h1>A few questions before we talk</h1>
     <p class="lede">
-      So the call starts with the opportunity in your account, not the basics.
-      Takes about thirty seconds — then you'll pick a time.
+      The first four tell me whether I can help. The rest are the numbers I'd otherwise
+      spend our fifteen minutes asking for — all tap-to-answer, about a minute in total.
+      Then you'll pick a time.
     </p>
   </header>
 
@@ -226,6 +244,76 @@ footer{
       </div>
     </fieldset>
 
+    <div class="group-break">
+      <h2>Now the numbers.</h2>
+      <p>
+        These are the ones I actually build the call around. Estimates are fine, every
+        question has a "not sure", and you can skip any of them.
+      </p>
+    </div>
+
+    <fieldset>
+      <legend>Roughly how many new customers do you get in a month?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="customers" value="Under 100" /><span>Under 100</span></label>
+        <label class="opt"><input type="radio" name="customers" value="100 – 500" /><span>100 – 500</span></label>
+        <label class="opt"><input type="radio" name="customers" value="500 – 2,000" /><span>500 – 2,000</span></label>
+        <label class="opt"><input type="radio" name="customers" value="2,000 – 10,000" /><span>2,000 – 10,000</span></label>
+        <label class="opt"><input type="radio" name="customers" value="10,000+" /><span>10,000+</span></label>
+        <label class="opt"><input type="radio" name="customers" value="Not sure" /><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>What's a typical order worth?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="aov" value="Under £30" /><span>Under £30</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£30 – 50" /><span>£30 – 50</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£50 – 100" /><span>£50 – 100</span></label>
+        <label class="opt"><input type="radio" name="aov" value="Over £100" /><span>Over £100</span></label>
+        <label class="opt"><input type="radio" name="aov" value="Not sure" /><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Roughly what's your gross margin, after cost of goods?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="margin" value="Under 30%" /><span>Under 30%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="30 – 50%" /><span>30 – 50%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="50 – 70%" /><span>50 – 70%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="Over 70%" /><span>Over 70%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="Not sure / rather not say" /><span>Not sure / rather not say</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Of the customers who buy once, roughly what share ever buy again?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="repeat" value="We don't track that" /><span>We don't track that</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="Under 10%" /><span>Under 10%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="10 – 25%" /><span>10 – 25%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="25 – 40%" /><span>25 – 40%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="Over 40%" /><span>Over 40%</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>When someone does come back, do they usually buy once more, or keep buying?</legend>
+      <div class="options">
+        <label class="opt"><input type="radio" name="depth" value="Usually just once more" /><span>Usually just once more</span></label>
+        <label class="opt"><input type="radio" name="depth" value="A few more times" /><span>A few more times</span></label>
+        <label class="opt"><input type="radio" name="depth" value="Most go on to subscribe" /><span>Most go on to subscribe</span></label>
+        <label class="opt"><input type="radio" name="depth" value="Not sure" /><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Which of these are running right now? <span class="hint" style="display:inline">(tick all that apply)</span></legend>
+      <div class="options options--split" id="q-live">
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Welcome" /><span>Welcome</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Abandoned cart" /><span>Abandoned cart</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Post-purchase" /><span>Post-purchase</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Reorder reminder" /><span>Reorder reminder</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Win-back" /><span>Win-back</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="None of these" data-solo /><span>None of these</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Not sure" data-solo /><span>Not sure</span></label>
+      </div>
+    </fieldset>
     <fieldset>
       <legend>Anything else we should know? <span class="hint" style="display:inline">(optional)</span></legend>
       <textarea name="notes" rows="4" maxlength="1000"
@@ -234,7 +322,7 @@ footer{
 
     <div class="actions">
       <button type="submit" id="submit">Continue to booking</button>
-      <p class="note">Next step is Calendly, where you'll pick a 15-minute slot.</p>
+      <p class="note">Next step is the calendar, where you'll pick a 15-minute slot.</p>
     </div>
   </form>
 
@@ -267,8 +355,26 @@ footer{
       " | platform: " + (data.platform || "—") +
       " | start: " + (data.timing || "—") +
       " | focus: " + (data.focus || "not given"));
-    if (data.notes) p.set("utm_term", data.notes.slice(0, 180));
+    p.set("utm_term",
+      "customers: " + (data.customers || "—") +
+      " | AOV: " + (data.aov || "—") +
+      " | margin: " + (data.margin || "—") +
+      " | repeat: " + (data.repeat || "—"));
     return url.toString();
+  }
+
+  /* "None of these" and "Not sure" rule out the individual flows, and each other. */
+  var live = document.getElementById("q-live");
+  if (live) {
+    live.addEventListener("change", function (e) {
+      var box = e.target;
+      if (!box.checked) return;
+      if (box.hasAttribute("data-solo")) {
+        live.querySelectorAll("input").forEach(function (i) { if (i !== box) i.checked = false; });
+      } else {
+        live.querySelectorAll("input[data-solo]").forEach(function (i) { i.checked = false; });
+      }
+    });
   }
 
   form.addEventListener("submit", function (e) {
