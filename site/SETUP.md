@@ -24,10 +24,14 @@ It has to be the folder.
 
 ---
 
-## Step 2 — Two required questions on the booking form (guarantees the data)
+## Step 2 — Optional: make two of them unskippable
 
-Calendly → your event → **Invitee Questions** → *Add New Question*.
-Type: **Radio Buttons**. Toggle **Required** on. Add these two:
+All five questions live on `/booked/`, so this step is only worth doing if you
+want two of them guaranteed rather than likely. Calendly won't complete a
+booking until required questions are answered.
+
+Calendly → your event → **Invitee Questions** → *Add New Question* →
+type **Radio Buttons** → toggle **Required**:
 
 **What's a typical order worth?**
 ```
@@ -47,11 +51,9 @@ Under 10%
 Over 40%
 ```
 
-Nobody completes a booking without answering these, and the answers arrive with
-the booking notification. They've been removed from `/booked/` so nobody is
-asked twice.
-
----
+If you do add these, tell me and I'll take the same two off `/booked/` so nobody
+is asked twice. The cost of this step is friction at the moment someone has
+decided to book — skip it if you'd rather keep the booking form short.
 
 ## Step 3 — Redirect and emails (catches the rest)
 

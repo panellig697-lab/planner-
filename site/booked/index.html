@@ -178,7 +178,7 @@ footer{
     <a class="wordmark" href="https://retainr.studio">Retain<span>r</span></a>
     <h1 id="greeting">You're booked in.</h1>
     <p class="lede">
-      A few more, so I can come to the call with your numbers already worked out rather than
+      Five more, so I can come to the call with your numbers already worked out rather than
       spending our fifteen minutes asking for them.
     </p>
   </header>
@@ -220,6 +220,16 @@ footer{
       </div>
     </fieldset>
     <fieldset>
+      <legend>What's a typical order worth?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="aov" value="Under £30" /><span>Under £30</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£30 – 50" /><span>£30 – 50</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£50 – 100" /><span>£50 – 100</span></label>
+        <label class="opt"><input type="radio" name="aov" value="Over £100" /><span>Over £100</span></label>
+        <label class="opt"><input type="radio" name="aov" value="Not sure" /><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
       <legend>Roughly what's your gross margin, after cost of goods?</legend>
       <div class="options options--split">
         <label class="opt"><input type="radio" name="margin" value="Under 30%" /><span>Under 30%</span></label>
@@ -227,6 +237,16 @@ footer{
         <label class="opt"><input type="radio" name="margin" value="50 – 70%" /><span>50 – 70%</span></label>
         <label class="opt"><input type="radio" name="margin" value="Over 70%" /><span>Over 70%</span></label>
         <label class="opt"><input type="radio" name="margin" value="Not sure / rather not say" /><span>Not sure / rather not say</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Of the customers who buy once, roughly what share ever buy again?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="repeat" value="We don't track that" /><span>We don't track that</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="Under 10%" /><span>Under 10%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="10 – 25%" /><span>10 – 25%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="25 – 40%" /><span>25 – 40%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="Over 40%" /><span>Over 40%</span></label>
       </div>
     </fieldset>
     <fieldset>
@@ -265,6 +285,9 @@ footer{
 
     <div class="actions">
       <button type="submit" id="submit">Send my answers</button>
+      <p class="note" id="empty-warning" hidden>
+        Nothing's answered yet — tap again if you'd rather send it blank.
+      </p>
       <p class="note">Estimates are fine, and you can skip anything you'd rather not answer.</p>
     </div>
   </form>
@@ -273,6 +296,7 @@ footer{
     <span class="tick" aria-hidden="true">&#10003;</span>
     <h2>Got it.</h2>
     <p>That's everything I need before we speak. See you on the call.</p>
+    <p class="note"><a href="" id="again">Answer again</a></p>
   </div>
 
   <footer>Convert. Retain. Grow.</footer>
@@ -322,8 +346,38 @@ footer{
     }
   });
 
+  /* Nothing is required, so a stray tap on the button would otherwise send an
+     empty form and replace the questions with a thank-you. Ask once first. */
+  var confirmedEmpty = false;
+  var warning = document.getElementById("empty-warning");
+
+  function answerCount() {
+    var n = 0;
+    form.querySelectorAll("input[type=radio], input[type=checkbox]").forEach(function (i) {
+      if (i.checked && i.name !== "bot-field") n++;
+    });
+    ["notes", "email_typed"].forEach(function (name) {
+      var el = form.querySelector("[name=" + name + "]");
+      if (el && el.value.trim()) n++;
+    });
+    return n;
+  }
+
+  document.getElementById("again").addEventListener("click", function (e) {
+    e.preventDefault();
+    window.location.reload();
+  });
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
+
+    if (answerCount() === 0 && !confirmedEmpty) {
+      confirmedEmpty = true;
+      warning.hidden = false;
+      button.textContent = "Send without answering";
+      warning.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
 
     button.disabled = true;
     button.textContent = "Sending…";
