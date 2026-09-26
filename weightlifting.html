@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weightlifting: A Practical Guide</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --panel-2: #1e222b;
+    --text: #e8eaed;
+    --muted: #9aa1ac;
+    --accent: #e63946;
+    --accent-2: #f4a261;
+    --border: #2a2f3a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  header {
+    padding: 4rem 1.5rem 3rem;
+    text-align: center;
+    background: radial-gradient(ellipse at top, #1c2130 0%, var(--bg) 70%);
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  header p {
+    color: var(--muted);
+    max-width: 640px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+  }
+  .accent { color: var(--accent); }
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+  nav.toc {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  nav.toc h2 {
+    margin: 0 0 0.75rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  nav.toc ul {
+    columns: 2;
+    padding-left: 1.1rem;
+    margin: 0;
+  }
+  nav.toc a {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px dashed transparent;
+  }
+  nav.toc a:hover { border-bottom-color: var(--accent-2); }
+  section {
+    margin-bottom: 3rem;
+    scroll-margin-top: 1.5rem;
+  }
+  section h2 {
+    font-size: 1.5rem;
+    border-left: 4px solid var(--accent);
+    padding-left: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .grid .card h3 {
+    margin-top: 0;
+    color: var(--accent-2);
+    font-size: 1.05rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--panel);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  th, td {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: var(--panel-2);
+    color: var(--accent-2);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  tr:last-child td { border-bottom: none; }
+  ul.checklist { list-style: none; padding-left: 0; }
+  ul.checklist li {
+    padding-left: 1.6rem;
+    position: relative;
+    margin-bottom: 0.5rem;
+  }
+  ul.checklist li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: bold;
+  }
+  .warning {
+    border-left: 4px solid var(--accent-2);
+    background: var(--panel-2);
+    padding: 1rem 1.25rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+  }
+  .warning strong { color: var(--accent-2); }
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+  }
+  code {
+    background: var(--panel-2);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Weight<span class="accent">lifting</span></h1>
+  <p>A practical guide to the big lifts, how to program them, and how to progress without getting hurt.</p>
+</header>
+
+<main>
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ul>
+      <li><a href="#basics">The Basics</a></li>
+      <li><a href="#lifts">Core Lifts</a></li>
+      <li><a href="#programming">Programming</a></li>
+      <li><a href="#technique">Technique Cues</a></li>
+      <li><a href="#recovery">Recovery &amp; Nutrition</a></li>
+      <li><a href="#safety">Safety</a></li>
+    </ul>
+  </nav>
+
+  <section id="basics">
+    <h2>The Basics</h2>
+    <p>Weightlifting is the practice of using external resistance — barbells, dumbbells, kettlebells, machines — to build strength, muscle, and work capacity. Two terms get used loosely and are worth separating:</p>
+    <div class="grid">
+      <div class="card">
+        <h3>Olympic Weightlifting</h3>
+        <p>The competitive sport built around two lifts: the <strong>snatch</strong> and the <strong>clean &amp; jerk</strong>. Judged on maximum weight lifted overhead or to the shoulders in a single explosive movement.</p>
+      </div>
+      <div class="card">
+        <h3>Weight Training</h3>
+        <p>The broader practice of lifting weights for strength, hypertrophy (muscle growth), or general fitness — includes squats, deadlifts, presses, and accessory work. This is what most gym-goers mean by "lifting weights."</p>
+      </div>
+    </div>
+    <p>This guide focuses mostly on weight training, since that's what the vast majority of lifters actually do.</p>
+  </section>
+
+  <section id="lifts">
+    <h2>Core Lifts</h2>
+    <table>
+      <thead>
+        <tr><th>Lift</th><th>Primary Muscles</th><th>Why It Matters</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Squat</td><td>Quads, glutes, core</td><td>Builds total-body strength and leg mass; foundational for almost everything else</td></tr>
+        <tr><td>Deadlift</td><td>Hamstrings, glutes, back</td><td>The purest test of posterior-chain strength; teaches hip hinge mechanics</td></tr>
+        <tr><td>Bench Press</td><td>Chest, shoulders, triceps</td><td>Standard for upper-body pushing strength</td></tr>
+        <tr><td>Overhead Press</td><td>Shoulders, triceps, core</td><td>Builds shoulder stability and strength without a bench to lean on</td></tr>
+        <tr><td>Pull-up / Row</td><td>Lats, upper back, biceps</td><td>Balances pressing work; critical for posture and shoulder health</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="programming">
+    <h2>Programming</h2>
+    <p>Random workouts produce random results. Progress comes from applying <strong>progressive overload</strong> — gradually increasing weight, reps, or volume over time — inside a structure you can actually recover from.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>Beginner</h3>
+        <p>Full-body, 3x/week. Linear progression: add weight every session on the main lifts. Simple beats clever here.</p>
+      </div>
+      <div class="card">
+        <h3>Intermediate</h3>
+        <p>Upper/lower or push/pull/legs split, 4–5x/week. Weekly rather than session-to-session progression.</p>
+      </div>
+      <div class="card">
+        <h3>Advanced</h3>
+        <p>Periodized blocks (volume → intensity → peak), often body-part splits. Progress is slow and must be tracked carefully.</p>
+      </div>
+    </div>
+    <p>A sane starting rep-range guide:</p>
+    <table>
+      <thead><tr><th>Goal</th><th>Reps</th><th>Rest</th></tr></thead>
+      <tbody>
+        <tr><td>Max strength</td><td>1–5</td><td>3–5 min</td></tr>
+        <tr><td>Hypertrophy</td><td>6–12</td><td>60–120 sec</td></tr>
+        <tr><td>Muscular endurance</td><td>12–20+</td><td>30–60 sec</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="technique">
+    <h2>Technique Cues</h2>
+    <ul class="checklist">
+      <li><strong>Squat:</strong> brace your core before descending, knees track over toes, hips and shoulders rise together</li>
+      <li><strong>Deadlift:</strong> bar stays close to the shins/legs throughout, hinge at the hips, chest up, don't round the lower back</li>
+      <li><strong>Bench:</strong> shoulder blades pulled back and down, feet planted, bar path travels in a slight arc, not straight up and down</li>
+      <li><strong>Overhead Press:</strong> squeeze glutes to avoid over-arching, bar path close to the face, lock out fully overhead</li>
+    </ul>
+  </section>
+
+  <section id="recovery">
+    <h2>Recovery &amp; Nutrition</h2>
+    <p>Lifting breaks muscle down; recovery is where it rebuilds stronger. Three levers matter most:</p>
+    <div class="grid">
+      <div class="card">
+        <h3>Sleep</h3>
+        <p>7–9 hours. This is when most muscle repair and hormonal recovery happens — no supplement compensates for chronic sleep debt.</p>
+      </div>
+      <div class="card">
+        <h3>Protein</h3>
+        <p>Roughly 1.6–2.2g per kg of bodyweight per day, spread across meals, supports muscle repair and growth.</p>
+      </div>
+      <div class="card">
+        <h3>Deload</h3>
+        <p>Every 4–8 weeks, drop volume or intensity for a week to let joints and the nervous system recover before it becomes an injury.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="safety">
+    <h2>Safety</h2>
+    <div class="warning">
+      <strong>Before you load up:</strong> learn the movement pattern with an empty bar or light weight first, use a spotter or safety pins for bench/squat, and never sacrifice form to hit a number. Pain that's sharp or joint-specific is a signal to stop, not push through — soreness is normal, pain is not.
+    </div>
+  </section>
+</main>
+
+<footer>
+  Train consistently. Progress slowly. Recover deliberately.
+</footer>
+
+</body>
+</html>
