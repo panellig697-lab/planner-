@@ -77,8 +77,6 @@
         <a class="btn btn--ghost btn--lg" href="#how-it-works">See how it works</a>
       </div>
 
-      <p class="eyebrow eyebrow--hero">Convert. <span class="accent">Retain.</span> Grow.</p>
-
       <p class="hero__note">Built in Klaviyo · Shopify supplement &amp; wellness brands · Founder-led, hands-on</p>
     </div>
   </section>
@@ -94,28 +92,53 @@
         </p>
       </header>
 
-      <!-- Feature grid — add another <article class="feature"> to extend -->
+      <!--
+        The cards run as a journey: visitor → subscriber → buyer → repeat buyer →
+        advocate. Add another <article class="feature"> to extend.
+      -->
       <div class="grid grid--features">
         <article class="feature">
-          <span class="feature__icon" aria-hidden="true">🛒</span>
-          <h3 class="feature__title">Abandoned Cart</h3>
+          <svg class="feature__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v9"/><path d="m8.5 9.5 3.5 3.5 3.5-3.5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+          <h3 class="feature__title">Signup capture</h3>
           <p class="feature__body">
-            Someone leaves without buying? They get a timely reminder — often the fastest win
-            for recovered revenue.
+            A visitor who leaves without joining the list is gone for good. Forms and offers that turn browsers into subscribers.
           </p>
         </article>
 
         <article class="feature">
-          <span class="feature__icon" aria-hidden="true">👋</span>
+          <svg class="feature__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5 12 13l9-5.5"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
           <h3 class="feature__title">Welcome Series</h3>
           <p class="feature__body">
-            First-time buyers get a sequence that builds trust and nudges them toward a
-            second purchase.
+            New subscribers get a sequence that builds trust and nudges them toward a first or second purchase.
           </p>
         </article>
 
         <article class="feature">
-          <span class="feature__icon" aria-hidden="true">🔁</span>
+          <svg class="feature__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+          <h3 class="feature__title">Browse Abandonment</h3>
+          <p class="feature__body">
+            Someone looked at a product and left. They get a reminder of the thing they were already interested in.
+          </p>
+        </article>
+
+        <article class="feature">
+          <svg class="feature__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/><path d="M2.5 4h2.2l2.3 11.1a1.6 1.6 0 0 0 1.6 1.3h8.5a1.6 1.6 0 0 0 1.6-1.25l1.6-7.15H6"/></svg>
+          <h3 class="feature__title">Abandoned Cart</h3>
+          <p class="feature__body">
+            Someone leaves without buying? They get a timely reminder — often the fastest win for recovered revenue.
+          </p>
+        </article>
+
+        <article class="feature">
+          <svg class="feature__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 7.5 12 12 3.5 7.5"/><path d="M12 12v9.5"/><path d="m3.5 7.5 8.5-4.5 8.5 4.5v9L12 21 3.5 16.5z"/></svg>
+          <h3 class="feature__title">Post-Purchase &amp; Replenishment</h3>
+          <p class="feature__body">
+            Keep customers coming back at the right time, automatically — timed to when they actually run out.
+          </p>
+        </article>
+
+        <article class="feature">
+          <svg class="feature__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 1 2.7 6.2"/><path d="M3 7.5V12h4.5"/></svg>
           <h3 class="feature__title">Win-Back</h3>
           <p class="feature__body">
             Customers who've gone quiet get re-engaged before they forget about you completely.
@@ -123,13 +146,17 @@
         </article>
 
         <article class="feature">
-          <span class="feature__icon" aria-hidden="true">📦</span>
-          <h3 class="feature__title">Post-Purchase &amp; Replenishment</h3>
+          <svg class="feature__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3.8 2.5 5.1 5.6.8-4 3.9 1 5.6-5.1-2.7-5.1 2.7 1-5.6-4-3.9 5.6-.8z"/></svg>
+          <h3 class="feature__title">Reviews &amp; Referrals</h3>
           <p class="feature__body">
-            Keep customers coming back at the right time, automatically.
+            Happy customers bring the next ones — asked at the point they're most likely to say yes.
           </p>
         </article>
       </div>
+
+      <p class="section__scope">
+        I don't bring you traffic — I own everything from the moment someone lands on your site.
+      </p>
 
       <p class="section__closing">
         All built in <strong>Klaviyo</strong> — the platform designed specifically for ecommerce,
@@ -155,6 +182,8 @@
 
         <p class="demo__caption">
           Real Welcome Series, VIP Series, and Abandoned Cart flows built in a live Klaviyo account.
+          <a class="demo__fallback" href="https://www.loom.com/share/0a277e5a1daa44a18cf85331f6568b2c"
+             target="_blank" rel="noopener">Can't see it? Watch on Loom →</a>
         </p>
       </div>
     </div>
@@ -212,6 +241,152 @@
     </div>
   </section>
 
+  <!-- =========================== FOUNDER ========================== -->
+  <section class="section" id="founder">
+    <div class="wrap founder">
+      <div class="founder__portrait">
+        <!-- Supply /founder.jpg (square, 400px or larger). Until it exists the
+             neutral placeholder below shows instead. -->
+        <img src="/founder.jpg" alt="Gio Panelli, founder of Retainr"
+             onerror="this.remove()" />
+        <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <circle cx="32" cy="24" r="11"/>
+          <path d="M12 56c2.5-11 10.5-16 20-16s17.5 5 20 16"/>
+        </svg>
+      </div>
+
+      <div class="founder__text">
+        <h2 class="founder__title">Who you'll be working with</h2>
+        <p>
+          Retainr is me, Gio Panelli. I build and write every flow myself, from Jersey,
+          for a small number of Shopify brands at a time.
+          <!-- ONE LINE FROM GIO GOES HERE — paste it inside this paragraph, then
+               delete this comment. Nothing renders while it sits in a comment. -->
+        </p>
+        <a class="founder__link" href="https://www.linkedin.com/in/gio-panelli-946870421"
+           target="_blank" rel="noopener">
+          Gio on LinkedIn
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 17 17 7"/><path d="M8 7h9v9"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= FAQ ============================ -->
+  <section class="section section--alt" id="faq">
+    <div class="wrap">
+      <header class="section__head">
+        <p class="section__kicker">Questions</p>
+        <h2 class="section__title">Before you book</h2>
+      </header>
+
+      <div class="faq">
+        <details class="faq__item">
+          <summary>
+            <span>Do I need to be on Klaviyo already?</span>
+            <svg class="faq__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </summary>
+          <p>No. If you're on Mailchimp or nothing yet, setting up Klaviyo and moving you across is part of the work.</p>
+        </details>
+        <details class="faq__item">
+          <summary>
+            <span>What does it cost?</span>
+            <svg class="faq__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </summary>
+          <p>It depends on what your business actually needs, so there's no flat rate. After a 15-minute call you get a written proposal with the fee in it. No minimum term.</p>
+        </details>
+        <details class="faq__item">
+          <summary>
+            <span>Does anything send without me seeing it?</span>
+            <svg class="faq__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </summary>
+          <p>No. You review every flow before it goes live.</p>
+        </details>
+        <details class="faq__item">
+          <summary>
+            <span>Is it really just you?</span>
+            <svg class="faq__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </summary>
+          <p>Yes. No account managers, no handover to someone junior.</p>
+        </details>
+        <details class="faq__item">
+          <summary>
+            <span>Do you run ads or SEO?</span>
+            <svg class="faq__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </summary>
+          <p>No. I don't bring you traffic — I own everything from the moment someone lands on your site.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I need to be on Klaviyo already?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. If you're on Mailchimp or nothing yet, setting up Klaviyo and moving you across is part of the work."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does it cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It depends on what your business actually needs, so there's no flat rate. After a 15-minute call you get a written proposal with the fee in it. No minimum term."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does anything send without me seeing it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. You review every flow before it goes live."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it really just you?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. No account managers, no handover to someone junior."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you run ads or SEO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. I don't bring you traffic — I own everything from the moment someone lands on your site."
+      }
+    }
+  ]
+}
+  </script>
+
   <!-- ===================== CONTACT / FINAL CTA ==================== -->
   <section class="section section--cta" id="contact">
     <div class="wrap cta">
@@ -230,7 +405,6 @@
         <a class="cta__email" href="mailto:gio@retainr.studio">gio@retainr.studio</a>
       </div>
 
-      <p class="cta__closing">Convert. <span class="accent">Retain.</span> Grow.</p>
     </div>
   </section>
 

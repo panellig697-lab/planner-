@@ -358,6 +358,15 @@ h1, h2, h3 {
   color: var(--muted);
 }
 
+.section__scope {
+  max-width: 56ch;
+  margin: clamp(30px, 4vw, 40px) auto 0;
+  text-align: center;
+  font-size: 1.05rem;
+  color: var(--white);
+  font-weight: 600;
+}
+
 .section__closing {
   max-width: 68ch;
   margin: clamp(38px, 5vw, 52px) auto 0;
@@ -403,16 +412,14 @@ h1, h2, h3 {
   box-shadow: 0 18px 40px -28px rgba(34,197,94,.8);
 }
 .feature__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   width: 46px; height: 46px;
   margin-bottom: 16px;
+  padding: 11px;
   border-radius: 12px;
   background: rgba(34,197,94,.1);
   border: 1px solid rgba(34,197,94,.24);
-  font-size: 22px;
-  line-height: 1;
+  color: var(--green);
 }
 .feature__title { font-size: 1.13rem; margin-bottom: 10px; }
 .feature__body { margin: 0; font-size: 15.2px; color: var(--muted); }
@@ -442,6 +449,15 @@ h1, h2, h3 {
   height: 100%;
   border: 0;
 }
+.demo__fallback {
+  display: block;
+  margin-top: 8px;
+  color: var(--green);
+  font-weight: 600;
+  text-decoration: none;
+}
+.demo__fallback:hover { text-decoration: underline; }
+
 .demo__caption {
   max-width: 60ch;
   margin: 18px auto 0;
@@ -608,4 +624,113 @@ h1, h2, h3 {
   margin: 18px 0 0;
   font-size: 13px;
   color: #62656c;
+}
+
+/* ----------------------------- founder ---------------------------- */
+.founder {
+  display: grid;
+  gap: clamp(20px, 4vw, 34px);
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+}
+@media (min-width: 680px) {
+  .founder {
+    grid-template-columns: auto 1fr;
+    justify-items: start;
+    text-align: left;
+  }
+}
+
+.founder__portrait {
+  position: relative;
+  width: 132px; height: 132px;
+  flex: none;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+}
+.founder__portrait img {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+/* the placeholder sits underneath, so it shows until the photo exists */
+.founder__portrait svg {
+  width: 100%; height: 100%;
+  fill: none;
+  stroke: #3d4048;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.founder__text { display: grid; gap: 14px; max-width: 54ch; }
+.founder__title {
+  margin: 0;
+  font-size: clamp(1.35rem, 3.4vw, 1.75rem);
+}
+.founder__text p { margin: 0; color: var(--muted); font-size: 1.02rem; }
+
+.founder__link {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--green);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+@media (min-width: 680px) { .founder__link { justify-self: start; } }
+.founder__link:hover { color: var(--green-bright); text-decoration: underline; }
+.founder__link svg { width: 15px; height: 15px; }
+
+/* ------------------------------- FAQ ------------------------------ */
+.faq {
+  max-width: 720px;
+  margin-inline: auto;
+  display: grid;
+  gap: 10px;
+}
+
+.faq__item {
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.faq__item[open] { border-color: rgba(34,197,94,.45); }
+
+.faq__item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  cursor: pointer;
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 600;
+  list-style: none;
+}
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__item summary:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
+
+.faq__chev {
+  flex: none;
+  width: 18px; height: 18px;
+  color: var(--muted);
+  transition: transform .2s ease, color .2s ease;
+}
+.faq__item[open] .faq__chev { transform: rotate(180deg); color: var(--green); }
+
+.faq__item p {
+  margin: 0;
+  padding: 0 20px 20px;
+  color: var(--muted);
+  font-size: 15.5px;
+  max-width: 62ch;
 }

@@ -115,6 +115,17 @@ textarea{
 }
 .group-break p{ margin:0; color:var(--muted); font-size:14.5px }
 
+.group-break__skip{ margin:4px 0 0 }
+.btn-skip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:11px 20px; border-radius:999px;
+  background:transparent; border:1px solid var(--line-strong);
+  color:var(--white); font-family:inherit; font-size:14.5px; font-weight:600;
+  cursor:pointer; transition:border-color .15s ease, color .15s ease;
+}
+.btn-skip:hover{ border-color:var(--green); color:var(--green) }
+.btn-skip:focus-visible{ outline:2px solid var(--green); outline-offset:2px }
+
 textarea::placeholder{color:#5f626a}
 textarea:focus{outline:none; border-color:var(--green)}
 
@@ -245,10 +256,13 @@ footer{
     </fieldset>
 
     <div class="group-break">
-      <h2>Now the numbers.</h2>
+      <h2>Optional: the numbers.</h2>
       <p>
-        These are the ones I actually build the call around. Estimates are fine, every
-        question has a "not sure", and you can skip any of them.
+        These are what I'd otherwise spend our fifteen minutes asking for. Every one has a
+        "not sure", none are required — or skip straight to the calendar below.
+      </p>
+      <p class="group-break__skip">
+        <button type="button" class="btn-skip" id="skip">Skip — take me to the calendar →</button>
       </p>
     </div>
 
@@ -374,6 +388,15 @@ footer{
       } else {
         live.querySelectorAll("input[data-solo]").forEach(function (i) { i.checked = false; });
       }
+    });
+  }
+
+  /* Skip sends whatever has been answered so far and goes straight on. The four
+     qualifying questions are still checked — they are what the call depends on. */
+  var skip = document.getElementById("skip");
+  if (skip) {
+    skip.addEventListener("click", function () {
+      form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { cancelable: true }));
     });
   }
 
