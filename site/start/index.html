@@ -115,6 +115,20 @@ textarea{
 }
 .group-break p{ margin:0; color:var(--muted); font-size:14.5px }
 
+.booking{ display:grid; gap:10px; padding-top:30px; border-top:1px solid var(--line) }
+.booking__title{
+  margin:0; color:var(--white); font-size:1.3rem; letter-spacing:-.02em;
+  font-weight:700; text-align:center;
+}
+.booking__note{ margin:0 0 8px; color:var(--muted); font-size:14.5px; text-align:center }
+.booking__widget{ min-height:660px; border-radius:var(--radius); overflow:hidden }
+.booking__fallback{
+  margin:0; padding:14px 16px; border-radius:var(--radius); text-align:center;
+  background:rgba(248,113,113,.08); border:1px solid rgba(248,113,113,.35);
+  color:#fca5a5; font-size:14.5px;
+}
+.booking__fallback a{ color:var(--green); font-weight:600 }
+
 .group-break__skip{ margin:4px 0 0 }
 .btn-skip{
   display:inline-flex; align-items:center; gap:6px;
@@ -336,9 +350,28 @@ footer{
 
     <div class="actions">
       <button type="submit" id="submit">Continue to booking</button>
-      <p class="note">Next step is the calendar, where you'll pick a 15-minute slot.</p>
+      <p class="note">The calendar opens below — pick a 15-minute slot.</p>
     </div>
   </form>
+
+  <!--
+    Calendly's free plan has no post-booking redirect, so the calendar is
+    embedded here instead and the page listens for the widget's
+    "calendly.event_scheduled" message to move people on to /booked/.
+    Nothing loads until the form is submitted.
+  -->
+  <section class="booking" id="book" hidden aria-live="polite">
+    <h2 class="booking__title">Pick a time</h2>
+    <p class="booking__note">Your answers are in — last step is the calendar.</p>
+
+    <div class="booking__widget" id="calendly"></div>
+
+    <p class="booking__fallback" id="calendly-fallback" hidden>
+      The calendar didn't load.
+      <a href="https://calendly.com/panellig697/about-retainr-build-a-relationship-w-clients"
+         target="_blank" rel="noopener">Open it in a new tab →</a>
+    </p>
+  </section>
 
   <footer>Convert. Retain. Grow.</footer>
 
@@ -423,16 +456,16 @@ footer{
     }
 
     button.disabled = true;
-    button.textContent = "Taking you to the calendar…";
+    button.textContent = "Opening the calendar…";
 
     var next = bookingUrl(data);
 
-    /* Post to Netlify Forms, then redirect either way: a booking is worth more
-       than a stored submission, so a failed post never blocks the hand-off. */
+    /* Post to Netlify Forms, then open the calendar either way: a booking is
+       worth more than a stored submission, so a failed post never blocks it. */
     var body = new URLSearchParams();
     fd.forEach(function (v, k) { if (typeof v === "string") body.append(k, v); });
 
-    var go = function () { window.location.href = next; };
+    var go = function () { showCalendar(next); };
 
     fetch(form.getAttribute("action") || window.location.pathname, {
       method: "POST",
@@ -442,6 +475,62 @@ footer{
 
     // don't strand anyone if the network hangs
     setTimeout(go, 3000);
+  });
+
+  /* ---- the embedded calendar ---------------------------------------
+     Loads Calendly's widget on demand, falls back to a plain link if the
+     script or the widget doesn't come up, and moves people to /booked/
+     the moment the widget says a slot has been booked.
+  ------------------------------------------------------------------- */
+  var calendarOpened = false;
+
+  function showCalendar(url) {
+    var section = document.getElementById("book");
+    var mount   = document.getElementById("calendly");
+    var fallback = document.getElementById("calendly-fallback");
+
+    section.hidden = false;
+    if (calendarOpened) return;
+    calendarOpened = true;
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    var failed = function () {
+      fallback.hidden = false;
+      mount.style.minHeight = "0";
+    };
+
+    var css = document.createElement("link");
+    css.rel = "stylesheet";
+    css.href = "https://assets.calendly.com/assets/external/widget.css";
+    document.head.appendChild(css);
+
+    var script = document.createElement("script");
+    script.src = "https://assets.calendly.com/assets/external/widget.js";
+    script.async = true;
+    script.onerror = failed;
+    script.onload = function () {
+      if (!window.Calendly) return failed();
+      window.Calendly.initInlineWidget({
+        url: url + "&hide_gdpr_banner=1&background_color=0a0a0b&text_color=d6d8dc&primary_color=22c55e",
+        parentElement: mount
+      });
+    };
+    document.head.appendChild(script);
+
+    // if nothing has rendered by now, the embed isn't coming
+    setTimeout(function () {
+      if (!mount.querySelector("iframe")) failed();
+    }, 8000);
+  }
+
+  /* Calendly posts a message when a slot is booked — that's the cue to ask
+     for the numbers on /booked/. */
+  window.addEventListener("message", function (e) {
+    if (!/calendly\.com$/.test(new URL(e.origin).hostname)) return;
+    var name = e.data && e.data.event;
+    if (name === "calendly.event_scheduled") {
+      window.location.href = "/booked/";
+    }
   });
 
   // clear the error state as soon as a question gets answered

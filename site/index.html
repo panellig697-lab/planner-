@@ -244,24 +244,25 @@
   <!-- =========================== FOUNDER ========================== -->
   <section class="section" id="founder">
     <div class="wrap founder">
-      <div class="founder__portrait">
-        <!-- Supply /founder.jpg (square, 400px or larger). Until it exists the
-             neutral placeholder below shows instead. -->
-        <img src="/founder.jpg" alt="Gio Panelli, founder of Retainr"
-             onerror="this.remove()" />
-        <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-          <circle cx="32" cy="24" r="11"/>
-          <path d="M12 56c2.5-11 10.5-16 20-16s17.5 5 20 16"/>
-        </svg>
-      </div>
+      <!--
+        No photo yet. The slot below stays hidden until /founder.jpg actually
+        loads — drop an 800x800 file at the site root and it appears, circular,
+        with no other change needed.
+      -->
+      <img class="founder__photo" src="/founder.jpg" alt="Gio Panelli, founder of Retainr"
+           width="800" height="800" hidden
+           onload="this.hidden = false; document.querySelector('.founder').classList.add('founder--photo')"
+           onerror="this.remove()" />
 
       <div class="founder__text">
         <h2 class="founder__title">Who you'll be working with</h2>
         <p>
           Retainr is me, Gio Panelli. I build and write every flow myself, from Jersey,
           for a small number of Shopify brands at a time.
-          <!-- ONE LINE FROM GIO GOES HERE — paste it inside this paragraph, then
-               delete this comment. Nothing renders while it sits in a comment. -->
+        </p>
+        <p>
+          I started this because too many brands work hard for the first sale and leave
+          the second to chance.
         </p>
         <a class="founder__link" href="https://www.linkedin.com/in/gio-panelli-946870421"
            target="_blank" rel="noopener">
