@@ -240,11 +240,43 @@ footer{
     <input type="hidden" name="form-name" value="retainr-qualification" />
     <p class="hp"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
 
+    <!-- Filled in on submit from the combined email question below, so platform
+         and flow status keep reaching Netlify under the names they always had. -->
+    <input type="hidden" name="platform" id="f-platform" value="" />
+    <input type="hidden" name="retention" id="f-retention" value="" />
+
+    <!-- Cheapest question first: one tap, nothing personal, and the fastest
+         way to rule out a brand I can't help. -->
+    <fieldset id="q-focus">
+      <legend>What do you sell?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="focus" value="Supplements" /><span>Supplements</span></label>
+        <label class="opt"><input type="radio" name="focus" value="Wellness/Health" /><span>Wellness / health</span></label>
+        <label class="opt"><input type="radio" name="focus" value="Skincare/Beauty" /><span>Skincare / beauty</span></label>
+        <label class="opt"><input type="radio" name="focus" value="Other" /><span>Something else</span></label>
+      </div>
+      <p class="error">Pick the closest one.</p>
+    </fieldset>
+
+    <!-- Platform and flow status in one answer. The two fields they used to be
+         are derived on submit, so nothing downstream changes. -->
+    <fieldset id="q-stack">
+      <legend>Where are you with email right now?</legend>
+      <div class="options">
+        <label class="opt"><input type="radio" name="stack" value="Klaviyo — flows running" /><span>Klaviyo — flows running</span></label>
+        <label class="opt"><input type="radio" name="stack" value="Klaviyo — flows neglected" /><span>Klaviyo — flows neglected</span></label>
+        <label class="opt"><input type="radio" name="stack" value="Klaviyo — campaigns only, no flows" /><span>Klaviyo — campaigns only, no flows</span></label>
+        <label class="opt"><input type="radio" name="stack" value="Another platform (Mailchimp, Shopify Email…)" /><span>Another platform (Mailchimp, Shopify Email…)</span></label>
+        <label class="opt"><input type="radio" name="stack" value="Nothing yet" /><span>Nothing yet</span></label>
+      </div>
+      <p class="error">Whichever is closest — "nothing yet" is a fine answer.</p>
+    </fieldset>
+
     <fieldset id="q-revenue">
       <legend>Roughly what's your monthly revenue?</legend>
       <p class="hint">A ballpark is fine — it tells me which flows will move the needle first.</p>
       <div class="options options--split">
-        <label class="opt"><input type="radio" name="revenue" value="Under £10k" required /><span>Under £10k</span></label>
+        <label class="opt"><input type="radio" name="revenue" value="Under £10k" /><span>Under £10k</span></label>
         <label class="opt"><input type="radio" name="revenue" value="£10k–£50k" /><span>£10k – £50k</span></label>
         <label class="opt"><input type="radio" name="revenue" value="£50k–£150k" /><span>£50k – £150k</span></label>
         <label class="opt"><input type="radio" name="revenue" value="£150k–£500k" /><span>£150k – £500k</span></label>
@@ -253,46 +285,14 @@ footer{
       <p class="error">Pick the range closest to where you are.</p>
     </fieldset>
 
-    <fieldset id="q-retention">
-      <legend>Are you sending any automated retention emails today?</legend>
-      <p class="hint">Flows that fire on their own — carts, welcome, win-back — not one-off campaigns.</p>
-      <div class="options">
-        <label class="opt"><input type="radio" name="retention" value="Actively running sequences" required /><span>Yes, actively running sequences</span></label>
-        <label class="opt"><input type="radio" name="retention" value="Neglected or outdated" /><span>Yes, but neglected or outdated</span></label>
-        <label class="opt"><input type="radio" name="retention" value="Starting from zero" /><span>No, starting from zero</span></label>
-      </div>
-      <p class="error">Pick whichever is closest — all three are workable.</p>
-    </fieldset>
-
-    <fieldset id="q-platform">
-      <legend>What are you sending email with now?</legend>
-      <div class="options options--split">
-        <label class="opt"><input type="radio" name="platform" value="Klaviyo" required /><span>Klaviyo</span></label>
-        <label class="opt"><input type="radio" name="platform" value="Mailchimp" /><span>Mailchimp</span></label>
-        <label class="opt"><input type="radio" name="platform" value="Other" /><span>Something else</span></label>
-        <label class="opt"><input type="radio" name="platform" value="None" /><span>Nothing yet</span></label>
-      </div>
-      <p class="error">Let me know what you're on — "nothing yet" is a fine answer.</p>
-    </fieldset>
-
-    <fieldset id="q-timing">
-      <legend>When would you want to start?</legend>
-      <div class="options">
-        <label class="opt"><input type="radio" name="timing" value="ASAP" required /><span>As soon as possible</span></label>
-        <label class="opt"><input type="radio" name="timing" value="Within 1 month" /><span>Within a month</span></label>
-        <label class="opt"><input type="radio" name="timing" value="Exploring" /><span>Just exploring for now</span></label>
-      </div>
-      <p class="error">Even a rough timeline helps.</p>
-    </fieldset>
-
-    <fieldset>
-      <legend>What's your product focus? <span class="hint" style="display:inline">(optional)</span></legend>
-      <div class="options options--split">
-        <label class="opt"><input type="radio" name="focus" value="Supplements" /><span>Supplements</span></label>
-        <label class="opt"><input type="radio" name="focus" value="Wellness/Health" /><span>Wellness / health</span></label>
-        <label class="opt"><input type="radio" name="focus" value="Skincare/Beauty" /><span>Skincare / beauty</span></label>
-        <label class="opt"><input type="radio" name="focus" value="Other" /><span>Something else</span></label>
-      </div>
+    <!-- Without this, anyone who answers and then leaves before booking is
+         unreachable. -->
+    <fieldset id="q-email">
+      <legend>Your email</legend>
+      <p class="hint">So I can follow up if the calendar doesn't suit.</p>
+      <input class="text-input" type="email" name="email" autocomplete="email"
+             inputmode="email" placeholder="you@yourbrand.com" />
+      <p class="error">A working email, so I can reach you.</p>
     </fieldset>
 
     <fieldset>
@@ -405,6 +405,15 @@ footer{
         <label class="opt opt--check"><input type="checkbox" name="live" value="Not sure" data-solo /><span>Not sure</span></label>
       </div>
     </fieldset>
+    <fieldset id="q-timing">
+      <legend>When would you want to start?</legend>
+      <div class="options">
+        <label class="opt"><input type="radio" name="timing" value="ASAP" required /><span>As soon as possible</span></label>
+        <label class="opt"><input type="radio" name="timing" value="Within 1 month" /><span>Within a month</span></label>
+        <label class="opt"><input type="radio" name="timing" value="Exploring" /><span>Just exploring for now</span></label>
+      </div>
+      <p class="error">Even a rough timeline helps.</p>
+    </fieldset>
     <fieldset>
       <legend>Anything else worth knowing? <span class="hint" style="display:inline">(optional)</span></legend>
       <textarea name="notes2" rows="4" maxlength="1000"
@@ -439,7 +448,7 @@ footer{
 
   var form   = document.getElementById("qualify");
   var button = document.getElementById("submit");
-  var REQUIRED = ["revenue", "retention", "platform", "timing"];
+  var REQUIRED = ["focus", "stack", "revenue"];
 
   /* Answers ride along as UTM parameters, which Calendly stores against the
      booking — so they show up next to the invitee rather than being lost in a
@@ -454,8 +463,8 @@ footer{
     p.set("utm_content",
       "revenue: " + (data.revenue || "—") +
       " | platform: " + (data.platform || "—") +
-      " | start: " + (data.timing || "—") +
-      " | focus: " + (data.focus || "not given"));
+      " | email: " + (data.email || "—") +
+      " | focus: " + (data.focus || "—"));
     if (data.notes) p.set("utm_term", data.notes.slice(0, 180));
     return url.toString();
   }
@@ -490,12 +499,38 @@ footer{
       group.setAttribute("data-invalid", "");
       if (!firstBad) firstBad = group;
     });
+
+    // an address that can't receive mail is worse than none at all
+    var emailGroup = document.getElementById("q-email");
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email || "")) {
+      emailGroup.removeAttribute("data-invalid");
+    } else {
+      emailGroup.setAttribute("data-invalid", "");
+      if (!firstBad) firstBad = emailGroup;
+    }
     if (firstBad) {
       firstBad.scrollIntoView({ behavior: "smooth", block: "center" });
-      var input = firstBad.querySelector("input");
+      var input = firstBad.querySelector("input, textarea");
       if (input) input.focus({ preventScroll: true });
       return;
     }
+
+    /* One question, two stored facts: platform and flow status carry on
+       reaching Netlify under the names they always had. */
+    var STACK = {
+      "Klaviyo — flows running":                    ["Klaviyo", "Actively running sequences"],
+      "Klaviyo — flows neglected":                  ["Klaviyo", "Neglected or outdated"],
+      "Klaviyo — campaigns only, no flows":         ["Klaviyo", "Starting from zero"],
+      "Another platform (Mailchimp, Shopify Email…)": ["Another platform", "Not stated"],
+      "Nothing yet":                                ["None", "Starting from zero"]
+    };
+    var pair = STACK[data.stack] || ["", ""];
+    document.getElementById("f-platform").value  = pair[0];
+    document.getElementById("f-retention").value = pair[1];
+    data.platform = pair[0];
+    data.retention = pair[1];
+    fd.set("platform", pair[0]);
+    fd.set("retention", pair[1]);
 
     button.disabled = true;
     button.textContent = "Opening the calendar…";

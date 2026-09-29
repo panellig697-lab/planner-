@@ -18,8 +18,25 @@ feature is required.
 
 ## The path a visitor takes
 
-1. **Four questions** (plus optional product focus and notes) at the bottom of
-   the homepage. Required: revenue, retention status, platform, timing.
+1. **Four questions** at the bottom of the homepage — what they sell, where
+   they are with email, monthly revenue, and their email address. All four are
+   required; a free-text box is optional.
+
+   The email question is one answer covering two facts. On submit the page
+   derives `platform` and `retention` from it, so Netlify keeps receiving those
+   two fields under the names it always had:
+
+   | Answer | platform | retention |
+   | --- | --- | --- |
+   | Klaviyo — flows running | Klaviyo | Actively running sequences |
+   | Klaviyo — flows neglected | Klaviyo | Neglected or outdated |
+   | Klaviyo — campaigns only, no flows | Klaviyo | Starting from zero |
+   | Another platform | Another platform | Not stated |
+   | Nothing yet | None | Starting from zero |
+
+   "When would you want to start?" now sits in the post-booking step — it can't
+   be acted on before the call, and it was lengthening the form that stands
+   between a visitor and your calendar.
 2. Submitting posts them to **Netlify → Forms → `retainr-qualification`** and
    reveals the **embedded Calendly widget** on the same page. The widget loads
    only at this point — it is ~100KB of third-party JavaScript and no one
