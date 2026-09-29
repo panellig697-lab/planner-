@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Book a Call with Retainr</title>
+<meta name="description" content="Four quick questions before we talk, so the call starts with the opportunity in your account rather than the basics." />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#000000" />
+
+<style>
+/* =============================================================
+   Retainr — qualification form.
+   Tokens mirror the main site (styles.css) so the two match.
+   ============================================================= */
+:root {
+  --black:#000; --surface:#0a0a0b; --surface-2:#101012;
+  --line:#1e1e21; --line-strong:#2a2a2f;
+  --white:#fff; --silver:#d6d8dc; --muted:#9a9da4; --faint:#7b7e86;
+  --green:#22c55e; --green-bright:#4ade80;
+  --radius:12px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+body{
+  margin:0; background:var(--black); color:var(--silver);
+  font-family:var(--font); font-size:17px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
+.wrap{width:100%; max-width:620px; margin-inline:auto; padding:36px 20px 64px}
+
+/* ---------------------------- header ---------------------------- */
+.masthead{text-align:center; display:grid; gap:14px; padding-bottom:30px}
+.wordmark{
+  margin:0; font-size:19px; font-weight:750; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--white); text-decoration:none;
+}
+.wordmark span{color:var(--green)}
+h1{
+  margin:0; color:var(--white); font-size:clamp(1.6rem,5vw,2.1rem);
+  line-height:1.15; letter-spacing:-.025em; font-weight:700; text-wrap:balance;
+}
+.lede{margin:0; color:var(--muted); font-size:15.5px}
+
+/* --------------------------- questions -------------------------- */
+form{display:grid; gap:0}
+
+fieldset{
+  margin:0; padding:26px 0; border:0; border-top:1px solid var(--line);
+  display:grid; gap:14px;
+}
+fieldset:first-of-type{border-top:0; padding-top:8px}
+
+legend{
+  padding:0; color:var(--white); font-size:16.5px; font-weight:650;
+  letter-spacing:-.01em;
+}
+.hint{margin:0; color:var(--faint); font-size:13.5px}
+
+.options{display:grid; gap:9px}
+/* two columns once there's room for them */
+@media (min-width:520px){ .options--split{grid-template-columns:1fr 1fr} }
+
+/* Each option is a full-width hit target — thumb-sized on mobile. */
+.opt{position:relative; display:block}
+.opt input{
+  position:absolute; inset:0; width:100%; height:100%;
+  margin:0; opacity:0; cursor:pointer;
+}
+.opt span{
+  display:flex; align-items:center; gap:11px;
+  padding:13px 16px; min-height:52px;
+  background:var(--surface-2); border:1px solid var(--line-strong);
+  border-radius:var(--radius); color:var(--silver); font-size:15.5px;
+  transition:border-color .15s ease, background-color .15s ease, color .15s ease;
+}
+.opt span::before{
+  content:""; flex:none; width:17px; height:17px; border-radius:50%;
+  border:1.5px solid #4a4d55; transition:border-color .15s ease, box-shadow .15s ease;
+}
+.opt input:checked + span{
+  border-color:var(--green); background:rgba(34,197,94,.08); color:var(--white);
+}
+.opt input:checked + span::before{
+  border-color:var(--green); box-shadow:inset 0 0 0 4px var(--green);
+}
+.opt input:focus-visible + span{outline:2px solid var(--green); outline-offset:2px}
+@media (hover:hover){ .opt:hover span{border-color:#3d4048} }
+
+textarea{
+  width:100%; padding:14px 16px; min-height:104px; resize:vertical;
+  background:var(--surface-2); border:1px solid var(--line-strong);
+  border-radius:var(--radius); color:var(--silver);
+  font-family:inherit; font-size:15.5px; line-height:1.55;
+}
+.opt--check span::before{ border-radius:5px; }
+.opt--check input:checked + span::before{
+  border-color:var(--green); background:var(--green); box-shadow:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.4l2.6 2.6L10 3.4' fill='none' stroke='%2303170c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size:12px; background-position:center; background-repeat:no-repeat;
+}
+
+/* marks where the qualifying questions end and the metrics begin */
+/* form and .done both set display, which outranks the browser's [hidden]
+   rule — without this the second step shows before it should */
+[hidden]{ display:none !important }
+
+.numbers{ display:grid; gap:0 }
+.numbers .masthead{ padding-bottom:22px }
+.numbers__title{
+  margin:0; color:var(--white); font-size:clamp(1.5rem,4.6vw,2rem);
+  line-height:1.15; letter-spacing:-.025em; font-weight:700;
+}
+.numbers__title:focus-visible{ outline:2px solid var(--green); outline-offset:6px; border-radius:6px }
+
+.done{
+  display:grid; gap:12px; padding:34px 28px; text-align:center;
+  background:var(--surface-2); border:1px solid rgba(34,197,94,.45);
+  border-radius:var(--radius);
+}
+.done h3{ margin:0; color:var(--white); font-size:1.35rem; letter-spacing:-.02em }
+.done p{ margin:0; color:var(--muted); font-size:15.5px }
+.done .tick{
+  justify-self:center; display:grid; place-items:center;
+  width:46px; height:46px; border-radius:50%;
+  background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.4);
+  color:var(--green); font-size:20px;
+}
+
+.group-break{
+  border-top:1px solid var(--line); margin-top:8px; padding:30px 0 4px;
+  display:grid; gap:10px; text-align:center;
+}
+.group-break h2{
+  margin:0; color:var(--white); font-size:1.3rem; letter-spacing:-.02em; font-weight:700;
+}
+.group-break p{ margin:0; color:var(--muted); font-size:14.5px }
+
+.booking{ display:grid; gap:10px; padding-top:30px; border-top:1px solid var(--line) }
+.booking__title{
+  margin:0; color:var(--white); font-size:1.3rem; letter-spacing:-.02em;
+  font-weight:700; text-align:center;
+}
+.booking__note{ margin:0 0 8px; color:var(--muted); font-size:14.5px; text-align:center }
+.booking__widget{ min-height:660px; border-radius:var(--radius); overflow:hidden }
+.booking__fallback{
+  margin:0; padding:14px 16px; border-radius:var(--radius); text-align:center;
+  background:rgba(248,113,113,.08); border:1px solid rgba(248,113,113,.35);
+  color:#fca5a5; font-size:14.5px;
+}
+.booking__fallback a{ color:var(--green); font-weight:600 }
+
+.group-break__skip{ margin:4px 0 0 }
+.btn-skip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:11px 20px; border-radius:999px;
+  background:transparent; border:1px solid var(--line-strong);
+  color:var(--white); font-family:inherit; font-size:14.5px; font-weight:600;
+  cursor:pointer; transition:border-color .15s ease, color .15s ease;
+}
+.btn-skip:hover{ border-color:var(--green); color:var(--green) }
+.btn-skip:focus-visible{ outline:2px solid var(--green); outline-offset:2px }
+
+textarea::placeholder{color:#5f626a}
+textarea:focus{outline:none; border-color:var(--green)}
+
+/* Inline validation: only shown after a failed submit. */
+.error{
+  display:none; margin:0; color:#f87171; font-size:13.5px; font-weight:550;
+}
+fieldset[data-invalid] .error{display:block}
+fieldset[data-invalid] .opt span{border-color:rgba(248,113,113,.5)}
+
+/* ---------------------------- submit ---------------------------- */
+.actions{border-top:1px solid var(--line); padding-top:26px; display:grid; gap:14px}
+
+button{
+  width:100%; padding:16px 24px; border:0; border-radius:999px;
+  background:var(--green); color:#03170c;
+  font-family:inherit; font-size:16.5px; font-weight:650; letter-spacing:-.01em;
+  cursor:pointer;
+  box-shadow:0 0 0 1px rgba(34,197,94,.35), 0 10px 30px -12px rgba(34,197,94,.6);
+  transition:background-color .15s ease, transform .15s ease;
+}
+button:hover:not(:disabled){background:var(--green-bright)}
+button:active:not(:disabled){transform:translateY(1px)}
+button:disabled{opacity:.65; cursor:progress}
+button:focus-visible{outline:2px solid var(--white); outline-offset:3px}
+
+.note{margin:0; text-align:center; color:var(--faint); font-size:13px}
+.note a{color:var(--muted)}
+
+noscript p{
+  margin:0 0 18px; padding:13px 16px; border-radius:var(--radius);
+  background:rgba(248,113,113,.08); border:1px solid rgba(248,113,113,.35);
+  color:#fca5a5; font-size:14px;
+}
+
+.hp{position:absolute; left:-9999px}
+
+footer{
+  border-top:1px solid var(--line); margin-top:36px; padding-top:22px;
+  text-align:center; color:var(--faint); font-size:12.5px;
+  letter-spacing:.18em; text-transform:uppercase;
+}
+</style>
+</head>
+
+<body>
+<main class="wrap">
+
+  <header class="masthead">
+    <a class="wordmark" href="https://retainr.studio">Retain<span>r</span></a>
+    <h1>A few questions before we talk</h1>
+    <p class="lede">
+      The first four tell me whether I can help. The rest are the numbers I'd otherwise
+      spend our fifteen minutes asking for — all tap-to-answer, about a minute in total.
+      Then you'll pick a time.
+    </p>
+  </header>
+
+  <noscript>
+    <p>This form needs JavaScript to send you through to the calendar. With it off,
+       your answers still reach us, but you'll need to book a time separately.</p>
+  </noscript>
+
+  <!--
+    Netlify Forms: the name + data-netlify attributes are what make Netlify
+    capture submissions (Project → Forms). The JS below posts the data, then
+    redirects to Calendly. Deployed anywhere else, the post fails quietly and
+    the redirect still happens.
+  -->
+  <form id="qualify" name="retainr-qualification" method="POST"
+        data-netlify="true" data-netlify-honeypot="bot-field" novalidate>
+    <input type="hidden" name="form-name" value="retainr-qualification" />
+    <p class="hp"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+
+    <!-- Filled in on submit from the combined email question below, so platform
+         and flow status keep reaching Netlify under the names they always had. -->
+    <input type="hidden" name="platform" id="f-platform" value="" />
+    <input type="hidden" name="retention" id="f-retention" value="" />
+
+    <!-- Cheapest question first: one tap, nothing personal, and the fastest
+         way to rule out a brand I can't help. -->
+    <fieldset id="q-focus">
+      <legend>What do you sell?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="focus" value="Supplements" /><span>Supplements</span></label>
+        <label class="opt"><input type="radio" name="focus" value="Wellness/Health" /><span>Wellness / health</span></label>
+        <label class="opt"><input type="radio" name="focus" value="Skincare/Beauty" /><span>Skincare / beauty</span></label>
+        <label class="opt"><input type="radio" name="focus" value="Other" /><span>Something else</span></label>
+      </div>
+      <p class="error">Pick the closest one.</p>
+    </fieldset>
+
+    <!-- Platform and flow status in one answer. The two fields they used to be
+         are derived on submit, so nothing downstream changes. -->
+    <fieldset id="q-stack">
+      <legend>Where are you with email right now?</legend>
+      <div class="options">
+        <label class="opt"><input type="radio" name="stack" value="Klaviyo — flows running" /><span>Klaviyo — flows running</span></label>
+        <label class="opt"><input type="radio" name="stack" value="Klaviyo — flows neglected" /><span>Klaviyo — flows neglected</span></label>
+        <label class="opt"><input type="radio" name="stack" value="Klaviyo — campaigns only, no flows" /><span>Klaviyo — campaigns only, no flows</span></label>
+        <label class="opt"><input type="radio" name="stack" value="Another platform (Mailchimp, Shopify Email…)" /><span>Another platform (Mailchimp, Shopify Email…)</span></label>
+        <label class="opt"><input type="radio" name="stack" value="Nothing yet" /><span>Nothing yet</span></label>
+      </div>
+      <p class="error">Whichever is closest — "nothing yet" is a fine answer.</p>
+    </fieldset>
+
+    <fieldset id="q-revenue">
+      <legend>Roughly what's your monthly revenue?</legend>
+      <p class="hint">A ballpark is fine — it tells me which flows will move the needle first.</p>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="revenue" value="Under £10k" /><span>Under £10k</span></label>
+        <label class="opt"><input type="radio" name="revenue" value="£10k–£50k" /><span>£10k – £50k</span></label>
+        <label class="opt"><input type="radio" name="revenue" value="£50k–£150k" /><span>£50k – £150k</span></label>
+        <label class="opt"><input type="radio" name="revenue" value="£150k–£500k" /><span>£150k – £500k</span></label>
+        <label class="opt"><input type="radio" name="revenue" value="£500k+" /><span>£500k+</span></label>
+      </div>
+      <p class="error">Pick the range closest to where you are.</p>
+    </fieldset>
+
+    <!-- Without this, anyone who answers and then leaves before booking is
+         unreachable. -->
+    <fieldset id="q-email">
+      <legend>Your email</legend>
+      <p class="hint">So I can follow up if the calendar doesn't suit.</p>
+      <input class="text-input" type="email" name="email" autocomplete="email"
+             inputmode="email" placeholder="you@yourbrand.com" />
+      <p class="error">A working email, so I can reach you.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Anything else we should know? <span class="hint" style="display:inline">(optional)</span></legend>
+      <textarea name="notes" rows="4" maxlength="1000"
+        placeholder="Current systems, team size, main challenges — whatever's useful."></textarea>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" id="submit">Continue to booking</button>
+      <p class="note">The calendar opens below — pick a 15-minute slot.</p>
+    </div>
+  </form>
+
+  <!--
+    Calendly's free plan has no post-booking redirect, so the calendar is
+    embedded here and the page listens for the widget's
+    "calendly.event_scheduled" message. Nothing loads until the form is sent.
+  -->
+  <section class="booking" id="book" hidden aria-live="polite">
+    <h2 class="booking__title">Pick a time</h2>
+    <p class="booking__note">Your answers are in — last step is the calendar.</p>
+
+    <div class="booking__widget" id="calendly"></div>
+
+    <p class="booking__fallback" id="calendly-fallback" hidden>
+      The calendar didn't load.
+      <a href="https://calendly.com/panellig697/about-retainr-build-a-relationship-w-clients"
+         target="_blank" rel="noopener">Open it in a new tab →</a>
+    </p>
+  </section>
+
+  <!--
+    The booking happens in the embed above, on this page — so this step simply
+    takes the calendar's place once the widget says a slot is booked.
+  -->
+  <section class="numbers" id="numbers" hidden>
+    <header class="masthead">
+      <h2 class="numbers__title" id="numbers-title" tabindex="-1">You're booked in.</h2>
+      <p class="lede">
+        Five more questions, so I can come to the call with your numbers already worked out
+        rather than spending our fifteen minutes asking for them.
+      </p>
+    </header>
+
+    <form id="stage2" name="retainr-stage-2" method="POST"
+          data-netlify="true" data-netlify-honeypot="bot-field" novalidate>
+      <input type="hidden" name="form-name" value="retainr-stage-2" />
+      <p class="hp"><label>Leave this empty <input name="bot-field-2" tabindex="-1" autocomplete="off" /></label></p>
+
+    <fieldset>
+      <legend>Roughly how many new customers do you get in a month?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="customers" value="Under 100" /><span>Under 100</span></label>
+        <label class="opt"><input type="radio" name="customers" value="100 – 500" /><span>100 – 500</span></label>
+        <label class="opt"><input type="radio" name="customers" value="500 – 2,000" /><span>500 – 2,000</span></label>
+        <label class="opt"><input type="radio" name="customers" value="2,000 – 10,000" /><span>2,000 – 10,000</span></label>
+        <label class="opt"><input type="radio" name="customers" value="10,000+" /><span>10,000+</span></label>
+        <label class="opt"><input type="radio" name="customers" value="Not sure" /><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>What's a typical order worth?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="aov" value="Under £30" /><span>Under £30</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£30 – 50" /><span>£30 – 50</span></label>
+        <label class="opt"><input type="radio" name="aov" value="£50 – 100" /><span>£50 – 100</span></label>
+        <label class="opt"><input type="radio" name="aov" value="Over £100" /><span>Over £100</span></label>
+        <label class="opt"><input type="radio" name="aov" value="Not sure" /><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Roughly what's your gross margin, after cost of goods?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="margin" value="Under 30%" /><span>Under 30%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="30 – 50%" /><span>30 – 50%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="50 – 70%" /><span>50 – 70%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="Over 70%" /><span>Over 70%</span></label>
+        <label class="opt"><input type="radio" name="margin" value="Not sure / rather not say" /><span>Not sure / rather not say</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Of the customers who buy once, roughly what share ever buy again?</legend>
+      <div class="options options--split">
+        <label class="opt"><input type="radio" name="repeat" value="We don't track that" /><span>We don't track that</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="Under 10%" /><span>Under 10%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="10 – 25%" /><span>10 – 25%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="25 – 40%" /><span>25 – 40%</span></label>
+        <label class="opt"><input type="radio" name="repeat" value="Over 40%" /><span>Over 40%</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>When someone does come back, do they usually buy once more, or keep buying?</legend>
+      <div class="options">
+        <label class="opt"><input type="radio" name="depth" value="Usually just once more" /><span>Usually just once more</span></label>
+        <label class="opt"><input type="radio" name="depth" value="A few more times" /><span>A few more times</span></label>
+        <label class="opt"><input type="radio" name="depth" value="Most go on to subscribe" /><span>Most go on to subscribe</span></label>
+        <label class="opt"><input type="radio" name="depth" value="Not sure" /><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Which of these are running right now? <span class="hint" style="display:inline">(tick all that apply)</span></legend>
+      <div class="options options--split" id="q-live">
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Welcome" /><span>Welcome</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Abandoned cart" /><span>Abandoned cart</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Post-purchase" /><span>Post-purchase</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Reorder reminder" /><span>Reorder reminder</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Win-back" /><span>Win-back</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="None of these" data-solo /><span>None of these</span></label>
+        <label class="opt opt--check"><input type="checkbox" name="live" value="Not sure" data-solo /><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset id="q-timing">
+      <legend>When would you want to start?</legend>
+      <div class="options">
+        <label class="opt"><input type="radio" name="timing" value="ASAP" required /><span>As soon as possible</span></label>
+        <label class="opt"><input type="radio" name="timing" value="Within 1 month" /><span>Within a month</span></label>
+        <label class="opt"><input type="radio" name="timing" value="Exploring" /><span>Just exploring for now</span></label>
+      </div>
+      <p class="error">Even a rough timeline helps.</p>
+    </fieldset>
+    <fieldset>
+      <legend>Anything else worth knowing? <span class="hint" style="display:inline">(optional)</span></legend>
+      <textarea name="notes2" rows="4" maxlength="1000"
+        placeholder="Seasonality, a product that drives most repeat orders, a number you're unsure about — whatever's useful."></textarea>
+    </fieldset>
+
+      <div class="actions">
+        <button type="submit" id="submit2">Send my answers</button>
+        <p class="note" id="empty-warning2" hidden>
+          Nothing's answered yet — tap again if you'd rather send it blank.
+        </p>
+        <p class="note">Estimates are fine, and you can skip anything you'd rather not answer.</p>
+      </div>
+    </form>
+
+    <div class="done" id="done" hidden>
+      <span class="tick" aria-hidden="true">&#10003;</span>
+      <h3>Got it.</h3>
+      <p>That's everything I need before we speak. See you on the call.</p>
+    </div>
+  </section>
+
+  <footer>Convert. Retain. Grow.</footer>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var CALENDLY = "https://calendly.com/panellig697/about-retainr-build-a-relationship-w-clients";
+
+  var form   = document.getElementById("qualify");
+  var button = document.getElementById("submit");
+  var REQUIRED = ["focus", "stack", "revenue"];
+
+  /* Answers ride along as UTM parameters, which Calendly stores against the
+     booking — so they show up next to the invitee rather than being lost in a
+     URL nobody reads. (Calendly drops query parameters it doesn't recognise,
+     which is why they aren't passed under their own names.) */
+  function bookingUrl(data) {
+    var url = new URL(CALENDLY);
+    var p = url.searchParams;
+    p.set("utm_source", "retainr.studio");
+    p.set("utm_medium", "qualification-form");
+    p.set("utm_campaign", data.retention || "");
+    p.set("utm_content",
+      "revenue: " + (data.revenue || "—") +
+      " | platform: " + (data.platform || "—") +
+      " | email: " + (data.email || "—") +
+      " | focus: " + (data.focus || "—"));
+    if (data.notes) p.set("utm_term", data.notes.slice(0, 180));
+    return url.toString();
+  }
+
+  /* "None of these" and "Not sure" rule out the individual flows, and each other. */
+  var live = document.getElementById("q-live");
+  if (live) {
+    live.addEventListener("change", function (e) {
+      var box = e.target;
+      if (!box.checked) return;
+      if (box.hasAttribute("data-solo")) {
+        live.querySelectorAll("input").forEach(function (i) { if (i !== box) i.checked = false; });
+      } else {
+        live.querySelectorAll("input[data-solo]").forEach(function (i) { i.checked = false; });
+      }
+    });
+  }
+
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    var fd = new FormData(form);
+    var data = {};
+    fd.forEach(function (v, k) { data[k] = typeof v === "string" ? v.trim() : v; });
+
+    // validate, and send focus to the first unanswered question
+    var firstBad = null;
+    REQUIRED.forEach(function (name) {
+      var group = document.getElementById("q-" + name);
+      if (data[name]) { group.removeAttribute("data-invalid"); return; }
+      group.setAttribute("data-invalid", "");
+      if (!firstBad) firstBad = group;
+    });
+
+    // an address that can't receive mail is worse than none at all
+    var emailGroup = document.getElementById("q-email");
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email || "")) {
+      emailGroup.removeAttribute("data-invalid");
+    } else {
+      emailGroup.setAttribute("data-invalid", "");
+      if (!firstBad) firstBad = emailGroup;
+    }
+    if (firstBad) {
+      firstBad.scrollIntoView({ behavior: "smooth", block: "center" });
+      var input = firstBad.querySelector("input, textarea");
+      if (input) input.focus({ preventScroll: true });
+      return;
+    }
+
+    /* One question, two stored facts: platform and flow status carry on
+       reaching Netlify under the names they always had. */
+    var STACK = {
+      "Klaviyo — flows running":                    ["Klaviyo", "Actively running sequences"],
+      "Klaviyo — flows neglected":                  ["Klaviyo", "Neglected or outdated"],
+      "Klaviyo — campaigns only, no flows":         ["Klaviyo", "Starting from zero"],
+      "Another platform (Mailchimp, Shopify Email…)": ["Another platform", "Not stated"],
+      "Nothing yet":                                ["None", "Starting from zero"]
+    };
+    var pair = STACK[data.stack] || ["", ""];
+    document.getElementById("f-platform").value  = pair[0];
+    document.getElementById("f-retention").value = pair[1];
+    data.platform = pair[0];
+    data.retention = pair[1];
+    fd.set("platform", pair[0]);
+    fd.set("retention", pair[1]);
+
+    button.disabled = true;
+    button.textContent = "Opening the calendar…";
+
+    var next = bookingUrl(data);
+
+    /* Post to Netlify Forms, then open the calendar either way: a booking is
+       worth more than a stored submission, so a failed post never blocks it. */
+    var body = new URLSearchParams();
+    fd.forEach(function (v, k) { if (typeof v === "string") body.append(k, v); });
+
+    var go = function () { showCalendar(next); };
+
+    fetch(form.getAttribute("action") || window.location.pathname, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString()
+    }).then(go, go);
+
+    // don't strand anyone if the network hangs
+    setTimeout(go, 3000);
+  });
+
+  /* ---- the embedded calendar ---------------------------------------
+     Loads Calendly's widget on demand and falls back to a plain link if the
+     script or the widget doesn't come up.
+  ------------------------------------------------------------------- */
+  var calendarOpened = false;
+
+  function showCalendar(url) {
+    var section = document.getElementById("book");
+    var mount   = document.getElementById("calendly");
+    var fallback = document.getElementById("calendly-fallback");
+
+    section.hidden = false;
+    if (calendarOpened) return;
+    calendarOpened = true;
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    var failed = function () {
+      fallback.hidden = false;
+      mount.style.minHeight = "0";
+    };
+
+    var css = document.createElement("link");
+    css.rel = "stylesheet";
+    css.href = "https://assets.calendly.com/assets/external/widget.css";
+    document.head.appendChild(css);
+
+    var script = document.createElement("script");
+    script.src = "https://assets.calendly.com/assets/external/widget.js";
+    script.async = true;
+    script.onerror = failed;
+    script.onload = function () {
+      if (!window.Calendly) return failed();
+      window.Calendly.initInlineWidget({
+        url: url + "&hide_gdpr_banner=1&background_color=0a0a0b&text_color=d6d8dc&primary_color=22c55e",
+        parentElement: mount
+      });
+    };
+    document.head.appendChild(script);
+
+    // if nothing has rendered by now, the embed isn't coming
+    setTimeout(function () {
+      if (!mount.querySelector("iframe")) failed();
+    }, 8000);
+  }
+
+  /* ---- booked: the numbers take the calendar's place ----------------
+     The widget posts its message to this page, so there's no navigation —
+     the calendar is swapped for the second step in situ.
+  ------------------------------------------------------------------- */
+  function showNumbers() {
+    var booking = document.getElementById("book");
+    var numbers = document.getElementById("numbers");
+    if (!numbers.hidden) return;
+
+    booking.hidden = true;
+    numbers.hidden = false;
+    numbers.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    // move the reading position to the new heading, not just the scroll position
+    var heading = document.getElementById("numbers-title");
+    setTimeout(function () { heading.focus({ preventScroll: true }); }, 400);
+  }
+
+  window.addEventListener("message", function (e) {
+    var host;
+    try { host = new URL(e.origin).hostname; } catch (err) { return; }
+    if (host !== "calendly.com" && !/\.calendly\.com$/.test(host)) return;
+    if (e.data && e.data.event === "calendly.event_scheduled") showNumbers();
+  });
+
+  /* ---- the second step ---------------------------------------------
+     Nothing is required — a skipped question is a real answer — so an empty
+     send asks once before going through.
+  ------------------------------------------------------------------- */
+  var form2    = document.getElementById("stage2");
+  var button2  = document.getElementById("submit2");
+  var done     = document.getElementById("done");
+  var warning2 = document.getElementById("empty-warning2");
+  var confirmedEmpty = false;
+
+  function answered() {
+    var n = 0;
+    form2.querySelectorAll("input[type=radio], input[type=checkbox]").forEach(function (i) {
+      if (i.checked && i.name !== "bot-field-2") n++;
+    });
+    var notes = form2.querySelector("[name=notes2]");
+    if (notes && notes.value.trim()) n++;
+    return n;
+  }
+
+  form2.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    if (answered() === 0 && !confirmedEmpty) {
+      confirmedEmpty = true;
+      warning2.hidden = false;
+      button2.textContent = "Send without answering";
+      return;
+    }
+
+    button2.disabled = true;
+    button2.textContent = "Sending…";
+
+    var body = new URLSearchParams();
+    new FormData(form2).forEach(function (v, k) {
+      if (typeof v === "string") body.append(k, v);
+    });
+
+    var finish = function () {
+      form2.hidden = true;
+      done.hidden = false;
+      done.scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+
+    fetch(form2.getAttribute("action") || window.location.pathname, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString()
+    }).then(finish, finish);
+  });
+
+  // clear the error state as soon as a question gets answered
+  form.addEventListener("change", function (e) {
+    var group = e.target.closest("fieldset[data-invalid]");
+    if (group) group.removeAttribute("data-invalid");
+  });
+})();
+</script>
+</body>
+</html>
