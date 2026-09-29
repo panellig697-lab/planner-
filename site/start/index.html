@@ -106,6 +106,32 @@ textarea{
 }
 
 /* marks where the qualifying questions end and the metrics begin */
+/* form and .done both set display, which outranks the browser's [hidden]
+   rule — without this the second step shows before it should */
+[hidden]{ display:none !important }
+
+.numbers{ display:grid; gap:0 }
+.numbers .masthead{ padding-bottom:22px }
+.numbers__title{
+  margin:0; color:var(--white); font-size:clamp(1.5rem,4.6vw,2rem);
+  line-height:1.15; letter-spacing:-.025em; font-weight:700;
+}
+.numbers__title:focus-visible{ outline:2px solid var(--green); outline-offset:6px; border-radius:6px }
+
+.done{
+  display:grid; gap:12px; padding:34px 28px; text-align:center;
+  background:var(--surface-2); border:1px solid rgba(34,197,94,.45);
+  border-radius:var(--radius);
+}
+.done h3{ margin:0; color:var(--white); font-size:1.35rem; letter-spacing:-.02em }
+.done p{ margin:0; color:var(--muted); font-size:15.5px }
+.done .tick{
+  justify-self:center; display:grid; place-items:center;
+  width:46px; height:46px; border-radius:50%;
+  background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.4);
+  color:var(--green); font-size:20px;
+}
+
 .group-break{
   border-top:1px solid var(--line); margin-top:8px; padding:30px 0 4px;
   display:grid; gap:10px; text-align:center;
@@ -269,16 +295,53 @@ footer{
       </div>
     </fieldset>
 
-    <div class="group-break">
-      <h2>Optional: the numbers.</h2>
-      <p>
-        These are what I'd otherwise spend our fifteen minutes asking for. Every one has a
-        "not sure", none are required — or skip straight to the calendar below.
-      </p>
-      <p class="group-break__skip">
-        <button type="button" class="btn-skip" id="skip">Skip — take me to the calendar →</button>
-      </p>
+    <fieldset>
+      <legend>Anything else we should know? <span class="hint" style="display:inline">(optional)</span></legend>
+      <textarea name="notes" rows="4" maxlength="1000"
+        placeholder="Current systems, team size, main challenges — whatever's useful."></textarea>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" id="submit">Continue to booking</button>
+      <p class="note">The calendar opens below — pick a 15-minute slot.</p>
     </div>
+  </form>
+
+  <!--
+    Calendly's free plan has no post-booking redirect, so the calendar is
+    embedded here and the page listens for the widget's
+    "calendly.event_scheduled" message. Nothing loads until the form is sent.
+  -->
+  <section class="booking" id="book" hidden aria-live="polite">
+    <h2 class="booking__title">Pick a time</h2>
+    <p class="booking__note">Your answers are in — last step is the calendar.</p>
+
+    <div class="booking__widget" id="calendly"></div>
+
+    <p class="booking__fallback" id="calendly-fallback" hidden>
+      The calendar didn't load.
+      <a href="https://calendly.com/panellig697/about-retainr-build-a-relationship-w-clients"
+         target="_blank" rel="noopener">Open it in a new tab →</a>
+    </p>
+  </section>
+
+  <!--
+    The booking happens in the embed above, on this page — so this step simply
+    takes the calendar's place once the widget says a slot is booked.
+  -->
+  <section class="numbers" id="numbers" hidden>
+    <header class="masthead">
+      <h2 class="numbers__title" id="numbers-title" tabindex="-1">You're booked in.</h2>
+      <p class="lede">
+        Five more questions, so I can come to the call with your numbers already worked out
+        rather than spending our fifteen minutes asking for them.
+      </p>
+    </header>
+
+    <form id="stage2" name="retainr-stage-2" method="POST"
+          data-netlify="true" data-netlify-honeypot="bot-field" novalidate>
+      <input type="hidden" name="form-name" value="retainr-stage-2" />
+      <p class="hp"><label>Leave this empty <input name="bot-field-2" tabindex="-1" autocomplete="off" /></label></p>
 
     <fieldset>
       <legend>Roughly how many new customers do you get in a month?</legend>
@@ -343,34 +406,25 @@ footer{
       </div>
     </fieldset>
     <fieldset>
-      <legend>Anything else we should know? <span class="hint" style="display:inline">(optional)</span></legend>
-      <textarea name="notes" rows="4" maxlength="1000"
-        placeholder="Current systems, team size, main challenges — whatever's useful."></textarea>
+      <legend>Anything else worth knowing? <span class="hint" style="display:inline">(optional)</span></legend>
+      <textarea name="notes2" rows="4" maxlength="1000"
+        placeholder="Seasonality, a product that drives most repeat orders, a number you're unsure about — whatever's useful."></textarea>
     </fieldset>
 
-    <div class="actions">
-      <button type="submit" id="submit">Continue to booking</button>
-      <p class="note">The calendar opens below — pick a 15-minute slot.</p>
+      <div class="actions">
+        <button type="submit" id="submit2">Send my answers</button>
+        <p class="note" id="empty-warning2" hidden>
+          Nothing's answered yet — tap again if you'd rather send it blank.
+        </p>
+        <p class="note">Estimates are fine, and you can skip anything you'd rather not answer.</p>
+      </div>
+    </form>
+
+    <div class="done" id="done" hidden>
+      <span class="tick" aria-hidden="true">&#10003;</span>
+      <h3>Got it.</h3>
+      <p>That's everything I need before we speak. See you on the call.</p>
     </div>
-  </form>
-
-  <!--
-    Calendly's free plan has no post-booking redirect, so the calendar is
-    embedded here instead and the page listens for the widget's
-    "calendly.event_scheduled" message to move people on to /booked/.
-    Nothing loads until the form is submitted.
-  -->
-  <section class="booking" id="book" hidden aria-live="polite">
-    <h2 class="booking__title">Pick a time</h2>
-    <p class="booking__note">Your answers are in — last step is the calendar.</p>
-
-    <div class="booking__widget" id="calendly"></div>
-
-    <p class="booking__fallback" id="calendly-fallback" hidden>
-      The calendar didn't load.
-      <a href="https://calendly.com/panellig697/about-retainr-build-a-relationship-w-clients"
-         target="_blank" rel="noopener">Open it in a new tab →</a>
-    </p>
   </section>
 
   <footer>Convert. Retain. Grow.</footer>
@@ -402,11 +456,7 @@ footer{
       " | platform: " + (data.platform || "—") +
       " | start: " + (data.timing || "—") +
       " | focus: " + (data.focus || "not given"));
-    p.set("utm_term",
-      "customers: " + (data.customers || "—") +
-      " | AOV: " + (data.aov || "—") +
-      " | margin: " + (data.margin || "—") +
-      " | repeat: " + (data.repeat || "—"));
+    if (data.notes) p.set("utm_term", data.notes.slice(0, 180));
     return url.toString();
   }
 
@@ -424,14 +474,6 @@ footer{
     });
   }
 
-  /* Skip sends whatever has been answered so far and goes straight on. The four
-     qualifying questions are still checked — they are what the call depends on. */
-  var skip = document.getElementById("skip");
-  if (skip) {
-    skip.addEventListener("click", function () {
-      form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { cancelable: true }));
-    });
-  }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -478,9 +520,8 @@ footer{
   });
 
   /* ---- the embedded calendar ---------------------------------------
-     Loads Calendly's widget on demand, falls back to a plain link if the
-     script or the widget doesn't come up, and moves people to /booked/
-     the moment the widget says a slot has been booked.
+     Loads Calendly's widget on demand and falls back to a plain link if the
+     script or the widget doesn't come up.
   ------------------------------------------------------------------- */
   var calendarOpened = false;
 
@@ -523,14 +564,80 @@ footer{
     }, 8000);
   }
 
-  /* Calendly posts a message when a slot is booked — that's the cue to ask
-     for the numbers on /booked/. */
+  /* ---- booked: the numbers take the calendar's place ----------------
+     The widget posts its message to this page, so there's no navigation —
+     the calendar is swapped for the second step in situ.
+  ------------------------------------------------------------------- */
+  function showNumbers() {
+    var booking = document.getElementById("book");
+    var numbers = document.getElementById("numbers");
+    if (!numbers.hidden) return;
+
+    booking.hidden = true;
+    numbers.hidden = false;
+    numbers.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    // move the reading position to the new heading, not just the scroll position
+    var heading = document.getElementById("numbers-title");
+    setTimeout(function () { heading.focus({ preventScroll: true }); }, 400);
+  }
+
   window.addEventListener("message", function (e) {
-    if (!/calendly\.com$/.test(new URL(e.origin).hostname)) return;
-    var name = e.data && e.data.event;
-    if (name === "calendly.event_scheduled") {
-      window.location.href = "/booked/";
+    var host;
+    try { host = new URL(e.origin).hostname; } catch (err) { return; }
+    if (host !== "calendly.com" && !/\.calendly\.com$/.test(host)) return;
+    if (e.data && e.data.event === "calendly.event_scheduled") showNumbers();
+  });
+
+  /* ---- the second step ---------------------------------------------
+     Nothing is required — a skipped question is a real answer — so an empty
+     send asks once before going through.
+  ------------------------------------------------------------------- */
+  var form2    = document.getElementById("stage2");
+  var button2  = document.getElementById("submit2");
+  var done     = document.getElementById("done");
+  var warning2 = document.getElementById("empty-warning2");
+  var confirmedEmpty = false;
+
+  function answered() {
+    var n = 0;
+    form2.querySelectorAll("input[type=radio], input[type=checkbox]").forEach(function (i) {
+      if (i.checked && i.name !== "bot-field-2") n++;
+    });
+    var notes = form2.querySelector("[name=notes2]");
+    if (notes && notes.value.trim()) n++;
+    return n;
+  }
+
+  form2.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    if (answered() === 0 && !confirmedEmpty) {
+      confirmedEmpty = true;
+      warning2.hidden = false;
+      button2.textContent = "Send without answering";
+      return;
     }
+
+    button2.disabled = true;
+    button2.textContent = "Sending…";
+
+    var body = new URLSearchParams();
+    new FormData(form2).forEach(function (v, k) {
+      if (typeof v === "string") body.append(k, v);
+    });
+
+    var finish = function () {
+      form2.hidden = true;
+      done.hidden = false;
+      done.scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+
+    fetch(form2.getAttribute("action") || window.location.pathname, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString()
+    }).then(finish, finish);
   });
 
   // clear the error state as soon as a question gets answered

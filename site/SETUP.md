@@ -1,50 +1,67 @@
 # Retainr — how the site is wired
 
-Everything is one file: `index.html`. Homepage, all the questions, and the
-booking link at the end. There is no second page to deploy and no Calendly
-setting to switch on for it to work.
+Two files, one page:
+
+```
+index.html      the whole site — homepage, questions, calendar, follow-up
+og-image.png    the link-preview card
+```
+
+`og-image.png` has to stay a separate file: link-preview scrapers (WhatsApp,
+LinkedIn, iMessage) fetch an image by URL and cannot read one embedded in the
+HTML. Everything else — CSS, JavaScript, SVG icons, logo, favicon — is inline.
 
 ## Deploying
 
-Upload `index.html` to Netlify. That's it. CSS, JavaScript, logo and favicon
-are all inside the file.
+Drag the folder onto Netlify. Nothing else to configure, and no Calendly plan
+feature is required.
 
-Optional: put `og-image.png` next to it so shared links show a preview card.
+## The path a visitor takes
 
-## What happens when someone fills it in
+1. **Four questions** (plus optional product focus and notes) at the bottom of
+   the homepage. Required: revenue, retention status, platform, timing.
+2. Submitting posts them to **Netlify → Forms → `retainr-qualification`** and
+   reveals the **embedded Calendly widget** on the same page. The widget loads
+   only at this point — it is ~100KB of third-party JavaScript and no one
+   reading the homepage should pay for it.
+3. Booking a slot makes Calendly's widget post `calendly.event_scheduled` to
+   the page. The page hides the calendar, reveals the **numbers questions** in
+   its place, scrolls to them and moves keyboard focus to the heading. No page
+   load, no second URL.
+4. Those answers post to **Netlify → Forms → `retainr-stage-2`**. The page
+   confirms in place.
 
-1. They answer the questions at the bottom of the homepage — four required
-   (revenue, retention status, platform, timing), the rest skippable.
-2. Their answers post to **Netlify → Forms → `retainr-qualification`**.
-3. They land on Calendly to pick a time.
+The Calendly link also carries a summary as UTM values, which Calendly records
+against the booking: `utm_campaign` (retention status), `utm_content` (revenue,
+platform, timing, focus), `utm_term` (the notes).
 
-The Calendly link also carries a short summary as UTM values, which Calendly
-records against the booking:
+**If the widget fails to load** — blocked script, ad blocker, nothing rendered
+within 8 seconds — a panel appears with a direct link to the Calendly page, so
+nobody is stranded.
 
-| Parameter | Carries |
-| --- | --- |
-| `utm_campaign` | retention status |
-| `utm_content` | revenue band, platform, timing, product focus |
-| `utm_term` | customers per month, order value, margin, repeat rate |
+**Turn on form notifications** (Netlify → Forms → Notifications → email), or
+submissions sit unread.
 
-So the headline numbers appear next to the booking in Calendly, and the full
-set — including the flows tick-list and any notes — sits in Netlify Forms.
+## The founder photo
 
-**Turn on form notifications** (Netlify → Forms → Notifications → email) or
-submissions will sit unread.
+The founder block is written to read as finished without a photo. Drop an
+800×800 `founder.jpg` at the site root and it appears automatically, circular,
+and the block becomes two columns. No code change. Until then the browser logs
+one 404 for `/founder.jpg`; visitors see nothing amiss.
 
-## Checking it works
+## Checking it works after deploying
 
-Open the site, answer the questions, submit. You should land on Calendly, and
-the submission should appear in Netlify Forms. If the form isn't listed in
-Netlify at all, it wasn't detected at deploy time — redeploy rather than
-editing the file.
+1. Answer the questions, submit. The calendar should appear below.
+2. Book a slot — mark it "TEST — ignore".
+3. The numbers questions should replace the calendar on the same page.
+4. Submit them, then check both forms in Netlify.
+5. Cancel the test booking.
 
-## The files in this repo
+If the form isn't listed in Netlify at all, it wasn't detected at deploy time —
+redeploy rather than editing the file.
 
-- `index.html`, `styles.css`, `script.js`, `assets/` — the source the single
-  file is built from
-- `start/index.html` — the questions, as a standalone page at `/start/`
-- `booked/index.html` — the old post-booking page. Not used by the single-file
-  setup; kept in case you ever want to split the questions either side of the
-  booking again.
+## Source layout
+
+`index.html`, `styles.css`, `script.js` and `assets/` are the source the single
+file is built from; `start/index.html` holds the questions, calendar embed and
+follow-up step.
