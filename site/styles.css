@@ -171,12 +171,14 @@ h1, h2, h3 {
 
 .nav__brand { display: flex; align-items: center; text-decoration: none; }
 
-/* Logo art has a black background, which sits flush on the black nav. */
+/* Logo art has a black background, which sits flush on the black nav.
+   The file is now cropped to the artwork, so these heights are the mark
+   itself rather than the mark plus its old margins. */
 .nav__logo {
-  height: 62px;
+  height: 30px;
   width: auto;
   object-fit: contain;
-  /* The supplied artwork has a baked-in near-black background; "screen" plus a
+  /* The artwork has a baked-in near-black background; "screen" plus a
      contrast nudge crushes it into the black page so no panel edge shows.
      Remove both lines once you swap in a transparent PNG/SVG. */
   mix-blend-mode: screen;
@@ -227,7 +229,7 @@ h1, h2, h3 {
 @media (max-width: 860px) {
   .nav__links { display: none; }
   .nav__toggle { display: flex; }
-  .nav__logo { height: 48px; }
+  .nav__logo { height: 24px; }
 
   .nav__drawer {
     display: block;
@@ -285,8 +287,8 @@ h1, h2, h3 {
 .hero__inner { position: relative; }
 
 .hero__logo {
-  width: min(520px, 88%);
-  margin: 0 auto clamp(-8px, 0.5vw, 4px);
+  width: min(430px, 80%);
+  margin: 0 auto clamp(14px, 2.5vw, 22px);
   /* See .nav__logo — drop these once the logo has a transparent background. */
   mix-blend-mode: screen;
   filter: contrast(1.35);
@@ -620,6 +622,32 @@ h1, h2, h3 {
   text-transform: uppercase;
   color: var(--muted);
 }
+.footer__privacy {
+  max-width: 62ch;
+  margin: 20px auto 0;
+  text-align: left;
+}
+.footer__privacy summary {
+  text-align: center;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12.5px;
+  letter-spacing: .02em;
+  list-style: none;
+}
+.footer__privacy summary::-webkit-details-marker { display: none; }
+.footer__privacy summary:hover { color: var(--silver); }
+.footer__privacy summary:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; border-radius: 4px; }
+.footer__privacy p {
+  margin: 12px 0 0;
+  color: #7b7e86;
+  font-size: 13px;
+  line-height: 1.6;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.footer__privacy a { color: var(--muted); }
+
 .footer__legal {
   margin: 18px 0 0;
   font-size: 13px;

@@ -59,6 +59,13 @@ nobody is stranded.
 **Turn on form notifications** (Netlify → Forms → Notifications → email), or
 submissions sit unread.
 
+## Privacy
+
+The email field carries a one-line note, and the footer has a short "How I
+handle your details" disclosure covering what the answers are used for, that
+Netlify stores them and Calendly holds the booking, and how to ask for
+deletion. Worth re-reading if you add another tool to the chain.
+
 ## The founder photo
 
 The founder block is written to read as finished without a photo. Drop an
