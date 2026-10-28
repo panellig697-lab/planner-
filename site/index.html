@@ -168,16 +168,20 @@
         <h3 class="demo__title">See it in action:</h3>
 
         <div class="demo__frame">
-          <!-- To swap the video later, change data-loom-src to another
-               https://www.loom.com/embed/<id> URL. -->
-          <iframe
-            class="demo__video"
-            src="about:blank"
-            data-loom-src="https://www.loom.com/embed/0a277e5a1daa44a18cf85331f6568b2c"
-            title="Retainr — live Klaviyo flow walkthrough"
-            frameborder="0"
-            allowfullscreen
-            loading="lazy"></iframe>
+          <!--
+            Click-to-play. The player is ~600KB of third-party code, more than
+            the rest of this page put together, so nothing loads until someone
+            asks for it. Swap the video by changing data-video below — a Loom,
+            YouTube or Vimeo link, or an .mp4 on this site, all work.
+          -->
+          <button type="button" class="demo__play" id="demo-play"
+                  data-video="https://www.loom.com/share/0a277e5a1daa44a18cf85331f6568b2c">
+            <span class="demo__play-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
+            </span>
+            <span class="demo__play-label">Play the walkthrough</span>
+            <span class="demo__play-sub">Welcome, VIP and Abandoned Cart flows in a live account</span>
+          </button>
         </div>
 
         <p class="demo__caption">

@@ -66,6 +66,18 @@ handle your details" disclosure covering what the answers are used for, that
 Netlify stores them and Calendly holds the booking, and how to ask for
 deletion. Worth re-reading if you add another tool to the chain.
 
+## The walkthrough video
+
+Nothing of the player loads until someone presses play — it is around 600KB of
+third-party code, more than the rest of the page. To change the video, edit
+`data-video` on the play button in `index.html` (or `start/` sources before a
+rebuild). Loom share and embed links, YouTube, Vimeo, and an `.mp4` hosted on
+this site are all handled; the link is converted to the right embed form and
+the video autoplays once clicked.
+
+If the embed is ever blocked, the "Watch on Loom" link under the caption still
+reaches it.
+
 ## The founder photo
 
 The founder block is written to read as finished without a photo. Drop an
